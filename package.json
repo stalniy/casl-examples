@@ -1,0 +1,26 @@
+{
+  "name": "casl-examples",
+  "version": "1.0.0",
+  "description": "CASL examples, integration with different frameworks",
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/stalniy/casl-examples.git"
+  },
+  "keywords": [
+    "casl",
+    "example",
+    "angular",
+    "vue",
+    "react",
+    "aurelia",
+    "mongoose",
+    "express"
+  ],
+  "author": "Sergii Stotskyi <sergiy.stostkiy@freaksidea.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/stalniy/casl-examples/issues"
+  },
+  "homepage": "https://github.com/stalniy/casl-examples#readme"
+}

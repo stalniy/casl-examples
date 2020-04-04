@@ -1,0 +1,20 @@
+importers:
+  packages/hello-world:
+    dependencies:
+      '@casl/ability': 3.4.0
+    specifiers:
+      '@casl/ability': ^3.4.0
+lockfileVersion: 5.1
+packages:
+  /@casl/ability/3.4.0:
+    dependencies:
+      sift: 9.0.7
+    dev: false
+    engines:
+      npm: ^6.0.0
+    resolution:
+      integrity: sha512-aJodlkXamBRNnb25m0xuibU6StiyWZzz7EFivqLKO5kmfLDAwrIklysa1w4K/Exi1mRt+lfOp7pSb4QtuAXx+A==
+  /sift/9.0.7:
+    dev: false
+    resolution:
+      integrity: sha512-q8Wvt15s0UJfIgVBEupXwITi8AKoHwCZbIO/bz+YMgEZRPh5qj/gjvYtqhKjHWe9srbuq5DyYeRyWPVjkOihPg==

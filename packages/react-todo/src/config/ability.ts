@@ -28,6 +28,6 @@ function detectAppSubjectType(subject?: Subjects) {
 
 export function buildAbilityFor(role: string): AppAbility {
   return new Ability<[Actions, Subjects]>(defineRulesFor(role), {
-      detectSubjectType: detectAppSubjectType
-  );
+    detectSubjectType: detectAppSubjectType
+  });
 }

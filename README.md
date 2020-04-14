@@ -8,10 +8,11 @@ You can find examples in [packages](./packages) folder. See `README.md` of the s
 
 Currently this repository contains the next examples:
 
-| Example                                   |  Description                         |
-|-------------------------------------------|--------------------------------------|
-| [CASL hello world](./packages/hello-world) | a basic hello world example          |
-| [CASL React todo](./packages/react-todo) | user roles in Todo app |
+| Example                                      |  Description                         |
+|----------------------------------------------|--------------------------------------|
+| [CASL hello world](./packages/hello-world)   | a basic hello world example          |
+| [CASL React todo](./packages/react-todo)     | user roles in Todo app |
+| [CASL Angular todo](./packages/angular-todo) | user roles in Todo app |
 
 
 ## Want to contribute?

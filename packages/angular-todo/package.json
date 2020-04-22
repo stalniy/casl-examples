@@ -1,6 +1,8 @@
 {
   "name": "casl-angular-example",
+  "private": true,
   "version": "0.0.0",
+  "main": "src/main.ts",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
@@ -10,7 +12,6 @@
     "e2e": "ng e2e",
     "postinstall": "ngcc"
   },
-  "private": true,
   "dependencies": {
     "@angular/animations": "9.0.5",
     "@angular/common": "9.0.5",

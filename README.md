@@ -10,9 +10,10 @@ Currently this repository contains the next examples:
 
 | Example                                      |  Description                         |
 |----------------------------------------------|--------------------------------------|
-| [CASL hello world](./packages/hello-world)   | a basic hello world example          |
+| [CASL hello world](./packages/hello-world)   | hello world example to start playing with          |
 | [CASL React todo](./packages/react-todo)     | user roles in Todo app |
 | [CASL Angular todo](./packages/angular-todo) | user roles in Todo app |
+| [CASL Vue todo](./packages/vue-todo)         | user roles in Todo app |
 
 
 ## Want to contribute?

@@ -1,0 +1,23 @@
+{
+  "name": "vue-ts",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "serve": "vue-cli-service serve",
+    "build": "vue-cli-service build"
+  },
+  "dependencies": {
+    "@casl/ability": "^4.0.5",
+    "@casl/vue": "^1.0.3",
+    "core-js": "^3.6.4",
+    "vue": "^2.6.11"
+  },
+  "devDependencies": {
+    "@types/node": "^13.13.2",
+    "@vue/cli-plugin-babel": "~4.3.0",
+    "@vue/cli-plugin-typescript": "~4.3.0",
+    "@vue/cli-service": "~4.3.0",
+    "typescript": "~3.8.3",
+    "vue-template-compiler": "^2.6.11"
+  }
+}

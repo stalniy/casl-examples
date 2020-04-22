@@ -14,7 +14,7 @@ export function defineRulesFor(role: string) {
     can('manage', 'all');
   } else {
     can('read', 'all');
-    can('manage', 'Todo', { assignee: 'me' });
+    can(['update', 'delete'], 'Todo', { assignee: 'me' });
   }
 
   return rules;

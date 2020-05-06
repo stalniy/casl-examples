@@ -13,6 +13,6 @@
   "author": "Sergii Stotskyi <sergiy.stotskiy@freaksidea.com>",
   "license": "MIT",
   "dependencies": {
-    "@casl/ability": "^3.4.0"
+    "@casl/ability": "^4.0.8"
   }
 }

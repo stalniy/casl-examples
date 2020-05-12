@@ -35,3 +35,20 @@ Ability configuration can be found in `src/config/ability.ts`, the React compone
   </Can>
 </div>
 ```
+
+## JavaScript sources
+
+If you don't know TypeScript, you can run `npm run build.es.source` inside `react-todo` folder. This transpiles TypesScript files in JavaScript and JSX. You can find the ES sources in `src.es` folder.
+
+You can even run them using `react-scripts`! To do this, just replace `include` option in `tsconfig.json` to:
+
+```json
+{
+  // other options
+  "include": [
+    "src.es/**/*"
+  ]
+}
+```
+
+And run `SKIP_PREFLIGHT_CHECK=true npm start`

@@ -71,9 +71,9 @@ importers:
       zone.js: ~0.10.2
   packages/hello-world:
     dependencies:
-      '@casl/ability': 3.4.0
+      '@casl/ability': 4.0.8
     specifiers:
-      '@casl/ability': ^3.4.0
+      '@casl/ability': ^4.0.8
   packages/react-todo:
     dependencies:
       '@casl/ability': 4.0.4
@@ -2116,14 +2116,6 @@ packages:
       to-fast-properties: 2.0.0
     resolution:
       integrity: sha512-XjnvNqenk818r5zMaba+sLQjnbda31UfUURv3ei0qPQw4u+j2jMyJ5b11y8ZHYTRSI3NnInQkkkRT4fLqqPdHg==
-  /@casl/ability/3.4.0:
-    dependencies:
-      sift: 9.0.7
-    dev: false
-    engines:
-      npm: ^6.0.0
-    resolution:
-      integrity: sha512-aJodlkXamBRNnb25m0xuibU6StiyWZzz7EFivqLKO5kmfLDAwrIklysa1w4K/Exi1mRt+lfOp7pSb4QtuAXx+A==
   /@casl/ability/4.0.4:
     dependencies:
       sift: 12.0.0
@@ -2140,6 +2132,14 @@ packages:
       npm: ^6.0.0
     resolution:
       integrity: sha512-HhRuLzHXuAtzfBUk0lnFSUV24l/UqqNv6nYxVrRBJ3c0178bBIKdYPTidiPcfrPDpX0YGPGa/QbSTH6s7qWJ3A==
+  /@casl/ability/4.0.8:
+    dependencies:
+      sift: 12.0.0
+    dev: false
+    engines:
+      npm: ^6.0.0
+    resolution:
+      integrity: sha512-XBTK87mIr0IaDkFLS019ZVQ2Z4OkKZnHqyqkwDGrauBiCh/5ZJqiia39xO5gcjY7EZLTC591Vje6gVPyBUFoCQ==
   /@casl/angular/4.0.4_fa0b5236f93e8c647283f2c1a39646ee:
     dependencies:
       '@angular/core': 9.0.5_ca296a5e5adc0afc8d32926df5677b5e
@@ -13420,10 +13420,6 @@ packages:
     dev: false
     resolution:
       integrity: sha512-aWQoexMzacDdUrUuPWLrvfHiYCW7QyMYZ6D7ipkuas7gdvn0GoUVzU/fyvPpgPjS49IRvZktCQWYxgWOwACk/A==
-  /sift/9.0.7:
-    dev: false
-    resolution:
-      integrity: sha512-q8Wvt15s0UJfIgVBEupXwITi8AKoHwCZbIO/bz+YMgEZRPh5qj/gjvYtqhKjHWe9srbuq5DyYeRyWPVjkOihPg==
   /signal-exit/3.0.3:
     resolution:
       integrity: sha512-VUJ49FC8U1OxwZLxIbTTrDvLnf/6TDgxZcK8wxR8zs13xpx7xbG60ndBlhNrFi2EMuFRoeDoJO7wthSLq42EjA==

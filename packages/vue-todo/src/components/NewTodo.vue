@@ -19,7 +19,7 @@
 </template>
 
 <script lang="ts">
-import Vue from '../AppVue';
+import Vue from 'vue';
 
 export default Vue.extend({
   name: 'NewTodo',

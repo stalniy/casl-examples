@@ -12,7 +12,7 @@
 </template>
 
 <script lang="ts">
-import Vue from '../AppVue';
+import Vue from 'vue';
 import { defineRulesFor } from '../config/ability';
 import { Todo } from '../models/Todo';
 

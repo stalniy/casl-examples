@@ -107,7 +107,7 @@ importers:
   packages/vue-todo:
     dependencies:
       '@casl/ability': 4.0.5
-      '@casl/vue': 1.0.3_@casl+ability@4.0.5+vue@2.6.11
+      '@casl/vue': 1.1.0_@casl+ability@4.0.5+vue@2.6.11
       core-js: 3.6.5
       vue: 2.6.11
     devDependencies:
@@ -119,7 +119,7 @@ importers:
       vue-template-compiler: 2.6.11
     specifiers:
       '@casl/ability': ^4.0.5
-      '@casl/vue': ^1.0.3
+      '@casl/vue': ^1.1.0
       '@types/node': ^13.13.2
       '@vue/cli-plugin-babel': ~4.3.0
       '@vue/cli-plugin-typescript': ~4.3.0
@@ -2166,7 +2166,7 @@ packages:
       react: ^15.0.0 || ^16.0.0
     resolution:
       integrity: sha512-c/cl4Q1CyX8UDfaB1yaBwE5hfZzuiRycLKIcxUzcs7xAZquci+5N83KBlkaqluTVgM1BpRw5cgcRrClIxzF8zg==
-  /@casl/vue/1.0.3_@casl+ability@4.0.5+vue@2.6.11:
+  /@casl/vue/1.1.0_@casl+ability@4.0.5+vue@2.6.11:
     dependencies:
       '@casl/ability': 4.0.5
       vue: 2.6.11
@@ -2177,7 +2177,7 @@ packages:
       '@casl/ability': ^2.0.0 || ^3.0.0 || ^4.0.0
       vue: ^2.0.0
     resolution:
-      integrity: sha512-PV1bMaT1aoOyFILLmhWdd2e2ydOy5JxdrH9HkaLYEM5GRPmQhQKQrOL4atsdjloieXsm6tsOI0mz7KbJqik1vA==
+      integrity: sha512-qboFEK4BifQxi8CEWuqXlE3Rz4oP1etRu/U4JeHcHk19fKOzAqyru7Mm5NkejNgJ/KBhaoYl95P7gRIt3mrSWw==
   /@cnakazawa/watch/1.0.4:
     dependencies:
       exec-sh: 0.3.4

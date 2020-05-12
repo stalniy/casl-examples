@@ -1,4 +1,4 @@
-import { PureAbility, AbilityBuilder, Ability, detectSubjectType, AbilityClass, InferSubjects } from '@casl/ability';
+import { AbilityBuilder, Ability, detectSubjectType, AbilityClass, InferSubjects } from '@casl/ability';
 import { Todo } from '../models/Todo'
 
 type Actions = 'manage' | 'create' | 'read' | 'update' | 'delete';
@@ -14,7 +14,7 @@ export function defineRulesFor(role: string) {
     can('manage', 'all');
   } else {
     can('read', 'all');
-    can(['update', 'delete'], 'Todo', { assignee: 'me' });
+    can(['create', 'update', 'delete'], 'Todo', { assignee: 'me' });
   }
 
   return rules;

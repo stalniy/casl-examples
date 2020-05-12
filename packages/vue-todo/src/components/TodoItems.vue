@@ -30,7 +30,7 @@
 </template>
 
 <script lang="ts">
-import Vue from '../AppVue';
+import Vue from 'vue';
 import { Todo, TodoInput } from '../models/Todo';
 
 type State = {

@@ -16,7 +16,7 @@
 </template>
 
 <script lang="ts">
-import Vue from '../AppVue';
+import Vue from 'vue';
 import TodoItems, { UpdateEvent } from './TodoItems.vue';
 import TodoFooter from './TodoFooter.vue';
 import NewTodo from './NewTodo.vue';

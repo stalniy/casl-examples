@@ -1,6 +1,6 @@
 # CASL Examples
 
-This repository is a monorepo of [CASL](https://github.com/stalniy/casl) examples. Examples illustrate integrations with major frameworks. This repository uses [pnpm](https://pnpm.js.org/) as a package manager.
+This repository is a monorepo of [CASL](https://github.com/stalniy/casl) examples. Examples illustrate integrations with major frameworks. This repository uses [pnpm](https://pnpm.js.org/) to manage all examples as a monorepo but you are not restricted to use pnpm. If you are interested in particular example, just navigate to its folder and use whatever package manager you like.
 
 You can find examples in [packages](./packages) folder. See `README.md` of the specific example for details.
 

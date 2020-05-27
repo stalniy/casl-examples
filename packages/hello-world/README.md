@@ -1,14 +1,12 @@
 # CASL hello world
 
-This is a basic example that illustrates the easiest CASL configuration.
+This is a basic example that allows to play around with [CASL](https://stalniy.github.io/casl/v4).
 
-## Requirements
-
-Node version that support experimental modules. Tested on node v12.13
+**Note**: this example uses CommonJS as `@casl/ability` currently doesn't support new `exports` field in package.json and codesandbox doesn't allow to change the version of nodejs (10.x only at the time of writing).
 
 ## Run
 
 ```sh
-pnpm install
-pnpm start
+npm install
+npm start
 ```

@@ -8,7 +8,7 @@ This example shows how to integrate [CASL authorization](https://stalniy.github.
 
 ``` bash
 # install dependencies
-pnpm install
+npm install
 
 # serve with hot reload at localhost:3000
 npm start

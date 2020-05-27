@@ -4,7 +4,7 @@
   "description": "CASL helloworld example",
   "main": "index.js",
   "scripts": {
-    "start": "node --experimental-modules src/index.mjs"
+    "start": "node src/index.js"
   },
   "keywords": [
     "casl",

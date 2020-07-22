@@ -14,6 +14,7 @@ Currently this repository contains the next examples:
 | [CASL React todo](./packages/react-todo)     | user roles in Todo app | [CASL React Todo] |
 | [CASL Angular todo](./packages/angular-todo) | user roles in Todo app |  |
 | [CASL Vue todo](./packages/vue-todo)         | user roles in Todo app |  |
+| [CASL Express API](./packages/express-blog)  | permission management in REST API for Blog app |  |
 
 [CASL HelloWorld]: https://codesandbox.io/s/github/stalniy/casl-examples/tree/master/packages/hello-world
 [CASL React Todo]: https://codesandbox.io/s/github/stalniy/casl-examples/tree/master/packages/react-todo

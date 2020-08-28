@@ -18,7 +18,7 @@ npm start
 
 This application is a basic Todo application with possibility to specify assignee for a task. By default, all users are able to create and read all tasks but update and delete only assigned to them. Any user may create a task and assign it to other users.
 
-Ability configuration can be found in [src/services/AppAbility.ts](./src/services/ability.js), the function that creates `Ability` instance is in the same file.
+Ability configuration can be found in [src/services/AppAbility.ts](./src/services/AppAbility.ts), the function that creates `Ability` instance is in the same file.
 
 ## Example
 

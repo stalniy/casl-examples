@@ -18,7 +18,8 @@
     "passport-jwt": "^4.0.0"
   },
   "devDependencies": {
-    "nodemon": "^1.17.5"
+    "nodemon": "^1.17.5",
+    "typescript": "3.9.2"
   },
   "scripts": {
     "start": "node src",

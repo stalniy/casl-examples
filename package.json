@@ -22,5 +22,8 @@
   "bugs": {
     "url": "https://github.com/stalniy/casl-examples/issues"
   },
-  "homepage": "https://github.com/stalniy/casl-examples#readme"
+  "homepage": "https://github.com/stalniy/casl-examples#readme",
+  "devDependencies": {
+    "typescript": "3.9.2"
+  }
 }

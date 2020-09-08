@@ -106,6 +106,7 @@ export default class AppStore {
     }] as const;
   }
 
+  @action
   hydrateFrom(storage: Storage) {
     const state = storage.getItem(STORE_KEY);
 

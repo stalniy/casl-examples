@@ -12,9 +12,10 @@ Currently this repository contains the next examples:
 |----------------------------------------------|-------------------------------------------|-----------|
 | [CASL hello world](./packages/hello-world)   | hello world example to start playing with | [CASL HelloWorld]          |
 | [CASL React todo](./packages/react-todo)     | user roles in Todo app | [CASL React Todo] |
+| [CASL React blog](./packages/react-blog)     | ACL in Blog app  with REST API |  |
 | [CASL Angular todo](./packages/angular-todo) | user roles in Todo app |  |
 | [CASL Vue todo](./packages/vue-todo)         | user roles in Todo app |  |
-| [CASL Vue blog](./packages/vue-blog)  | ACL in Blog app |  |
+| [CASL Vue blog](./packages/vue-blog)  | ACL in Blog app with REST API |  |
 | [CASL Express API](./packages/express-blog)  | ACL in REST API for Blog app |  |
 
 [CASL HelloWorld]: https://codesandbox.io/s/github/stalniy/casl-examples/tree/master/packages/hello-world

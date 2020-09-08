@@ -7,7 +7,7 @@ async function create(req, res) {
   const { email, password } = req.body || {};
 
   if (!email || !password) {
-    throw new BadRequest('Please specify "email" and "password" fields is "session" object');
+    throw new BadRequest('Please specify "email" and "password" fields is body');
   }
 
   const user = await mongoose.model('User').findOne({ email });

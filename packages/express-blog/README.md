@@ -37,19 +37,17 @@ mongorestore db
 1. Create new user
 
 ```
-POST http://localhost:3000/users
+POST http://localhost:3000/api/users
 {
-  "user": {
-    "email": "casl@medium.com",
-    "password": "password"
-  }
+   "email": "casl@medium.com",
+   "password": "password"
 }
 ```
 
 2. Create new session
 
 ```
-POST http://localhost:3000/session
+POST http://localhost:3000/api/session
 {
   "email": "admin@casl.io",
   "password": "123456"

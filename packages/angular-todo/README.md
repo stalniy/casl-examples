@@ -6,12 +6,14 @@ This example shows how to integrate [CASL][casl-ability] auhorization (i.e. perm
 
 ## Installation
 
+Use `yarn` to install dependencies, for some reason pnpm doesn't work with angular...
+
 ``` bash
 # install dependencies
-pnpm install
+yarn
 
 # serve with hot reload at localhost:4200
-npm start
+yarn start
 ```
 
 ## Description

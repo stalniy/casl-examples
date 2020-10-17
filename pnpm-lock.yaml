@@ -80,8 +80,8 @@ importers:
       zone.js: ~0.10.3
   packages/express-blog:
     dependencies:
-      '@casl/ability': 4.0.8
-      '@casl/mongoose': 3.0.3_5abb6cf93ff3d9c9831d85e452d1f804
+      '@casl/ability': 5.1.0-next.11
+      '@casl/mongoose': 3.0.3_5d1fbd799cc01c65717791b35d6a3e1e
       body-parser: 1.19.0
       cors: 2.8.5
       express: 4.17.1
@@ -95,7 +95,7 @@ importers:
       nodemon: 1.19.4
       typescript: 3.9.2
     specifiers:
-      '@casl/ability': ^4.0.0
+      '@casl/ability': ^5.1.0-next.11
       '@casl/mongoose': ^3.0.0
       body-parser: ^1.19.0
       cors: ^2.8.5
@@ -110,11 +110,11 @@ importers:
       typescript: 3.9.2
   packages/hello-world:
     dependencies:
-      '@casl/ability': 4.0.8
+      '@casl/ability': 5.1.0-next.11
     devDependencies:
       typescript: 3.9.2
     specifiers:
-      '@casl/ability': ^4.0.8
+      '@casl/ability': ^5.1.0-next.11
       typescript: 3.9.2
   packages/react-blog:
     dependencies:
@@ -4229,14 +4229,6 @@ packages:
       npm: ^6.0.0
     resolution:
       integrity: sha512-HhRuLzHXuAtzfBUk0lnFSUV24l/UqqNv6nYxVrRBJ3c0178bBIKdYPTidiPcfrPDpX0YGPGa/QbSTH6s7qWJ3A==
-  /@casl/ability/4.0.8:
-    dependencies:
-      sift: 12.0.0
-    dev: false
-    engines:
-      npm: ^6.0.0
-    resolution:
-      integrity: sha512-XBTK87mIr0IaDkFLS019ZVQ2Z4OkKZnHqyqkwDGrauBiCh/5ZJqiia39xO5gcjY7EZLTC591Vje6gVPyBUFoCQ==
   /@casl/ability/4.1.5:
     dependencies:
       sift: 13.2.0
@@ -4269,9 +4261,9 @@ packages:
       tslib: ^1.9.0 || ^2.0.0
     resolution:
       integrity: sha512-brvBedVdPdBAN4US8QxVpEHBsBRU3+b0OGn9/fuFBphiwtSmCCudeWmEnk4UgPxhs7fFe7Qz705oo2cu3Cik1A==
-  /@casl/mongoose/3.0.3_5abb6cf93ff3d9c9831d85e452d1f804:
+  /@casl/mongoose/3.0.3_5d1fbd799cc01c65717791b35d6a3e1e:
     dependencies:
-      '@casl/ability': 4.0.8
+      '@casl/ability': 5.1.0-next.11
       mongoose: 5.9.25_mongoose@5.9.25
     dev: false
     engines:

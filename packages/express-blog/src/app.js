@@ -8,7 +8,7 @@ const errorHandler = require('./error-handler');
 
 const MODULES = ['auth', 'comments', 'posts', 'users'];
 
-module.exports = function createApp() {
+module.exports = async function createApp() {
   const app = express();
 
   mongoose.plugin(accessibleRecordsPlugin);
@@ -35,6 +35,12 @@ module.exports = function createApp() {
   app.use(errorHandler);
 
   mongoose.Promise = global.Promise;
-  return mongoose.connect('mongodb://localhost:27017/blog')
-    .then(() => app);
+  await mongoose.connect('mongodb://localhost:27017/blog', {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  });
+
+  app.on('close', () => mongoose.disconnect());
+
+  return app;
 };

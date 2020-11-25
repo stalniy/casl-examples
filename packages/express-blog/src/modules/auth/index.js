@@ -7,7 +7,7 @@ module.exports = {
   configure(app, router) {
     router.post('/session', session.create);
 
-    const secret = '!_^secret.casl.authorization?!';
+    const secret = '!_^secret.casl@authorization?!';
 
     app.set('jwt.secret', secret);
     app.set('jwt.issuer', 'CASL.Express');

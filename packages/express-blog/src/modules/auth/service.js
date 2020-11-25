@@ -26,6 +26,7 @@ async function create(req, res) {
     token,
     rules: defineRulesFor(user),
     email: user.email,
+    userId: user.id,
   });
 }
 

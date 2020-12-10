@@ -82,6 +82,7 @@ importers:
     dependencies:
       '@casl/ability': 5.1.0-next.12
       '@casl/mongoose': 3.0.3_548e9da9b9d86e6e970f15a6bc0bebed
+      bdd-lazy-var: 2.5.5
       body-parser: 1.19.0
       cors: 2.8.5
       express: 4.17.1
@@ -101,6 +102,7 @@ importers:
       '@casl/ability': ^5.1.0-next.12
       '@casl/mongoose': ^3.0.0
       axios: ^0.21.0
+      bdd-lazy-var: ^2.5.5
       body-parser: ^1.19.0
       chai: ^4.2.0
       cors: ^2.8.5
@@ -6898,6 +6900,10 @@ packages:
     dev: true
     resolution:
       integrity: sha1-pDAdOJtqQ/m2f/PKEaP2Y342Dp4=
+  /bdd-lazy-var/2.5.5:
+    dev: false
+    resolution:
+      integrity: sha512-CRKaZaRcEVPPagS3KM9JPbe6ioC+d9JhLjE6P+cDE2C1rxVtKcvMIlg3KCSMsUgizLUJKtqfAuL5wPtnnHsXjA==
   /better-assert/1.0.2:
     dependencies:
       callsite: 1.0.0

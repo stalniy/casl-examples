@@ -1,10 +1,11 @@
 const { default: axios } = require('axios');
 const chai = require('chai');
+const lazyVar = require('bdd-lazy-var/getter');
 const createApp = require('../src/app');
 
 const isNotServerError = status => status < 500;
 const http = axios.create({
-  validateStatus: isNotServerError
+  validateStatus: isNotServerError,
 });
 
 const clients = {};
@@ -63,4 +64,10 @@ module.exports = {
   startServer,
   http,
   expect: chai.expect,
+  get $() {
+    return lazyVar.get;
+  },
+  get def() {
+    return lazyVar.def;
+  }
 };

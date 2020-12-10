@@ -8,7 +8,6 @@ module.exports.mochaHooks = {
   },
 
   afterAll() {
-    console.log('close')
     server.close();
   }
 };

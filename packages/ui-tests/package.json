@@ -1,0 +1,25 @@
+{
+  "name": "ui-tests",
+  "version": "0.0.1",
+  "description": "UI tests to test CASL integration with frontend frameworks",
+  "private": true,
+  "scripts": {
+    "test.todo": "cypress run --browser chrome --headless --config-file todo-app/cypress.json",
+    "test.todo.dev": "cypress open --browser --config-file todo-app/cypress.json"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/stalniy/casl-examples.git"
+  },
+  "author": "Sergii Stotskyi <sergiy.stostkiy@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/stalniy/casl-examples/issues"
+  },
+  "homepage": "https://github.com/stalniy/casl-examples#readme",
+  "dependencies": {
+    "bdd-lazy-var": "^2.6.0",
+    "cypress": "^6.1.0",
+    "mocha": "7.0.1"
+  }
+}

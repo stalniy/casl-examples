@@ -17,7 +17,7 @@
     "mongoose",
     "express"
   ],
-  "author": "Sergii Stotskyi <sergiy.stostkiy@freaksidea.com>",
+  "author": "Sergii Stotskyi <sergiy.stostkiy@gmail.com>",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/stalniy/casl-examples/issues"

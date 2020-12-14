@@ -20,7 +20,7 @@
     "typescript": "3.9.2"
   },
   "scripts": {
-    "start": "SKIP_PREFLIGHT_CHECK=true react-scripts start",
+    "start": "PORT=8080 SKIP_PREFLIGHT_CHECK=true react-scripts start",
     "build": "react-scripts build",
     "build.es.source": "tsc -p tsconfig.es.json",
     "test": "react-scripts test",

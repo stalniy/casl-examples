@@ -22,7 +22,7 @@ export function defineAbilitiesFor(role: string) {
 
 export function createAbility() {
   return new AppAbility(defineAbilitiesFor('member'), {
-    // https://casl.js.org/v4/en/guide/subject-type-detection
+    // https://casl.js.org/v5/en/guide/subject-type-detection
     detectSubjectType: object => object.kind,
   });
 }

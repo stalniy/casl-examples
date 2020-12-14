@@ -14,8 +14,8 @@ importers:
       '@angular/platform-browser': 10.1.6_2d43135e778d9cbb2c8b3e8c236ff94e
       '@angular/platform-browser-dynamic': 10.1.6_9e69e0bff270204980584bb38190e239
       '@angular/router': 10.1.6_4d33e7577b9432c1889e1a040fd8c4d8
-      '@casl/ability': 5.1.0-next.11
-      '@casl/angular': 4.1.5_b03fffd2ceaacda80d666bf0b604242f
+      '@casl/ability': 5.1.0-next.12
+      '@casl/angular': 4.1.5_b0ae90bab22371f6f878defb02857583
       rxjs: 6.6.2
       tslib: 2.0.1
       zone.js: 0.10.3
@@ -57,7 +57,7 @@ importers:
       '@angular/platform-browser': ~10.1.6
       '@angular/platform-browser-dynamic': ~10.1.6
       '@angular/router': ~10.1.6
-      '@casl/ability': ^5.1.0-next.11
+      '@casl/ability': ^5.1.0-next.12
       '@casl/angular': ^4.1.5
       '@types/jasmine': ~3.5.0
       '@types/jasminewd2': ~2.0.3
@@ -4054,10 +4054,10 @@ packages:
       npm: ^6.0.0
     resolution:
       integrity: sha512-vKuLoedsjVpogsbVIvKSLkJWbRl1cJfsJn+PFoXlSmgdSr3WXX69FRQ+ivam+meQaqZKzooQE1qD1oGAqzZH2Q==
-  /@casl/angular/4.1.5_b03fffd2ceaacda80d666bf0b604242f:
+  /@casl/angular/4.1.5_b0ae90bab22371f6f878defb02857583:
     dependencies:
       '@angular/core': 10.1.6_rxjs@6.6.2+zone.js@0.10.3
-      '@casl/ability': 5.1.0-next.11
+      '@casl/ability': 5.1.0-next.12
       rxjs: 6.6.2
       tslib: 2.0.1
     dev: false

@@ -5,7 +5,7 @@
   "main": "src/main.ts",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
+    "start": "ng serve --port 8080",
     "build": "ng build",
     "test": "ng test",
     "lint": "ng lint",
@@ -21,7 +21,7 @@
     "@angular/platform-browser": "~10.1.6",
     "@angular/platform-browser-dynamic": "~10.1.6",
     "@angular/router": "~10.1.6",
-    "@casl/ability": "^5.1.0-next.11",
+    "@casl/ability": "^5.1.0-next.12",
     "@casl/angular": "^4.1.5",
     "rxjs": "~6.6.0",
     "tslib": "^2.0.0",

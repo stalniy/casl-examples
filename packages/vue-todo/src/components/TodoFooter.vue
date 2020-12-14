@@ -3,7 +3,7 @@
     <span class="todo-count">
       <strong>{{ remaining }}</strong> left
     </span>
-    <ul class="filters">
+    <ul class="roles">
       <li class="help" title="Admin - can do anything. Member can read everything and manage todos with assignee 'me'">Switch roles</li>
       <li><button type="button" :class="{ selected: role === 'admin' }" @click="setRole('admin')">Admin</button></li>
       <li><button type="button" :class="{ selected: role === 'member' }" @click="setRole('member')">Member</button></li>

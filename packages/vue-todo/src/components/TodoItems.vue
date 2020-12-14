@@ -1,5 +1,5 @@
 <template>
-  <section class="main">
+  <section class="main" v-if="items.length">
     <ul class="todo-list">
       <li v-for="(todo, index) in items" :key="todo.id" :class="classesFor(todo)">
         <input

@@ -5,7 +5,9 @@
   "private": true,
   "scripts": {
     "test.todo": "cypress run --browser chrome --headless --config-file todo-app/cypress.json",
-    "test.todo.dev": "cypress open --browser --config-file todo-app/cypress.json"
+    "test.todo.dev": "cypress open --browser chrome --config-file todo-app/cypress.json",
+    "test.blog": "cypress run --browser chrome --headless --config-file blog-app/cypress.json",
+    "test.blog.dev": "cypress open --browser chrome --config-file blog-app/cypress.json"
   },
   "repository": {
     "type": "git",

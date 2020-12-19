@@ -7,8 +7,8 @@
       <v-card-text v-show="!!message">{{ message }}</v-card-text>
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn :color="options.color" flat="flat" @click="agree">{{ options.yesLabel }}</v-btn>
-        <v-btn flat="flat" @click="cancel">{{ options.noLabel }}</v-btn>
+        <v-btn :color="options.color" flat="flat" @click="agree" name="confirm">{{ options.yesLabel }}</v-btn>
+        <v-btn flat="flat" @click="cancel" name="reject">{{ options.noLabel }}</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>

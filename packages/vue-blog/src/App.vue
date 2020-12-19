@@ -2,7 +2,7 @@
   <v-app>
     <v-navigation-drawer app mini-variant v-model="isVisibleMenu">
       <v-list dense class="pt-0">
-        <v-list-tile to="/">
+        <v-list-tile to="/" id="go-home">
           <v-list-tile-action>
             <v-icon>home</v-icon>
           </v-list-tile-action>
@@ -10,7 +10,7 @@
             <v-list-tile-title>Home</v-list-tile-title>
           </v-list-tile-content>
         </v-list-tile>
-        <v-list-tile :to="{ name: 'newArticle' }" v-if="$can('create', 'Article')">
+        <v-list-tile :to="{ name: 'newArticle' }" v-if="$can('create', 'Article')" id="create-article">
           <v-list-tile-action>
             <v-icon>add_circle</v-icon>
           </v-list-tile-action>
@@ -19,7 +19,7 @@
           </v-list-tile-content>
         </v-list-tile>
         <template v-if="isLoggedIn">
-          <v-list-tile @click="logout" title="Log out">
+          <v-list-tile @click="logout" title="Log out" id="logout">
             <v-list-tile-action>
               <v-icon>rowing</v-icon>
             </v-list-tile-action>
@@ -42,12 +42,12 @@
     </v-navigation-drawer>
     <v-content>
       <v-toolbar>
-        <v-btn icon @click="isVisibleMenu = !isVisibleMenu">
+        <v-btn icon @click="isVisibleMenu = !isVisibleMenu" name="menu">
           <v-icon>menu</v-icon>
         </v-btn>
         <v-toolbar-title>{{ pageTitle }}</v-toolbar-title>
         <v-spacer />
-        <div v-if="email">{{ email }}</div>
+        <div v-if="email" id="userEmail">{{ email }}</div>
       </v-toolbar>
       <v-container fluid fill-height>
         <router-view />

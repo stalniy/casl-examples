@@ -1,9 +1,9 @@
 {
   "baseUrl": "http://localhost:8080",
-  "integrationFolder": "todo-app",
+  "integrationFolder": "blog-app",
   "testFiles": "**/*.spec.js",
   "pluginsFile": false,
-  "supportFile": false,
+  "supportFile": "blog-app/support.js",
   "fixturesFolder": false,
   "screenshotOnRunFailure": false,
   "video": false

@@ -23,24 +23,12 @@ export default {
         .then(response => response.body.item)
     },
 
-    save(_, { id, action, published, ...data }) {
-      if (action === 'publish') {
-        data.published = published
-      }
-
+    save(_, { id, ...data }) {
       const request = id
         ? http(`/articles/${id}`, { method: 'PATCH', data })
         : http('/articles', { method: 'POST', data })
 
       return request.then(response => response.body.item)
     },
-
-    publish({ dispatch }, article) {
-      return dispatch('save', {
-        id: article.id,
-        published: true,
-        action: 'publish'
-      })
-    }
   }
 }

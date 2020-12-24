@@ -29,9 +29,7 @@
       }
     },
     computed: {
-      ...mapState({
-        currentUser: store => store.email
-      }),
+      ...mapState(['userId']),
     },
     methods: {
       ...mapActions('articles', {
@@ -52,7 +50,7 @@
       },
 
       isOwn(article) {
-        return article.createdBy.email === this.currentUser;
+        return article.author === this.userId;
       }
     },
     created() {

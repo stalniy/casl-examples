@@ -1,5 +1,5 @@
 import http from '../services/http'
-import { typeAs } from '../services/utils'
+import { subject as an } from '@casl/ability'
 
 export default {
   namespaced: true,
@@ -8,19 +8,18 @@ export default {
     find() {
       return http('/articles')
         .then((response) => {
-          return response.body.items.map(typeAs('Article'))
+          return response.body.items.map(item => an('Article', item))
         })
     },
 
     findById(_, id) {
       return http(`/articles/${id}`)
-        .then(response => response.body.item)
-        .then(typeAs('Article'))
+        .then(response => an('Article', response.body.item))
     },
 
     destroy(_, article) {
       return http(`/articles/${article.id}`, { method: 'DELETE' })
-        .then(response => response.body.item)
+        .then(response => an('Article', response.body.item))
     },
 
     save(_, { id, ...data }) {
@@ -28,7 +27,7 @@ export default {
         ? http(`/articles/${id}`, { method: 'PATCH', data })
         : http('/articles', { method: 'POST', data })
 
-      return request.then(response => response.body.item)
+      return request.then(response => an('Article', response.body.item))
     },
   }
 }

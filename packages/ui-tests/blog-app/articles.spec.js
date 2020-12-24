@@ -1,13 +1,15 @@
-import { login, logout, createArticle, updateArticle, deleteArticle } from './actions';
+import { login, logout, ensureHasArticle, createArticle, updateArticle, deleteArticle } from './actions';
 
 describe('Articles', () => {
-  const publishedArticleTitle = `published article ${Date.now()}`;
-  const draftArticleTitle = `draft article ${Date.now()}`;
+  const publishedArticleTitle = `$published article$`;
+  const draftArticleTitle = `$draft article$`;
 
   before(() => {
     login('another.writer@casl.io');
-    createArticle({ title: publishedArticleTitle });
-    createArticle({
+    ensureHasArticle({
+      title: publishedArticleTitle,
+    });
+    ensureHasArticle({
       title: draftArticleTitle,
       published: false
     });
@@ -58,11 +60,11 @@ describe('Articles', () => {
     });
 
     it('can change others articles', () => {
-      cy.get('.article:not(.own) a[name=edit]').should('exist');
+      cy.get('.article:not(.own) *[name=edit]').should('exist');
     });
 
     it('can delete others articles', () => {
-      cy.get('.article:not(.own) button[name=delete]').should('exist');
+      cy.get('.article:not(.own) *[name=delete]').should('exist');
     });
   })
 
@@ -76,11 +78,11 @@ describe('Articles', () => {
     })
 
     it('cannot delete others articles', () => {
-      cy.get(`${ownArticlesSelector} button[name=delete]`).should('not.exist');
+      cy.get(`${ownArticlesSelector} *[name=delete]`).should('not.exist');
     })
 
     it('cannot change others articles', () => {
-      cy.get(`${ownArticlesSelector} .article a[name=edit]`).should('not.exist');
+      cy.get(`${ownArticlesSelector} .article *[name=edit]`).should('not.exist');
     })
   }
 
@@ -119,6 +121,7 @@ describe('Articles', () => {
     it('can publish draft', () => {
       const title = `DRAFT2: ${Date.now()}`;
       createArticle({ title, published: false });
+      cy.wait(1000);
       updateArticle({ title }, { published: true });
 
       cy.get('.article:not(.draft) h3').findWhere(el => el.text() === title).should('exist');

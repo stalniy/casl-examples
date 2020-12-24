@@ -7,7 +7,6 @@ import notifications from './notifications'
 import articles from './articles'
 import http from '../services/http'
 import router from '../router'
-import { TYPE_KEY } from '../services/utils'
 
 Vue.use(Vuex)
 
@@ -28,6 +27,7 @@ export const store = new Vuex.Store({
   state: {
     token: '',
     email: '',
+    userId: '',
     rules: [],
     pageTitle: 'CASL + VUE + VUEX + REST API'
   },
@@ -38,13 +38,7 @@ export const store = new Vuex.Store({
     },
 
     ability() {
-      return new Ability([], {
-        subjectName(subject) {
-          return !subject || typeof subject === 'string'
-            ? subject
-            : subject[TYPE_KEY]
-        }
-      })
+      return new Ability()
     }
   },
 
@@ -53,6 +47,7 @@ export const store = new Vuex.Store({
       state.token = session.token
       state.rules = session.rules
       state.email = session.email
+      state.userId = session.userId
       http.token = session.token
     },
 

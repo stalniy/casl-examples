@@ -2,7 +2,7 @@ export function login(email, password = '123456') {
   cy.visit('/login');
 
   cy.get('body').then(($body) => {
-    if ($body.find('#userEmail').length) {
+    if ($body.find('#user-email').length) {
       logout();
     }
 
@@ -14,18 +14,19 @@ export function login(email, password = '123456') {
       .type('{selectall}')
       .type(password);
 
-    cy.get('button[name=login]').click();
+    cy.get('*[name=login]').click();
     cy.wait(500);
   })
 }
 
 export function logout() {
-  cy.get('button[name=menu]').click();
+  cy.get('.app-header *[name=menu]').click();
+  cy.wait(200);
   cy.get('#logout').click();
 }
 
 export function createArticle(article) {
-  cy.get('button[name=menu]').click();
+  cy.get('.app-header *[name=menu]').click();
   cy.get('#create-article').click();
 
   fillArticleForm({
@@ -33,7 +34,7 @@ export function createArticle(article) {
     body: 'Default',
     ...article
   });
-  cy.get('button[name=save]').click();
+  cy.get('*[name=save]').click();
   cy.wait(1000);
 }
 
@@ -51,27 +52,37 @@ function fillArticleForm(article) {
   }
 
   if (article.published) {
-    cy.get('.v-input[name=published] label').click();
+    cy.get('.checkbox[name=published] label').click();
   }
 }
 
 export function updateArticle(article, changes) {
   cy.get('.article')
     .findWhere(el => el.find('h3').text().trim() === article.title)
-    .find('a[name=edit]')
+    .find('*[name=edit]')
     .click();
 
   fillArticleForm(changes);
-  cy.get('button[name=save]').click();
+  cy.get('*[name=save]').click();
   cy.wait(1000);
 }
 
 export function deleteArticle(article) {
   cy.get('.article')
     .findWhere(el => el.find('h3').text() === article.title)
-    .find('button[name=delete]')
+    .find('*[name=delete]')
     .click();
 
-  cy.get('button[name=confirm]').click();
+  cy.get('*[name=confirm]').click();
   cy.wait(1000);
+}
+
+export function ensureHasArticle(article) {
+  cy.get('.article')
+    .findWhere(el => el.find('h3').text() === article.title)
+    .then(($article) => {
+      if (!$article) {
+        createArticle(article);
+      }
+    });
 }

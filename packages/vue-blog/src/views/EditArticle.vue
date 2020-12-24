@@ -19,6 +19,7 @@
         label="Publish"
         v-model="article.published"
         v-if="canPublish"
+        class="checkbox"
       />
 
       <v-btn :to="{ name: 'home' }" small>Back to articles</v-btn>

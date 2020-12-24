@@ -8,6 +8,6 @@ export default () => {
   useAppTitle('New Article');
 
   return (
-    <ArticleForm onUpdate={article => history.push(`/articles/${article.id}/edit`)} />
+    <ArticleForm onUpdate={() => history.push('/')} />
   );
 };

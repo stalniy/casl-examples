@@ -1,5 +1,5 @@
 import React from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useHistory } from 'react-router-dom';
 import ArticleForm from './ArticleForm';
 import { useAppStoreEffect } from '../hooks/useAppStore';
 import { useAppTitle } from '../hooks/useAppTitle';
@@ -10,6 +10,8 @@ export default () => {
   const [article, setArticle] = useAppStoreEffect<Article>((store) => {
     return store.findArticleById(params.id);
   }, [params]);
+  const history = useHistory();
+
   useAppTitle(`Edit "${article?.title}"`);
 
   if (!article) {
@@ -18,6 +20,9 @@ export default () => {
 
   return <ArticleForm
     article={article}
-    onUpdate={setArticle}
+    onUpdate={(article) => {
+      setArticle(article);
+      history.push('/');
+    }}
   />
 };

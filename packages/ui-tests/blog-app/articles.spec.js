@@ -108,7 +108,7 @@ describe('Articles', () => {
     it('can delete own article', () => {
       deleteArticle(article);
 
-      cy.get('.article h3').findWhere(el => el.text().includes(article.title)).should('not.exist');
+      cy.get('.article h3').findWhere(el => el.text() === article.title).should('be.null');
     })
 
     it('can create draft article', () => {

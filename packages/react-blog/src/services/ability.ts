@@ -1,7 +1,7 @@
 import { Ability, AbilityClass } from '@casl/ability';
 import { Article } from '../models/Article';
 
-type Actions = 'manage' | 'create' | 'read' | 'update' | 'delete';
+type Actions = 'manage' | 'create' | 'read' | 'update' | 'delete' | 'publish';
 type Subjects = 'Article' | Article | 'all';
 
 export type AppAbility = Ability<[Actions, Subjects]>;

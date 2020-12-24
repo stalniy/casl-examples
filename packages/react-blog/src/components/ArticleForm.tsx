@@ -5,6 +5,7 @@ import {
   makeStyles,
   createStyles,
   TextField,
+  Checkbox,
   Button,
 } from '@material-ui/core';
 import TaskErrorNotification from './TaskErrorNotification';
@@ -12,6 +13,7 @@ import { useFormField, formToObject, minLength, required, validation } from '../
 import { useHistory } from 'react-router-dom';
 import { useAsyncTask } from '../hooks/useAsyncTask';
 import { useAppStore } from '../hooks/useAppStore';
+import { useAppAbility } from '../hooks/useAppAbility';
 import { Article } from '../models/Article';
 
 const useStyles = makeStyles(theme => createStyles({
@@ -32,36 +34,15 @@ const useStyles = makeStyles(theme => createStyles({
 function useArticleForm(article?: Article) {
   const title = useFormField(article?.title);
   const body = useFormField(article?.body);
+  const published = useFormField(article?.published || false);
 
-  return { title, body };
+  return { title, body, published };
 }
 
 const validate = validation<ReturnType<typeof useArticleForm>>({
   title: [required],
-  body: [required, minLength(10)]
+  body: [required, minLength(5)]
 });
-
-function PublishButton(props: { article: Article, onPublished?(article: Article): void }) {
-  const store = useAppStore();
-  const publishTask = useAsyncTask(() => {
-    return store.saveArticle({ id: props.article.id, published: true })
-      .then(props.onPublished);
-  });
-
-  return (
-    <>
-      <TaskErrorNotification task={publishTask} />
-      <Button
-        variant="contained"
-        color="secondary"
-        disabled={publishTask.isExecuting}
-        onClick={publishTask.exec}
-      >
-        Publish
-      </Button>
-    </>
-  );
-}
 
 type Props = {
   article?: Article
@@ -73,8 +54,18 @@ export default ({ article, onUpdate }: Props) => {
   const form = useArticleForm(article);
   const store = useAppStore();
   const history = useHistory();
+  const { can } = useAppAbility();
   const saveTask = useAsyncTask(() => {
-    return store.saveArticle(formToObject(form)).then(onUpdate);
+    const changes = {
+      ...formToObject(form),
+      id: article?.id,
+    };
+
+    if (article?.published) {
+      delete changes.published;
+    }
+
+    return store.saveArticle(changes).then(onUpdate);
   }, () => validate(form));
 
   return (
@@ -85,6 +76,7 @@ export default ({ article, onUpdate }: Props) => {
           <div className={styles.formField}>
             <TextField
               id="title"
+              name="title"
               label="Title"
               required
               value={form.title.value}
@@ -99,6 +91,7 @@ export default ({ article, onUpdate }: Props) => {
               multiline
               rows="20"
               id="body"
+              name="content"
               label="Content"
               required
               value={form.body.value}
@@ -108,9 +101,20 @@ export default ({ article, onUpdate }: Props) => {
               fullWidth
             />
           </div>
+          <div className={`${styles.formField} checkbox`} {...{ name: "published" }}>
+            {(!article || can('publish', article)) && (
+              <label>
+                <Checkbox
+                  checked={form.published.value}
+                  onChange={form.published.setValueFromEvent}
+                /> Publish
+              </label>
+            )}
+          </div>
           <div className={styles.actions}>
             <Button onClick={() => history.push('/')}>Back</Button>
             <Button
+              name="save"
               type="submit"
               variant="contained"
               color="primary"
@@ -118,9 +122,6 @@ export default ({ article, onUpdate }: Props) => {
             >
               {article ? 'Update' : 'Create'}
             </Button>
-            {article && !article.published && (
-              <PublishButton article={article} onPublished={onUpdate} />
-            )}
           </div>
         </form>
       </Paper>

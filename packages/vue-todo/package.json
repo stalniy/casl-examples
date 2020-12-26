@@ -8,8 +8,8 @@
     "build": "vue-cli-service build"
   },
   "dependencies": {
-    "@casl/ability": "5.1.0-next.15",
-    "@casl/vue": "^1.1.0",
+    "@casl/ability": "^5.1.0",
+    "@casl/vue": "^1.2.0",
     "core-js": "^3.6.4",
     "vue": "^2.6.11"
   },

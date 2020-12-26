@@ -21,8 +21,8 @@
     "@angular/platform-browser": "~10.1.6",
     "@angular/platform-browser-dynamic": "~10.1.6",
     "@angular/router": "~10.1.6",
-    "@casl/ability": "5.1.0-next.15",
-    "@casl/angular": "^4.1.5",
+    "@casl/ability": "^5.1.0",
+    "@casl/angular": "^5.0.0",
     "rxjs": "~6.6.0",
     "tslib": "^2.0.0",
     "zone.js": "~0.10.3"

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-card v-for="article in articles" :key="article.id" class="article">
+    <v-card v-for="article in articles" :key="article.id" class="article" :class="{ own: isOwn(article), draft: !article.published }">
       <v-card-title class="article-title">
         <router-link :to="{ name: 'article', params: article }" tag="h3" class="headline mb-0">{{ article.title }}</router-link>
         <div v-if="article.createdBy">{{ article.createdBy.email }}</div>
@@ -8,10 +8,10 @@
       <v-card-text>{{ article.body | short }}</v-card-text>
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn icon :to="{ name: 'editArticle', params: article }" v-if="$can('update', article)">
+        <v-btn icon :to="{ name: 'editArticle', params: article }" v-if="$can('update', article)" name="edit">
           <v-icon>edit</v-icon>
         </v-btn>
-        <v-btn icon @click="destroy(article)" v-if="$can('delete', article)">
+        <v-btn icon @click="destroy(article)" v-if="$can('delete', article)" name="delete">
           <v-icon>delete</v-icon>
         </v-btn>
       </v-card-actions>
@@ -20,13 +20,16 @@
 </template>
 
 <script>
-  import { mapActions } from 'vuex'
+  import { mapActions, mapState } from 'vuex'
 
   export default {
     data() {
       return {
         articles: []
       }
+    },
+    computed: {
+      ...mapState(['userId']),
     },
     methods: {
       ...mapActions('articles', {
@@ -44,6 +47,10 @@
       remove(article) {
         const index = this.articles.indexOf(article)
         this.articles.splice(index, 1)
+      },
+
+      isOwn(article) {
+        return article.author === this.userId;
       }
     },
     created() {

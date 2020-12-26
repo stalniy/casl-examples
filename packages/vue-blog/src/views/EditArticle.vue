@@ -1,12 +1,29 @@
 <template>
   <v-layout column>
     <form @submit.prevent="save">
-      <v-text-field label="Title" v-model="article.title" single-line :rules="titleValidation"></v-text-field>
-      <v-text-field label="Content" v-model="article.body" multi-line :rules="bodyValidation"></v-text-field>
+      <v-text-field
+        name="title"
+        label="Title"
+        v-model="article.title"
+        single-line
+        :rules="titleValidation"
+      />
+      <v-textarea
+        name="content"
+        label="Content"
+        v-model="article.body"
+        :rules="bodyValidation"
+      />
+      <v-checkbox
+        name="published"
+        label="Publish"
+        v-model="article.published"
+        v-if="canPublish"
+        class="checkbox"
+      />
 
       <v-btn :to="{ name: 'home' }" small>Back to articles</v-btn>
-      <v-btn color="success" small type="submit">Save</v-btn>
-      <v-btn color="success" small @click="publish" v-if="$can('publish', article)">Publish</v-btn>
+      <v-btn color="success" small type="submit" name="save">Save</v-btn>
     </form>
   </v-layout>
 </template>
@@ -18,6 +35,7 @@
   export default {
     data() {
       return {
+        originalArticle: null,
         article: {
           title: '',
           body: '',
@@ -32,6 +50,11 @@
         ]
       }
     },
+    computed: {
+      canPublish() {
+        return !this.originalArticle || this.$can('publish', this.originalArticle)
+      }
+    },
     methods: {
       ...mapActions('articles', {
         saveArticle: 'save',
@@ -41,20 +64,23 @@
       ...mapActions('notifications', ['info']),
 
       save() {
-        return this.saveArticle(this.article)
+        const { published, ...article } = this.article;
+
+        if (this.canPublish) {
+          article.published = published;
+        }
+
+        return this.saveArticle(article)
           .then(() => {
-            this.info('Article has been successfully saved')
+            if (this.article.published) {
+              this.info('Article has been successfully published')
+            } else {
+              this.info('Article has been successfully saved')
+            }
+
             this.$router.push('/')
           })
       },
-
-      publish() {
-        return this.publishArticle(this.article)
-          .then(() => {
-            this.info('Article has been successfully published')
-            this.$router.push('/')
-          })
-      }
     },
     created() {
       const id = this.$route.params.id
@@ -62,8 +88,9 @@
       if (id) {
         this.$store.dispatch('setTitle', 'Edit Article')
         this.getArticle(id)
-          .then(article => {
-            this.article = article
+          .then((article) => {
+            this.originalArticle = article
+            this.article = { ...article }
             this.$store.dispatch('setTitle', `Edit "${article.title}"`)
           })
       } else {

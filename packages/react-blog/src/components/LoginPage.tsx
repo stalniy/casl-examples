@@ -62,6 +62,7 @@ export default () => {
           <div className={styles.formField}>
             <TextField
               id="email"
+              type="email"
               label="E-mail"
               value={form.email.value}
               onChange={form.email.setValueFromEvent}
@@ -84,6 +85,7 @@ export default () => {
             type="submit"
             variant="contained"
             color="primary"
+            name="login"
             disabled={loginTask.isExecuting}
           >
             Login

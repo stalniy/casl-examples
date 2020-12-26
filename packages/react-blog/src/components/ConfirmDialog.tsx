@@ -16,19 +16,19 @@ interface Props {
   onClose(): void
 };
 
-export default (props: Props) => {
+export default React.forwardRef<typeof Dialog, Props>((props, ref) => {
   return (
-    <Dialog open={props.open} onExited={props.onClose}>
+    <Dialog open={props.open} onExited={props.onClose} ref={ref}>
       <DialogTitle>{props.title || 'Confirmation'}</DialogTitle>
       <DialogContent>
         <DialogContentText>{props.content}</DialogContentText>
       </DialogContent>
       <DialogActions>
-        <Button autoFocus onClick={props.onClose} color="primary">
+        <Button autoFocus onClick={props.onClose} color="primary" name="reject">
           Cancel
         </Button>
-        <Button onClick={props.onConfirm} color="secondary">Confirm</Button>
+        <Button onClick={props.onConfirm} color="secondary" name="confirm">Confirm</Button>
       </DialogActions>
     </Dialog>
   );
-};
+});

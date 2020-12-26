@@ -82,9 +82,9 @@ export default class AppStore {
       .then(response => subject('Article', response.data.item));
   }
 
-  saveArticle(article: Partial<Pick<Article, 'title' | 'body' | 'id' | 'published'>>) {
-    const save = article.id
-      ? this._http.patch<{ item: Article }>(`/articles/${article.id}`, article)
+  saveArticle({ id, ...article }: Partial<Pick<Article, 'title' | 'body' | 'id' | 'published'>>) {
+    const save = id
+      ? this._http.patch<{ item: Article }>(`/articles/${id}`, article)
       : this._http.post<{ item: Article }>('/articles', article);
 
     return save.then(response => subject('Article', response.data.item));

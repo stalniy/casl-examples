@@ -1,4 +1,4 @@
-import { AbilityBuilder, Ability, detectSubjectType, AbilityClass, InferSubjects } from '@casl/ability';
+import { AbilityBuilder, Ability, AbilityClass, InferSubjects } from '@casl/ability';
 import { Todo } from '../models/Todo'
 
 type Actions = 'manage' | 'create' | 'read' | 'update' | 'delete';
@@ -8,7 +8,7 @@ export type AppAbility = Ability<[Actions, Subjects]>;
 export const AppAbility = Ability as AbilityClass<AppAbility>;
 
 export function defineAbilitiesFor(role: string) {
-  const { can, rules } = new AbilityBuilder<AppAbility>();
+  const { can, rules } = new AbilityBuilder(AppAbility);
 
   if (role === 'admin') {
     can('manage', 'all');
@@ -20,19 +20,9 @@ export function defineAbilitiesFor(role: string) {
   return rules;
 }
 
-/**
- * Read for details: https://stalniy.github.io/casl/v4/en/guide/subject-type-detection
- */
-function detectAppSubjectType(subject?: Subjects) {
-  if (subject && typeof subject === 'object' && subject.kind) {
-    return subject.kind;
-  }
-
-  return detectSubjectType(subject);
-}
-
 export function createAbility() {
   return new AppAbility(defineAbilitiesFor('member'), {
-    detectSubjectType: detectAppSubjectType,
+    // https://casl.js.org/v5/en/guide/subject-type-detection
+    detectSubjectType: object => object.kind,
   });
 }

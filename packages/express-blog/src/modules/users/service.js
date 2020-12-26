@@ -20,7 +20,8 @@ async function update(req, res) {
     throw new NotFound('User is not found');
   }
 
-  user.set(req.body.user);
+  const { role, ...body } = req.body;
+  user.set(body);
   ForbiddenError.from(req.ability).throwUnlessCan('update', user);
   await user.save();
 

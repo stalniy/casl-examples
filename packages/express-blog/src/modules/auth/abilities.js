@@ -12,30 +12,29 @@ function defineAbilityFor(user) {
 }
 
 function defineRulesFor(user) {
-  const { rules, can } = new AbilityBuilder();
+  const builder = new AbilityBuilder(Ability);
 
   switch (user.role) {
     case 'admin':
-      defineAdminRules(user, can);
+      defineAdminRules(builder, user);
       break;
     case 'writer':
-      defineWriterRules(user, can);
+      defineAnonymousRules(builder);
+      defineWriterRules(builder, user);
       break;
     default:
-      defineAnonymousRules(user, can);
+      defineAnonymousRules(builder, user);
       break;
   }
 
-  return rules;
+  return builder.rules;
 }
 
-function defineAdminRules(_, can) {
+function defineAdminRules({ can }) {
   can('manage', 'all');
 }
 
-function defineWriterRules(user, can) {
-  defineAnonymousRules(user, can);
-
+function defineWriterRules({ can }, user) {
   can(['read', 'create', 'delete', 'update'], ['Article', 'Comment'], {
     author: user._id
   });
@@ -46,7 +45,7 @@ function defineWriterRules(user, can) {
   can(['read', 'update'], 'User', { _id: user._id });
 }
 
-function defineAnonymousRules(_, can) {
+function defineAnonymousRules({ can }) {
   can('read', ['Article', 'Comment'], { published: true });
 }
 

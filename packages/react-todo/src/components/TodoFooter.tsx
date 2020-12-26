@@ -36,7 +36,7 @@ export default class TodoFooter extends PureComponent<Props, State> {
     return (
       <footer className="footer">
         <span className="todo-count"><b>{this.remaining}</b> left</span>
-        <ul className="filters">
+        <ul className="roles">
           <li className="help" title={hint}>Switch roles:</li>
           <li>
             <button type="button" className={this._selectedIfRole('admin')} onClick={this._setRole.bind(this, 'admin')}>

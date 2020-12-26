@@ -232,7 +232,7 @@ label[for='toggle-all'] {
 .todo-count strong {
 	font-weight: 300;
 }
-.filters {
+.roles {
 	margin: 0;
 	padding: 0;
 	list-style: none;
@@ -240,10 +240,10 @@ label[for='toggle-all'] {
 	right: 0;
 	left: 0;
 }
-.filters li {
+.roles li {
 	display: inline;
 }
-.filters li button {
+.roles li button {
 	color: inherit;
 	margin: 3px;
 	padding: 3px 7px;
@@ -253,7 +253,7 @@ label[for='toggle-all'] {
 	background: #fff;
 	cursor: pointer;
 }
-.filters li button:hover {
+.roles li button:hover {
 	border-color: rgba(175, 47, 47, 0.1);
 }
 .filters li button.selected {

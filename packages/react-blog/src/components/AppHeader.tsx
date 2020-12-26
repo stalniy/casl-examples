@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   AppBar,
   Toolbar,
@@ -53,17 +53,18 @@ export default observer(() => {
       history.push('/login');
     }
   };
+  useEffect(() => clearAnchor, []);
 
   return (
-    <>
+    <div className="app-header">
       <AppBar position="fixed">
         <Toolbar>
           <Typography variant="h6" className={styles.title}>{title}</Typography>
           {store.isLoggedIn
             ? (
               <>
-                {store.user!.email}
-                <IconButton edge="end" color="inherit" onClick={setAnchorFromClick}>
+                <div id="user-email">{store.user!.email}</div>
+                <IconButton edge="end" color="inherit" onClick={setAnchorFromClick} name="menu">
                   <MoreIcon />
                 </IconButton>
                 <Menu
@@ -74,15 +75,15 @@ export default observer(() => {
                 >
                   {can('create', 'Article') && (
                     <MenuItem onClick={clearAnchor}>
-                      <Link to="/articles/new" className={styles.menuLink}>Add Article</Link>
+                      <Link to="/articles/new" className={styles.menuLink} id="create-article">Add Article</Link>
                     </MenuItem>
                   )}
-                  <MenuItem onClick={goToLoginOrLogout}>Logout</MenuItem>
+                  <MenuItem onClick={goToLoginOrLogout} id="logout">Logout</MenuItem>
                 </Menu>
               </>
             )
             : (
-              <Button color="inherit" onClick={goToLoginOrLogout}>
+              <Button color="inherit" onClick={goToLoginOrLogout} name="goToLogin">
                 Login
               </Button>
             )
@@ -90,6 +91,6 @@ export default observer(() => {
         </Toolbar>
       </AppBar>
       <Toolbar />
-    </>
+    </div>
   );
 });

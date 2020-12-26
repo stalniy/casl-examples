@@ -3,26 +3,26 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "casl-angular-example": {
-      "root": "",
-      "sourceRoot": "src",
+    "angular-todo": {
       "projectType": "application",
-      "prefix": "app",
       "schematics": {
         "@schematics/angular:component": {
           "style": "scss"
         }
       },
+      "root": "",
+      "sourceRoot": "src",
+      "prefix": "app",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:browser",
+          "builder": "@angular-builders/custom-webpack:browser",
           "options": {
-            "aot": true,
-            "outputPath": "dist/casl-angular-example",
+            "outputPath": "dist/test",
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
             "tsConfig": "tsconfig.app.json",
+            "aot": true,
             "assets": [
               "src/favicon.ico",
               "src/assets"
@@ -31,7 +31,9 @@
               "src/styles.scss"
             ],
             "scripts": [],
-            "es5BrowserSupport": true
+            "customWebpackConfig": {
+              "path": "./webpack.extend.js"
+            }
           },
           "configurations": {
             "production": {
@@ -57,27 +59,31 @@
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "6kb"
+                  "maximumWarning": "6kb",
+                  "maximumError": "10kb"
                 }
               ]
             }
           }
         },
         "serve": {
-          "builder": "@angular-devkit/build-angular:dev-server",
+          "builder": "@angular-builders/custom-webpack:dev-server",
           "options": {
-            "browserTarget": "casl-angular-example:build"
+            "browserTarget": "angular-todo:build",
+            "customWebpackConfig": {
+              "path": "./webpack.extend.js"
+            }
           },
           "configurations": {
             "production": {
-              "browserTarget": "casl-angular-example:build:production"
+              "browserTarget": "angular-todo:build:production"
             }
           }
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "casl-angular-example:build"
+            "browserTarget": "angular-todo:build"
           }
         },
         "test": {
@@ -87,14 +93,14 @@
             "polyfills": "src/polyfills.ts",
             "tsConfig": "tsconfig.spec.json",
             "karmaConfig": "karma.conf.js",
-            "styles": [
-              "src/styles.scss"
-            ],
-            "scripts": [],
             "assets": [
               "src/favicon.ico",
               "src/assets"
-            ]
+            ],
+            "styles": [
+              "src/styles.scss"
+            ],
+            "scripts": []
           }
         },
         "lint": {
@@ -102,43 +108,27 @@
           "options": {
             "tsConfig": [
               "tsconfig.app.json",
-              "tsconfig.spec.json"
+              "tsconfig.spec.json",
+              "e2e/tsconfig.json"
             ],
             "exclude": [
               "**/node_modules/**"
             ]
           }
-        }
-      }
-    },
-    "casl-angular-example-e2e": {
-      "root": "e2e/",
-      "projectType": "application",
-      "prefix": "",
-      "architect": {
+        },
         "e2e": {
           "builder": "@angular-devkit/build-angular:protractor",
           "options": {
             "protractorConfig": "e2e/protractor.conf.js",
-            "devServerTarget": "casl-angular-example:serve"
+            "devServerTarget": "angular-todo:serve"
           },
           "configurations": {
             "production": {
-              "devServerTarget": "casl-angular-example:serve:production"
+              "devServerTarget": "angular-todo:serve:production"
             }
-          }
-        },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": "e2e/tsconfig.e2e.json",
-            "exclude": [
-              "**/node_modules/**"
-            ]
           }
         }
       }
-    }
-  },
-  "defaultProject": "casl-angular-example"
+    }},
+  "defaultProject": "angular-todo"
 }

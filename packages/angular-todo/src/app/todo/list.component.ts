@@ -19,7 +19,7 @@ import { Todo } from '../../models/Todo';
         </div>
 
         <input class="edit" type="text"
-          *ngIf="todo | can: 'update'"
+          *ngIf="'update' | able: todo"
           [(ngModel)]="todo.title"
           (blur)="doneEdit(todo)"
           (keyup.enter)="doneEdit(todo)"

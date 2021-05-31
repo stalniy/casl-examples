@@ -15,7 +15,7 @@
       "prefix": "app",
       "architect": {
         "build": {
-          "builder": "@angular-builders/custom-webpack:browser",
+          "builder": "@angular-devkit/build-angular:browser",
           "options": {
             "outputPath": "dist/test",
             "index": "src/index.html",
@@ -30,10 +30,7 @@
             "styles": [
               "src/styles.scss"
             ],
-            "scripts": [],
-            "customWebpackConfig": {
-              "path": "./webpack.extend.js"
-            }
+            "scripts": []
           },
           "configurations": {
             "production": {
@@ -67,12 +64,9 @@
           }
         },
         "serve": {
-          "builder": "@angular-builders/custom-webpack:dev-server",
+          "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "angular-todo:build",
-            "customWebpackConfig": {
-              "path": "./webpack.extend.js"
-            }
+            "browserTarget": "angular-todo:build"
           },
           "configurations": {
             "production": {

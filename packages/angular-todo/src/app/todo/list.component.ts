@@ -1,25 +1,30 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
+import { Observable } from "rxjs";
 import { AppAbility } from '../../services/AppAbility';
 import { Todo } from '../../models/Todo';
+import { AbilityService } from '@casl/angular';
 
 @Component({
   selector: 'todo-list',
   template: `
-    <ul class="todo-list">
+    <ul *ngIf="ability$ | async as ability" class="todo-list">
       <li *ngFor="let todo of items" class="todo" [ngClass]="cssFor(todo)">
         <input
-          *ngIf="'update' | able: todo"
+          *ngIf="ability.can('update', todo)"
           class="toggle"
           type="checkbox"
           [(ngModel)]="todo.completed"
         >
 
         <div class="view">
-          <label (dblclick)="editTodo(todo)">{{ todo.title }}</label>
+          <label *ngIf="ability.can('update', todo) else pureLabel" (dblclick)="editTodo(todo)">{{ todo.title }}</label>
+          <ng-template #pureLabel>
+            <label>{{ todo.title }}</label>
+          </ng-template>
         </div>
 
         <input class="edit" type="text"
-          *ngIf="'update' | able: todo"
+          *ngIf="ability.can('update', todo)"
           [(ngModel)]="todo.title"
           (blur)="doneEdit(todo)"
           (keyup.enter)="doneEdit(todo)"
@@ -31,22 +36,27 @@ import { Todo } from '../../models/Todo';
         </div>
 
         <button
-          *ngIf="'delete' | able: todo"
+          *ngIf="ability.can('delete', todo)"
           class="destroy"
           (click)="removeTodo(todo)"
         ></button>
       </li>
     </ul>
   `,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TodoList {
   @Input() items: Todo[] = [];
   @Output('remove') onRemoveTodo = new EventEmitter<Todo>();
 
-  editedTodo: Todo = null;
-  beforeEditTodo: Todo = null;
+  readonly ability$: Observable<AppAbility>;
 
-  constructor(private ability: AppAbility) {}
+  private editedTodo: Todo = null;
+  private beforeEditTodo: Todo = null;
+
+  constructor(abilityService: AbilityService<AppAbility>) {
+    this.ability$ = abilityService.ability$;
+  }
 
   cssFor(todo: Todo) {
     return {
@@ -56,10 +66,8 @@ export class TodoList {
   }
 
   editTodo(todo: Todo) {
-    if (this.ability.can('update', todo)) {
-      this.editedTodo = todo;
-      this.beforeEditTodo = { ...todo }
-    }
+    this.editedTodo = todo;
+    this.beforeEditTodo = { ...todo }
   }
 
   doneEdit(todo: Todo) {

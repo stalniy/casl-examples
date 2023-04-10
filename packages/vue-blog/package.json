@@ -10,20 +10,23 @@
     "@casl/ability": "^5.1.0",
     "@casl/vue": "^1.2.0",
     "@mdi/font": "^5.8.55",
+    "@vue/cli-plugin-typescript": "^5.0.8",
     "vue": "^2.6.11",
     "vue-router": "^3.3.4",
     "vuetify": "^1.5.24",
     "vuex": "^3.5.1"
   },
   "devDependencies": {
+    "@babel/core": "^7.0.0",
     "@vue/babel-preset-app": "^4.4.6",
-    "@vue/cli-plugin-babel": "^4.4.6",
-    "@vue/cli-service": "^4.4.6",
+    "@vue/cli-plugin-babel": "^5.0.8",
+    "@vue/cli-service": "^5.0.8",
     "core-js": "^3.6.5",
-    "node-sass": "^4.14.1",
-    "sass-loader": "^8.0.2",
+    "node-sass": "^8.0.0",
+    "sass-loader": "^10.0.2",
     "typescript": "3.9.2",
-    "vue-template-compiler": "^2.6.11"
+    "vue-template-compiler": "^2.6.11",
+    "webpack": "^5.78.0"
   },
   "browserslist": [
     "> 1%",

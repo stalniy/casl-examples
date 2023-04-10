@@ -1,11 +1,11 @@
-import { AbilityBuilder, Ability, AbilityClass, InferSubjects } from '@casl/ability';
+import { AbilityBuilder, AbilityClass, createMongoAbility, InferSubjects, MongoAbility, PureAbility } from '@casl/ability';
 import { Todo } from '../models/Todo'
 
 type Actions = 'manage' | 'create' | 'read' | 'update' | 'delete';
 type Subjects = InferSubjects<Todo> | 'all';
 
-export type AppAbility = Ability<[Actions, Subjects]>;
-export const AppAbility = Ability as AbilityClass<AppAbility>;
+export type AppAbility = MongoAbility<[Actions, Subjects]>;
+export const AppAbility = PureAbility as AbilityClass<AppAbility>;
 
 export function defineAbilitiesFor(role: string) {
   const { can, rules } = new AbilityBuilder(AppAbility);
@@ -21,7 +21,7 @@ export function defineAbilitiesFor(role: string) {
 }
 
 export function createAbility() {
-  return new AppAbility(defineAbilitiesFor('member'), {
+  return createMongoAbility(defineAbilitiesFor('member'), {
     // https://casl.js.org/v5/en/guide/subject-type-detection
     detectSubjectType: object => object.kind,
   });

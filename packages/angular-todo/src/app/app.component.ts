@@ -1,38 +1,52 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { AbilityService } from '@casl/angular';
+import { BehaviorSubject, combineLatest, map, Observable } from 'rxjs';
+import { AppAbility } from 'src/services/AppAbility';
 import { Todo, TodoInput } from '../models/Todo';
 
 @Component({
   selector: 'app-root',
   template: `
-    <section class="todoapp">
+    <section *ngIf="state$ | async as state" class="todoapp">
       <header class="header">
         <h1>Todo list</h1>
-        <todo-form *ngIf="'create' | able: 'Todo'" (newTodo)="addTodo($event)"></todo-form>
+        <todo-form *ngIf="state.ability.can('create', 'Todo')" (newTodo)="addTodo($event)"></todo-form>
       </header>
       <section class="main">
-        <todo-list [items]="todos" (remove)="removeTodo($event)"></todo-list>
+        <todo-list [items]="state.todos" (remove)="removeTodo($event)"></todo-list>
       </section>
-      <todo-footer [items]="todos"></todo-footer>
+      <todo-footer [items]="state.todos"></todo-footer>
     </section>
   `,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AppComponent {
-  todos: Todo[] = [];
+  readonly state$: Observable<{
+    ability: AppAbility;
+    todos: Todo[];
+  }>;
+
+  private readonly todos$ = new BehaviorSubject<Todo[]>([]);
+
+  constructor(abilityService: AbilityService<AppAbility>) {
+    this.state$ = combineLatest([abilityService.ability$, this.todos$]).pipe(
+      map(([ability, todos]) => ({
+        ability,
+        todos,
+      }))
+    );
+  }
 
   addTodo(todo: TodoInput) {
-    this.todos.push({
+    this.todos$.next(this.todos$.value.concat({
       ...todo,
       kind: 'Todo',
       id: Date.now(),
       completed: false,
-    });
+    }));
   }
 
-  removeTodo(todo: Todo) {
-    const index = this.todos.indexOf(todo);
-
-    if (index !== -1) {
-      this.todos.splice(index, 1);
-    }
+  removeTodo(todoToRemove: Todo) {
+    this.todos$.next(this.todos$.value.filter(todo => todo !== todoToRemove));
   }
 }

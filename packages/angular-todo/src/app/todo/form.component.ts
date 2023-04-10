@@ -1,4 +1,4 @@
-import { Component, Output, EventEmitter } from '@angular/core';
+import { Component, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
 import { TodoInput } from '../../models/Todo';
 
 @Component({
@@ -21,12 +21,13 @@ import { TodoInput } from '../../models/Todo';
       </select>
     </div>
   `,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TodoForm {
   @Output('newTodo') onNewTodo = new EventEmitter<TodoInput>();
 
-  placeholder: string = 'What needs to be done?';
-  newTodo: TodoInput = {
+  readonly placeholder: string = 'What needs to be done?';
+  readonly newTodo: TodoInput = {
     title: '',
     assignee: ''
   };

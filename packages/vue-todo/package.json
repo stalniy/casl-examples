@@ -9,15 +9,16 @@
   },
   "dependencies": {
     "@casl/ability": "^5.1.0",
-    "@casl/vue": "^1.2.0",
+    "@casl/vue": "^1.2.3",
     "core-js": "^3.6.4",
     "vue": "^2.6.11"
   },
   "devDependencies": {
+    "@babel/core": "^7.0.0",
     "@types/node": "^13.13.2",
-    "@vue/cli-plugin-babel": "~4.3.0",
-    "@vue/cli-plugin-typescript": "~4.3.0",
-    "@vue/cli-service": "~4.3.0",
+    "@vue/cli-plugin-babel": "~5.0.8",
+    "@vue/cli-plugin-typescript": "~5.0.8",
+    "@vue/cli-service": "~5.0.8",
     "typescript": "3.9.2",
     "vue-template-compiler": "^2.6.11"
   }

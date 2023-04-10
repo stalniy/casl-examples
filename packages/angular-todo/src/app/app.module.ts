@@ -1,8 +1,7 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
 import { NgModule } from '@angular/core';
-import { AbilityModule } from '@casl/angular';
-import { PureAbility } from '@casl/ability';
+import { AbilityModule, AbilityService } from '@casl/angular';
 
 import { createAbility, AppAbility } from '../services/AppAbility';
 import { AppComponent } from './app.component';
@@ -23,9 +22,8 @@ import { TodoFooter } from './todo/footer.component';
     FormsModule
   ],
   providers: [
-    // `PureAbility` is injected by `able` and `can` pipes
-    { provide: PureAbility, useExisting: AppAbility },
-    { provide: AppAbility, useFactory: createAbility }
+    { provide: AppAbility, useFactory: createAbility },
+    AbilityService
   ],
   bootstrap: [AppComponent]
 })

@@ -248,16 +248,16 @@ label[for='toggle-all'] {
 	margin: 3px;
 	padding: 3px 7px;
 	text-decoration: none;
-	border: 1px solid transparent;
+	border: 1px solid white;
 	border-radius: 3px;
 	background: #fff;
 	cursor: pointer;
 }
 .roles li button:hover {
-	border-color: rgba(175, 47, 47, 0.1);
+	border-color: rgba(175, 47, 47, 0.5);
 }
-.filters li button.selected {
-	border-color: rgba(175, 47, 47, 0.2);
+.roles li button.selected {
+	border-color: rgba(175, 47, 47, 0.5);
 }
 
 .clear-completed,

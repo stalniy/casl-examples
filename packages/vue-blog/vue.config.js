@@ -1,11 +1,11 @@
 module.exports = {
-  css: {
-    loaderOptions: {
-      postcss: {
-        config: {
-          path: `${__dirname}/.postcssrc`
-        }
-      }
+  pages: {
+    index: {
+      entry: 'src/main.js'
     }
+  },
+  chainWebpack: (config) => {
+    config.plugins.delete('fork-ts-checker')
+    config.module.rules.delete('postcss')//plugins.delete('fork-ts-checker')
   }
 }

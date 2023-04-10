@@ -31,6 +31,12 @@ Also you need mongodb database up and running. Application will connect to `mong
 mongorestore db
 ```
 
+Alternatively, you can run mongodb in container:
+
+```sh
+docker compose up -d
+docker compose exec mongo mongorestore /var/app/db
+```
 
 ## Instruction to login
 

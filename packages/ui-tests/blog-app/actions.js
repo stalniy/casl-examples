@@ -78,10 +78,12 @@ export function deleteArticle(article) {
 }
 
 export function ensureHasArticle(article) {
-  cy.get('.article')
-    .findWhere(el => el.find('h3').text() === article.title)
-    .then(($article) => {
-      if (!$article) {
+  cy.document()
+    .then((document) => {
+      const hasArticle = Array.from(document.querySelectorAll('.article h3')).some(titleEl => {
+        return titleEl.textContent.trim() === article.title;
+      });
+      if (!hasArticle) {
         createArticle(article);
       }
     });

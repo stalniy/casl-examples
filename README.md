@@ -17,6 +17,7 @@ Currently this repository contains the next examples:
 | [CASL Vue todo](./packages/vue-todo)         | user roles in Todo app |  |
 | [CASL Vue blog](./packages/vue-blog)  | ACL in Blog app with REST API |  |
 | [CASL Express API](./packages/express-blog)  | ACL in REST API for Blog app |  |
+| [CASL Fastify+Prisma API](./packages/fastify-prisma-blog)  | ACL in REST API for Blog app |  |
 
 [CASL HelloWorld]: https://codesandbox.io/s/github/stalniy/casl-examples/tree/master/packages/hello-world
 [CASL React Todo]: https://codesandbox.io/s/github/stalniy/casl-examples/tree/master/packages/react-todo

@@ -35,7 +35,7 @@ module.exports = async function createApp() {
   app.use(errorHandler);
 
   mongoose.Promise = global.Promise;
-  await mongoose.connect('mongodb://localhost:27017/blog', {
+  await mongoose.connect('mongodb://root:blogpwd@localhost:27017/blog?authSource=admin&retryWrites=true&w=majority', {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   });

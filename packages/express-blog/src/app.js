@@ -3,7 +3,6 @@ require('express-async-errors');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const cors = require('cors');
-const { accessibleRecordsPlugin } = require('@casl/mongoose');
 const errorHandler = require('./error-handler');
 
 const MODULES = ['auth', 'comments', 'posts', 'users'];
@@ -11,7 +10,6 @@ const MODULES = ['auth', 'comments', 'posts', 'users'];
 module.exports = async function createApp() {
   const app = express();
 
-  mongoose.plugin(accessibleRecordsPlugin);
   mongoose.plugin((schema) => {
     schema.methods.toJSON = function toJSON() {
       const { _id, ...object } = this.toObject();

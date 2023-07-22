@@ -6,6 +6,7 @@ const createApp = require('../src/app');
 const isNotServerError = status => status < 500;
 const http = axios.create({
   validateStatus: isNotServerError,
+  baseURL: 'http://localhost:3000/api'
 });
 
 const clients = {};

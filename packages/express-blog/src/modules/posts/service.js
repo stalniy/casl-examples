@@ -1,10 +1,11 @@
 const { NotFound } = require('http-errors');
 const { ForbiddenError } = require('@casl/ability');
+const { accessibleBy } = require('@casl/mongoose');
 const Article = require('./model')();
 const { parsePagination } = require('../utils');
 
 async function findAll(req, res) {
-  const articlesQuery = Article.accessibleBy(req.ability);
+  const articlesQuery = Article.find(accessibleBy(req.ability).Article);
   const [page, pageSize] = parsePagination(req.query);
 
   const [count, articles] = await Promise.all([
@@ -79,7 +80,7 @@ async function destroy(req, res) {
 
   if (article) {
     ForbiddenError.from(req.ability).throwUnlessCan('delete', article);
-    await article.remove();
+    await article.deleteOne();
   }
 
   res.send({ item: article });

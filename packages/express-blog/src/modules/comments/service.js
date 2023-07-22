@@ -1,9 +1,10 @@
 const { NotFound } = require('http-errors');
 const { ForbiddenError } = require('@casl/ability');
+const { accessibleBy } = require('@casl/mongoose');
 const Comment = require('./model')();
 
 async function findAll(req, res) {
-  const comments = await Comment.accessibleBy(req.ability);
+  const comments = await Comment.find(accessibleBy(req.ability).Comment);
 
   res.send({ items: comments });
 }

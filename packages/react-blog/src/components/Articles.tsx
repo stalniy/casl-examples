@@ -15,7 +15,7 @@ import {
 import EditIcon from '@material-ui/icons/EditOutlined';
 import DeleteIcon from '@material-ui/icons/DeleteOutlined';
 import { red } from '@material-ui/core/colors';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useAppStoreEffect, useAppStore } from '../hooks/useAppStore';
 import { formatDate } from '../services/date';
 import { useAppAbility } from '../hooks/useAppAbility';
@@ -53,7 +53,7 @@ const short = (value: string) => {
 function articleClasses(article: Article, user?: User) {
   let css = 'article';
 
-  if (article.createdBy.email === user?.email) {
+  if (article.createdBy?.email === user?.email) {
     css += ' own';
   }
 
@@ -68,7 +68,7 @@ export default () => {
   const [articles, setArticles] = useAppStoreEffect(s => s.findArticles());
   const classes = useStyles();
   const { can } = useAppAbility();
-  const history = useHistory();
+  const navigate = useNavigate();
   const store = useAppStore();
   const [articleToDelete, setArticleToDelete] = useState<Article>();
   const deleteArticle = () => {
@@ -98,7 +98,7 @@ export default () => {
             <CardHeader
               avatar={
                 <Avatar aria-label="recipe" className={classes.avatar}>
-                  {article.createdBy.email[0].toUpperCase()}
+                  {article.createdBy?.email[0]?.toUpperCase()}
                 </Avatar>
               }
               title={<h3>{article.title}</h3>}
@@ -111,7 +111,7 @@ export default () => {
             </CardContent>
             <CardActions disableSpacing>
               {can('update', article) && (
-                <IconButton onClick={() => history.push(`/articles/${article.id}/edit`)} name="edit">
+                <IconButton onClick={() => navigate(`/articles/${article.id}/edit`)} name="edit">
                   <EditIcon />
                 </IconButton>
               )}
@@ -123,7 +123,7 @@ export default () => {
               <Button
                 size="small"
                 color="primary"
-                onClick={() => history.push(`/articles/${article.id}`)}
+                onClick={() => navigate(`/articles/${article.id}`)}
               >
                 Learn More
               </Button>

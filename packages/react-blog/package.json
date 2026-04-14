@@ -3,35 +3,32 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@casl/ability": "^5.1.0",
-    "@casl/react": "^2.2.0",
+    "@casl/ability": "^6.8.0",
+    "@casl/react": "^6.0.0",
     "@material-ui/core": "^4.11.0",
     "@material-ui/icons": "^4.9.1",
     "@material-ui/lab": "^4.0.0-alpha.56",
-    "axios": "^0.20.0",
-    "mobx": "^5.15.6",
-    "mobx-react": "^6.3.0",
-    "react": "^16.13.1",
-    "react-dom": "^16.13.1",
-    "react-router-dom": "^5.2.0"
+    "ky": "^2.0.0",
+    "mobx": "^6.0.1",
+    "mobx-react": "^9.2.1",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^7.14.0"
   },
   "devDependencies": {
     "@types/jest": "^24.9.1",
-    "@types/node": "^12.12.35",
-    "@types/react": "^16.9.49",
-    "@types/react-dom": "^16.9.6",
-    "@types/react-router-dom": "^5.1.5",
-    "react-scripts": "3.4.1",
-    "typescript": "3.9.2"
+    "@types/node": "^18.15.0",
+    "@types/react": "^18.3.5",
+    "@types/react-dom": "^18.3.0",
+    "@vitejs/plugin-react": "^4.7.0",
+    "typescript": "^5.9.0",
+    "vite": "^5.4.19"
   },
   "scripts": {
-    "start": "PORT=8080 SKIP_PREFLIGHT_CHECK=true react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
-  },
-  "eslintConfig": {
-    "extends": "react-app"
+    "start": "vite --host --port 8080",
+    "dev": "vite --host --port 8080",
+    "build": "vite build",
+    "preview": "vite preview --host --port 8080"
   },
   "browserslist": {
     "production": [

@@ -28,7 +28,7 @@ npm start # `npm run dev` to run in dev mode
 Also you need mongodb database up and running. Application will connect to `mongodb://localhost:27017/blog`. This repository contains database fixtures which you can load using `mongorestore` cli command. Navigate to the project root and run:
 
 ```sh
-mongorestore mongorestore --uri='mongodb://root:blogpwd@localhost:27017' ./db
+mongorestore --uri='mongodb://root:blogpwd@localhost:27017' ./db
 ```
 
 Alternatively, you can run mongodb in container:

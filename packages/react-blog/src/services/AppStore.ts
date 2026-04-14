@@ -1,4 +1,4 @@
-import { observable, computed, action, reaction } from 'mobx';
+import { observable, computed, action, makeObservable, reaction } from 'mobx';
 import { RawRuleOf, subject } from '@casl/ability';
 import { User } from '../models/User';
 import { Article } from '../models/Article';
@@ -31,24 +31,31 @@ export default class AppStore {
   }
 
   public readonly ability = createAbility();
+  private readonly _http: Http;
 
-  constructor(
-    private _http: Http
-  ) {
-    reaction(() => this.token, (token) => {
-      if (token) {
-        this._http.defaults.headers.Authorization = token;
-      } else {
-        delete this._http.defaults.headers.Authorization;
+  constructor(http: Http) {
+    makeObservable(this);
+
+    this._http = http.extend({
+      hooks: {
+        beforeRequest: [(options) => {
+          if (this.token) {
+            options.request.headers.set('Authorization', this.token);
+          }
+        }]
       }
     });
-
-    reaction(() => this.rules, (rules) => this.ability.update(rules));
+    reaction(() => this.rules, (rules) => {
+      this.ability.update(rules);
+    });
   }
 
   login(email: string, password: string) {
-    return this._http.post<Session>('/session', { email, password })
-      .then(response => this._setSession(response.data))
+    return this._http.post<Session>('/session', {
+      body: JSON.stringify({ email, password }),
+    })
+      .json()
+      .then(response => this._setSession(response))
       .catch((error) => {
         if (error.response && error.response.status === 400) {
           throw new BadCredentialsError();
@@ -74,20 +81,23 @@ export default class AppStore {
 
   findArticles() {
     return this._http.get<{ items: Article[] }>('/articles')
-      .then(response => response.data.items.map(item => subject('Article', item)));
+      .json()
+      .then(response => response.items.map(item => subject('Article', item)));
   }
 
   findArticleById(id: string) {
     return this._http.get<{ item: Article }>(`/articles/${id}`)
-      .then(response => subject('Article', response.data.item));
+      .json()
+      .then(response => subject('Article', response.item));
   }
 
   saveArticle({ id, ...article }: Partial<Pick<Article, 'title' | 'body' | 'id' | 'published'>>) {
+    const payload = { body: JSON.stringify(article) };
     const save = id
-      ? this._http.patch<{ item: Article }>(`/articles/${id}`, article)
-      : this._http.post<{ item: Article }>('/articles', article);
+      ? this._http.patch<{ item: Article }>(`/articles/${id}`, payload)
+      : this._http.post<{ item: Article }>('/articles', payload);
 
-    return save.then(response => subject('Article', response.data.item));
+    return save.json().then(response => subject('Article', response.item));
   }
 
   deleteArticle(article: Article) {

@@ -2,16 +2,19 @@
 
 This example shows how to integrate [CASL authorization](https://casl.js.org) (i.e. permissions) in React application with [Mobx](https://mobx.js.org/).
 
-> Generated with crate-react-app
+> Built with Vite
 
 ## Installation
 
 ``` bash
 # install dependencies
-npm install
+pnpm install
 
-# serve with hot reload at localhost:3000
-npm start
+# serve with hot reload at localhost:8080
+pnpm start
+
+# build for production
+pnpm build
 ```
 
 ## Description

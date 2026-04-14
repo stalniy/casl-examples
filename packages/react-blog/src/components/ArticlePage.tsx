@@ -19,7 +19,7 @@ export function ArticlePage({ article }: Props) {
 
 export default () => {
   const params = useParams<{ id: string }>();
-  const [article] = useAppStoreEffect(store => store.findArticleById(params.id), [params]);
+  const [article] = useAppStoreEffect(store => store.findArticleById(params.id!), [params]);
   useAppTitle(article?.title || 'Article');
 
   if (!article) {

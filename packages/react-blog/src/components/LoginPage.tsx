@@ -7,7 +7,7 @@ import {
   createStyles,
   Paper,
 } from '@material-ui/core';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useAppStore } from '../hooks/useAppStore';
 import { useFormField, validation, required, minLength, email } from '../hooks/useFormField';
 import { useAsyncTask } from '../hooks/useAsyncTask';
@@ -42,11 +42,11 @@ export default () => {
   const store = useAppStore();
   const form = useLoginForm();
   const styles = useStyles();
-  const history = useHistory();
+  const navigate = useNavigate();
   const loginTask = useAsyncTask((task) => {
     return store.login(form.email.value!, form.password.value!)
       .then(() => {
-        history.push('/');
+        navigate('/');
       })
       .catch(error => when(error, [
         [BadCredentialsError, () => task.setError('Invalid login or password')]

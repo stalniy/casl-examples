@@ -10,10 +10,9 @@ import {
   createStyles,
   makeStyles,
 } from '@material-ui/core';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { observer } from 'mobx-react';
 import MoreIcon from '@material-ui/icons/MoreVert';
-import { useHistory } from 'react-router-dom';
 import { useAppTitle } from '../hooks/useAppTitle';
 import { useAppStore } from '../hooks/useAppStore';
 import { useAppAbility } from '../hooks/useAppAbility';
@@ -37,7 +36,7 @@ const useStyles = makeStyles(theme => createStyles({
 export default observer(() => {
   const styles = useStyles();
   const title = useAppTitle();
-  const history = useHistory();
+  const navigate = useNavigate();
   const store = useAppStore();
   const { can } = useAppAbility();
   const [anchor, setAnchor] = useState<HTMLElement>();
@@ -48,9 +47,9 @@ export default observer(() => {
   const goToLoginOrLogout = () => {
     if (store.isLoggedIn) {
       store.logout();
-      history.replace('/');
+      navigate('/', { replace: true });
     } else {
-      history.push('/login');
+      navigate('/login');
     }
   };
   useEffect(() => clearAnchor, []);

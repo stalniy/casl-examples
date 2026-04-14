@@ -10,7 +10,7 @@ import {
 } from '@material-ui/core';
 import TaskErrorNotification from './TaskErrorNotification';
 import { useFormField, formToObject, minLength, required, validation } from '../hooks/useFormField';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useAsyncTask } from '../hooks/useAsyncTask';
 import { useAppStore } from '../hooks/useAppStore';
 import { useAppAbility } from '../hooks/useAppAbility';
@@ -53,7 +53,7 @@ export default ({ article, onUpdate }: Props) => {
   const styles = useStyles();
   const form = useArticleForm(article);
   const store = useAppStore();
-  const history = useHistory();
+  const navigate = useNavigate();
   const { can } = useAppAbility();
   const saveTask = useAsyncTask(() => {
     const changes = {
@@ -62,7 +62,7 @@ export default ({ article, onUpdate }: Props) => {
     };
 
     if (article?.published) {
-      delete changes.published;
+      delete (changes as Record<string, any>).published;
     }
 
     return store.saveArticle(changes).then(onUpdate);

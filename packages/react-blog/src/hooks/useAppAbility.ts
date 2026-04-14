@@ -3,4 +3,8 @@ import { createContext } from 'react';
 import { AppAbility } from '../services/ability';
 
 export const AbilityContext = createContext<AppAbility>(null as unknown as AppAbility);
-export const useAppAbility = () => useAbility(AbilityContext);
+export const useAppAbility = () => {
+  const a = useAbility(AbilityContext);
+  console.log('<----', a.rules)
+  return a;
+};

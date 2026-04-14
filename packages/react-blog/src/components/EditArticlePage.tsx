@@ -1,5 +1,5 @@
 import React from 'react';
-import { useParams, useHistory } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import ArticleForm from './ArticleForm';
 import { useAppStoreEffect } from '../hooks/useAppStore';
 import { useAppTitle } from '../hooks/useAppTitle';
@@ -7,10 +7,10 @@ import { Article } from '../models/Article';
 
 export default () => {
   const params = useParams<{ id: string }>();
+  const navigate = useNavigate();
   const [article, setArticle] = useAppStoreEffect<Article>((store) => {
-    return store.findArticleById(params.id);
+    return store.findArticleById(params.id!);
   }, [params]);
-  const history = useHistory();
 
   useAppTitle(`Edit "${article?.title}"`);
 
@@ -22,7 +22,7 @@ export default () => {
     article={article}
     onUpdate={(article) => {
       setArticle(article);
-      history.push('/');
+      navigate('/');
     }}
   />
 };

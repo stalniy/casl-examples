@@ -1,5 +1,6 @@
-import React, { Component } from 'react';
-import Can, { AbilityContext } from './Can';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { Can, useAbility } from '@casl/react';
+import type { AppAbility } from '../config/ability';
 import { Todo } from '../services/todo-storage';
 
 export interface Props {
@@ -9,117 +10,115 @@ export interface Props {
   onComplete(todo: Todo, completed: boolean): void
 };
 
-type State = Readonly<{ isEditing: boolean, editingTitle: string }>;
+export default function TodoItem({ todo, onEdited, onRemove, onComplete }: Props) {
+  const ability = useAbility<AppAbility>();
+  const editInputRef = useRef<HTMLInputElement>(null);
+  const [editingTitle, setEditingTitle] = useState('');
+  const [isEditing, setIsEditing] = useState(false);
 
-export default class TodoItem extends Component<Props, State> {
-  static contextType = AbilityContext;
+  useEffect(() => {
+    if (isEditing) {
+      editInputRef.current?.focus();
+    }
+  }, [isEditing]);
 
-  refs!: {
-    editInput: HTMLInputElement
+  const cancelEdit = () => {
+    setIsEditing(false);
+    setEditingTitle('');
   };
 
-  state = {
-    editingTitle: '',
-    isEditing: false,
+  const removeTodo = () => {
+    onRemove(todo);
   };
 
-  private _doneEdit = () => {
-    if (!this.state.isEditing) {
-      return
+  const doneEdit = () => {
+    if (!isEditing) {
+      return;
     }
 
-    if (!this.refs.editInput.value) {
-      this._removeTodo()
+    const nextTitle = editInputRef.current?.value || '';
+
+    if (!nextTitle) {
+      removeTodo();
     } else {
-      this.props.onEdited({ ...this.props.todo, title: this.refs.editInput.value })
+      onEdited({ ...todo, title: nextTitle });
     }
 
-    this._cancelEdit()
-  }
+    cancelEdit();
+  };
 
-  private _cancelEdit() {
-    this.setState({ isEditing: false, editingTitle: '' });
-  }
-
-  private _doneOrCancelEdit = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.keyCode === 13) {
-      this._doneEdit()
-    } else if (event.keyCode === 27) {
-      this._cancelEdit()
+  const doneOrCancelEdit = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Enter') {
+      doneEdit();
+    } else if (event.key === 'Escape') {
+      cancelEdit();
     }
-  }
+  };
 
-  private _removeTodo = () => {
-    this.props.onRemove(this.props.todo)
-  }
-
-  private _editTodo = () => {
-    if (!this.context.can('update', this.props.todo)) {
-      return
+  const editTodo = () => {
+    if (!ability.can('update', todo)) {
+      return;
     }
 
-    this.setState({ isEditing: true });
-    this.refs.editInput.focus()
-  }
+    setIsEditing(true);
+  };
 
-  private _updateTitle = (event: React.ChangeEvent<HTMLInputElement>) => {
-    this.setState({ editingTitle: event.target.value });
-  }
+  const updateTitle = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setEditingTitle(event.target.value);
+  };
 
-  private _getClassName() {
+  const className = useMemo(() => {
     const css = ['todo']
 
-    if (this.props.todo.completed) {
+    if (todo.completed) {
       css.push('completed')
     }
 
-    if (this.state.isEditing) {
+    if (isEditing) {
       css.push('editing')
     }
 
     return css.join(' ')
-  }
+  }, [isEditing, todo.completed]);
 
-  private _completeTodo= (event: React.ChangeEvent<HTMLInputElement>) => {
-    this.props.onComplete(this.props.todo, event.target.checked)
-  }
+  const completeTodo = (event: React.ChangeEvent<HTMLInputElement>) => {
+    onComplete(todo, event.target.checked);
+  };
 
-  render() {
-    const { todo } = this.props
+  return (
+    <li className={className}>
+      <Can I="update" a={todo}>
+        <input
+          type="checkbox"
+          checked={todo.completed}
+          onChange={completeTodo}
+          className="toggle"
+        />
+      </Can>
 
-    return (
-      <li className={this._getClassName()}>
-        <Can do="update" on={todo}>
-          <input
-            type="checkbox"
-            checked={todo.completed}
-            onChange={this._completeTodo}
-            className="toggle"
-          />
-        </Can>
+      <div className="view">
+        <label onDoubleClick={editTodo}>{todo.title}</label>
+      </div>
 
-        <div className="view">
-          <label onDoubleClick={this._editTodo}>{todo.title}</label>
-        </div>
+      <Can I="update" a={todo}>
+        <input
+          className="edit"
+          type="text"
+          ref={editInputRef}
+          value={editingTitle || todo.title}
+          onBlur={doneEdit}
+          onKeyUp={doneOrCancelEdit}
+          onChange={updateTitle}
+        />
+      </Can>
 
-        <Can do="update" on={todo}>
-          <input className="edit"
-            type="text"
-            ref="editInput"
-            value={this.state.editingTitle || todo.title}
-            onBlur={this._doneEdit}
-            onKeyUp={this._doneOrCancelEdit}
-            onChange={this._updateTitle} />
-        </Can>
+      <div className="assignee">
+        {todo.assignee}
+      </div>
 
-        <div className="assignee">
-          {todo.assignee}
-        </div>
-
-        <Can do="delete" on={todo}>
-          <button className="destroy" onClick={this._removeTodo}></button>
-        </Can>
-      </li>
-    )
-  }
+      <Can I="delete" a={todo}>
+        <button className="destroy" onClick={removeTodo}></button>
+      </Can>
+    </li>
+  );
 }

@@ -1,14 +1,13 @@
-import { AbilityBuilder, Ability, AbilityClass } from '@casl/ability';
+import { AbilityBuilder, createMongoAbility, MongoAbility } from '@casl/ability';
 import { Todo } from '../services/todo-storage';
 
 type Actions = 'manage' | 'create' | 'read' | 'update' | 'delete';
 type Subjects = 'Todo' | Todo | 'all';
 
-export type AppAbility = Ability<[Actions, Subjects]>;
-export const AppAbility = Ability as AbilityClass<AppAbility>;
+export type AppAbility = MongoAbility<[Actions, Subjects]>;
 
 export default function defineRulesFor(role: string) {
-  const { can, rules } = new AbilityBuilder(AppAbility);
+  const { can, rules } = new AbilityBuilder<AppAbility>(createMongoAbility);
 
   if (role === 'admin') {
     can('manage', 'all');
@@ -21,8 +20,8 @@ export default function defineRulesFor(role: string) {
 }
 
 export function buildAbilityFor(role: string): AppAbility {
-  return new AppAbility(defineRulesFor(role), {
-    // https://casl.js.org/v5/en/guide/subject-type-detection
+  return createMongoAbility<AppAbility>(defineRulesFor(role), {
+    // https://casl.js.org/v6/en/guide/subject-type-detection
     detectSubjectType: (object) => object!.type
   });
 }

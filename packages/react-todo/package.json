@@ -3,28 +3,25 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@casl/ability": "^5.1.0",
-    "@casl/react": "^2.2.0",
-    "react": "^16.13.1",
-    "react-dom": "^16.13.1"
+    "@casl/ability": "7.0.0-rc",
+    "@casl/react": "7.0.0-rc",
+    "react": "19.2.5",
+    "react-dom": "19.2.5"
   },
   "devDependencies": {
-    "@types/jest": "^24.9.1",
-    "@types/node": "^12.12.35",
-    "@types/react": "^16.9.34",
-    "@types/react-dom": "^16.9.6",
-    "react-scripts": "3.4.1",
-    "typescript": "3.9.2"
+    "@types/node": "~24.0.0",
+    "@types/react": "^19.2.2",
+    "@types/react-dom": "^19.2.2",
+    "@vitejs/plugin-react": "^4.7.0",
+    "typescript": "5.9.3",
+    "vite": "^5.4.19"
   },
   "scripts": {
-    "start": "PORT=8080 SKIP_PREFLIGHT_CHECK=true react-scripts start",
-    "build": "react-scripts build",
+    "start": "vite --host --port 8080",
+    "dev": "vite --host --port 8080",
+    "build": "vite build",
     "build.es.source": "tsc -p tsconfig.es.json",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
-  },
-  "eslintConfig": {
-    "extends": "react-app"
+    "preview": "vite preview --host --port 8080"
   },
   "browserslist": {
     "production": [

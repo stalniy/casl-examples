@@ -1,74 +1,61 @@
-import React, { Component } from 'react';
+import React, { useEffect, useState } from 'react';
+import { Can } from '@casl/react';
 import todoStorage, { Todo } from '../services/todo-storage';
 import NewTodo from './NewTodo';
 import TodoListRenderer from './TodoListRenderer';
 import TodoFooter from './TodoFooter';
-import Can from './Can';
 
-type State = {
-  items: Todo[]
-}
+export default function TodoList() {
+  const [items, setItems] = useState<Todo[]>(() => todoStorage.fetch());
 
-export default class TodoList extends Component<{}, State> {
-  state = {
-    items: todoStorage.fetch()
+  useEffect(() => {
+    todoStorage.save(items);
+  }, [items]);
+
+  const addTodo = (attrs: Pick<Todo, 'assignee' | 'title'>) => {
+    const todo = todoStorage.build(attrs);
+    setItems(prevItems => prevItems.concat(todo));
   };
 
-  componentDidUpdate() {
-    todoStorage.save(this.state.items);
-  }
+  const removeTodo = (todo: Todo) => {
+    setItems(prevItems => prevItems.filter(item => item !== todo));
+  };
 
-  private _addTodo = (attrs: Pick<Todo, 'assignee' | 'title'>) => {
-    const todo = todoStorage.build(attrs)
+  const editTodo = (todo: Todo) => {
+    setItems(prevItems => {
+      const itemsCopy = prevItems.slice(0);
+      const index = itemsCopy.findIndex(item => item.id === todo.id);
 
-    this.setState((prevState) => ({
-      items: prevState.items.concat(todo)
-    }))
-  }
+      itemsCopy.splice(index, 1, todo);
 
-  private _removeTodo = (todo: Todo) => {
-    this.setState((prevState) => ({
-      items: prevState.items.filter(item => item !== todo)
-    }))
-  }
-
-  private _editTodo = (todo: Todo) => {
-    this.setState((prevState) => {
-      const items = prevState.items.slice(0);
-      const index = items.findIndex(item => item.id === todo.id);
-
-      items.splice(index, 1, todo);
-
-      return { items }
+      return itemsCopy;
     });
-  }
+  };
 
-  private _completeTodo = (todo: Todo, completed: boolean) => {
-    this.setState((prevState) => {
-      const items = prevState.items.slice(0);
-      const index = items.findIndex(item => item.id === todo.id);
-      items[index] = { ...items[index], completed };
-      return { items };
+  const completeTodo = (todo: Todo, completed: boolean) => {
+    setItems(prevItems => {
+      const itemsCopy = prevItems.slice(0);
+      const index = itemsCopy.findIndex(item => item.id === todo.id);
+      itemsCopy[index] = { ...itemsCopy[index], completed };
+      return itemsCopy;
     });
-  }
+  };
 
-  render() {
-    return (
-      <div>
-        <header className="header">
-          <h1>Todos</h1>
-          <Can do="create" on="Todo">
-            <NewTodo onNewTodo={this._addTodo} />
-          </Can>
-        </header>
-        <TodoListRenderer
-          items={this.state.items}
-          onRemove={this._removeTodo}
-          onEdited={this._editTodo}
-          onComplete={this._completeTodo}
-          />
-        <TodoFooter items={this.state.items} />
-      </div>
-    )
-  }
+  return (
+    <div>
+      <header className="header">
+        <h1>Todos</h1>
+        <Can I="create" a="Todo">
+          <NewTodo onNewTodo={addTodo} />
+        </Can>
+      </header>
+      <TodoListRenderer
+        items={items}
+        onRemove={removeTodo}
+        onEdited={editTodo}
+        onComplete={completeTodo}
+      />
+      <TodoFooter items={items} />
+    </div>
+  );
 }

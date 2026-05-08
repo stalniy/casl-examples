@@ -4,18 +4,24 @@ const STORAGE_KEY = 'casl-vue-todos';
 let todoId = 0;
 
 export default {
-  build(attrs: Todo | TodoInput): Todo {
+  build(attrs: TodoInput): Todo {
     return {
       completed: false,
       ...attrs,
-      kind: 'Todo',
+      type: 'Todo',
       id: ++todoId,
     };
   },
 
   fetch(): Todo[] {
     const items = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]') as Todo[];
-    return items.map(item => this.build(item));
+    const lastItem = items[items.length - 1];
+
+    if (lastItem) {
+      todoId = lastItem.id;
+    }
+
+    return items;
   },
 
   save(todos: Todo[]): void {

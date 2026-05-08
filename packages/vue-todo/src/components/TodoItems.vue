@@ -3,25 +3,25 @@
     <ul class="todo-list">
       <li v-for="(todo, index) in items" :key="todo.id" :class="classesFor(todo)">
         <input
-          v-if="$can('update', todo)"
+          v-if="ability.can('update', todo)"
           type="checkbox"
           class="toggle"
           :checked="todo.completed"
-          @input="updateTodoAt(index, { completed: $event.target.checked })"
+          @input="updateTodoCompletion(index, $event)"
         >
         <div class="view">
           <label @dblclick="editTodo(todo)">{{ todo.title }}</label>
         </div>
         <input class="edit"
-          v-if="$can('update', todo)"
+          v-if="ability.can('update', todo)"
           v-model.trim="editedTitle"
           @blur="doneEditAt(index)"
           @keyup.enter="doneEditAt(index)"
           @keyup.esc="resetEdit"
         >
         <button
-          v-if="$can('delete', todo)"
-          @click="$emit('remove', todo)"
+          v-if="ability.can('delete', todo)"
+          @click="emit('remove', todo)"
           class="destroy"
         ></button>
       </li>
@@ -29,73 +29,77 @@
   </section>
 </template>
 
-<script lang="ts">
-import Vue from 'vue';
-import { Todo, TodoInput } from '../models/Todo';
-
-type State = {
-  editedTitle: string,
-  editedTodo: Todo | null
-};
+<script setup lang="ts">
+import { ref } from 'vue';
+import { useAbility } from '@casl/vue';
+import type { AppAbility } from '../config/ability';
+import type { Todo, TodoInput } from '../models/Todo';
 
 export interface UpdateEvent {
   index: number
   patch: Partial<TodoInput>
 }
 
-export default Vue.extend({
-  name: 'TodoItems',
-  props: {
-    items: {
-      type: Array as () => Todo[],
-      required: true,
-    }
-  },
-  data: (): State => ({
-    editedTitle: '',
-    editedTodo: null
-  }),
-  methods: {
-    classesFor(todo: Todo) {
-      return {
-        todo: true,
-        completed: todo.completed,
-        editing: todo === this.editedTodo
-      };
-    },
-    editTodo(todo: Todo) {
-      if (!this.$can('update', todo)) {
-        return;
-      }
+const props = defineProps<{
+  items: Todo[]
+}>();
 
-      this.editedTitle = todo.title;
-      this.editedTodo = todo;
-    },
-    updateTodoAt(index: UpdateEvent['index'], patch: UpdateEvent['patch']) {
-      this.$emit('update', {
-        index,
-        patch,
-      });
-    },
-    doneEditAt(index: number) {
-      if (!this.editedTodo) {
-        return
-      }
+const emit = defineEmits<{
+  update: [event: UpdateEvent]
+  remove: [todo: Todo]
+}>();
 
-      const newTitle = this.editedTitle.trim();
+const ability = useAbility<AppAbility>();
+const editedTitle = ref('');
+const editedTodo = ref<Todo | null>(null);
 
-      if (this.editedTitle) {
-        this.updateTodoAt(index, { title: this.editedTitle });
-      } else {
-        this.$emit('remove', this.items[index]);
-      }
+function classesFor(todo: Todo) {
+  return {
+    todo: true,
+    completed: todo.completed,
+    editing: todo === editedTodo.value,
+  };
+}
 
-      this.resetEdit();
-    },
-    resetEdit() {
-      this.editedTodo = null;
-      this.editedTitle = '';
-    },
+function editTodo(todo: Todo) {
+  if (!ability.can('update', todo)) {
+    return;
   }
-});
+
+  editedTitle.value = todo.title;
+  editedTodo.value = todo;
+}
+
+function updateTodoAt(index: UpdateEvent['index'], patch: UpdateEvent['patch']) {
+  emit('update', {
+    index,
+    patch,
+  });
+}
+
+function updateTodoCompletion(index: number, event: Event) {
+  const { checked } = event.target as HTMLInputElement;
+  updateTodoAt(index, { completed: checked });
+}
+
+function doneEditAt(index: number) {
+  if (!editedTodo.value) {
+    return;
+  }
+
+  const newTitle = editedTitle.value.trim();
+
+  if (newTitle) {
+    updateTodoAt(index, { title: newTitle });
+  } else {
+    emit('remove', props.items[index]);
+  }
+
+  resetEdit();
+}
+
+function resetEdit() {
+  editedTodo.value = null;
+  editedTitle.value = '';
+}
 </script>

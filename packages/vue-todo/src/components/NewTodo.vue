@@ -18,27 +18,26 @@
   </div>
 </template>
 
-<script lang="ts">
-import Vue from 'vue';
+<script setup lang="ts">
+import { reactive } from 'vue';
+import type { TodoInput } from '../models/Todo';
 
-export default Vue.extend({
-  name: 'NewTodo',
-  data: () => ({
-    newTodo: {
-      title: '',
-      assignee: ''
-    }
-  }),
-  methods: {
-    submit() {
-      if (!this.newTodo.title) {
-        return;
-      }
+const emit = defineEmits<{
+  submit: [todo: TodoInput]
+}>();
 
-      this.$emit('submit', { ...this.newTodo });
-      this.newTodo.title = '';
-      this.newTodo.assignee = '';
-    },
-  },
+const newTodo = reactive<TodoInput>({
+  title: '',
+  assignee: '',
 });
+
+function submit() {
+  if (!newTodo.title) {
+    return;
+  }
+
+  emit('submit', { ...newTodo });
+  newTodo.title = '';
+  newTodo.assignee = '';
+}
 </script>

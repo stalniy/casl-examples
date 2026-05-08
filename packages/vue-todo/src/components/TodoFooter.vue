@@ -11,32 +11,24 @@
   </footer>
 </template>
 
-<script lang="ts">
-import Vue from 'vue';
-import { defineRulesFor } from '../config/ability';
-import { Todo } from '../models/Todo';
+<script setup lang="ts">
+import { computed, ref } from 'vue';
+import { useAbility } from '@casl/vue';
+import { defineRulesFor, type AppAbility } from '../config/ability';
+import type { Todo } from '../models/Todo';
 
-export default Vue.extend({
-  name: 'TodoFooter',
-  props: {
-    items: {
-      type: Array as () => Todo[],
-      required: true,
-    }
-  },
-  data: () => ({
-    role: 'member'
-  }),
-  computed: {
-    remaining(): number {
-      return this.items.filter(item => !item.completed).length;
-    },
-  },
-  methods: {
-    setRole(role: string) {
-      this.role = role;
-      this.$ability.update(defineRulesFor(role));
-    }
-  },
-});
+type Role = 'admin' | 'member';
+
+const props = defineProps<{
+  items: Todo[]
+}>();
+
+const ability = useAbility<AppAbility>();
+const role = ref<Role>('member');
+const remaining = computed(() => props.items.filter((item) => !item.completed).length);
+
+function setRole(nextRole: Role) {
+  role.value = nextRole;
+  ability.update(defineRulesFor(nextRole));
+}
 </script>

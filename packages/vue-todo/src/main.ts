@@ -1,19 +1,16 @@
-import Vue from 'vue';
+import { createApp } from 'vue';
 import { abilitiesPlugin, Can } from '@casl/vue';
 import { buildAbilityFor } from './config/ability';
 import App from './App.vue';
 
 const ability = buildAbilityFor('member');
+const app = createApp(App);
 
-if (process.env.NODE_ENV !== 'production') {
+if (import.meta.env.DEV) {
   // exposed for debugging
-  (window as any).ability = ability
+  (window as Window & { ability?: typeof ability }).ability = ability;
 }
 
-Vue.config.productionTip = false;
-Vue.use(abilitiesPlugin, ability);
-Vue.component('Can', Can);
-
-new Vue({
-  render: h => h(App),
-}).$mount('#app')
+app.use(abilitiesPlugin, ability);
+app.component('Can', Can);
+app.mount('#app');

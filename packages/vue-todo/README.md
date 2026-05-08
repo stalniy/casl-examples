@@ -1,6 +1,6 @@
 # CASL Vue Todo list
 
-This example shows how to integrate [CASL](https://stalniy.github.io/casl/) authorization in Vue2 application.
+This example shows how to integrate [CASL](https://stalniy.github.io/casl/) authorization in a Vue 3 application powered by Vite.
 Read [Vue ACL with CASL](https://medium.com/@sergiy.stotskiy/vue-acl-with-casl-781a374b987a) for detailed explanation.
 
 
@@ -8,10 +8,10 @@ Read [Vue ACL with CASL](https://medium.com/@sergiy.stotskiy/vue-acl-with-casl-7
 
 ``` bash
 # install dependencies
-npm install
+pnpm install
 
 # serve with hot reload at localhost:8080
-npm run serve
+pnpm run dev
 ```
 
 ## Description

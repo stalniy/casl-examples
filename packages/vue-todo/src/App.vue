@@ -4,16 +4,8 @@
   </div>
 </template>
 
-<script lang="ts">
-import Vue from 'vue';
+<script setup lang="ts">
 import TodoList from './components/TodoList.vue';
-
-export default Vue.extend({
-  name: 'App',
-  components: {
-    TodoList
-  },
-});
 </script>
 
 <style src="./styles/app.css"></style>

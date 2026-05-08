@@ -1,25 +1,23 @@
 {
-  "name": "vue-ts",
+  "name": "vue-todo",
   "version": "0.1.0",
   "private": true,
-  "main": "src/main.ts",
   "scripts": {
-    "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build"
+    "start": "vite --host --port 8080",
+    "dev": "vite --host --port 8080",
+    "build": "vue-tsc --noEmit && vite build",
+    "preview": "vite preview --host --port 8080"
   },
   "dependencies": {
-    "@casl/ability": "^5.1.0",
-    "@casl/vue": "^1.2.3",
-    "core-js": "^3.6.4",
-    "vue": "^2.6.11"
+    "@casl/ability": "7.0.0-rc",
+    "@casl/vue": "3.0.0-rc",
+    "vue": "^3.5.33"
   },
   "devDependencies": {
-    "@babel/core": "^7.0.0",
-    "@types/node": "^13.13.2",
-    "@vue/cli-plugin-babel": "~5.0.8",
-    "@vue/cli-plugin-typescript": "~5.0.8",
-    "@vue/cli-service": "~5.0.8",
-    "typescript": "3.9.2",
-    "vue-template-compiler": "^2.6.11"
+    "@types/node": "^24.0.0",
+    "@vitejs/plugin-vue": "^6.0.1",
+    "typescript": "~6.0.2",
+    "vite": "^7.3.2",
+    "vue-tsc": "^3.0.6"
   }
 }

@@ -103,3 +103,5 @@ dist
 .tern-port
 
 src.es
+
+.DS_Store

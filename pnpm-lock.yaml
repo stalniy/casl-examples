@@ -185,12 +185,12 @@ importers:
   packages/hello-world:
     dependencies:
       '@casl/ability':
-        specifier: ^5.1.0
-        version: 5.4.4
+        specifier: 7.0.0-rc
+        version: 7.0.0-rc
     devDependencies:
       typescript:
-        specifier: 3.9.2
-        version: 3.9.2
+        specifier: ~6.0.0
+        version: 6.0.2
 
   packages/react-blog:
     dependencies:
@@ -27793,8 +27793,7 @@ snapshots:
 
   typescript@5.9.3: {}
 
-  typescript@6.0.2:
-    optional: true
+  typescript@6.0.2: {}
 
   unbox-primitive@1.1.0:
     dependencies:

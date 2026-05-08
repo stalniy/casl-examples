@@ -4,7 +4,7 @@
   "description": "CASL helloworld example",
   "main": "index.js",
   "scripts": {
-    "start": "node src/index.js"
+    "start": "node --experimental-strip-types src/index.ts"
   },
   "keywords": [
     "casl",
@@ -13,9 +13,9 @@
   "author": "Sergii Stotskyi <sergiy.stotskiy@freaksidea.com>",
   "license": "MIT",
   "dependencies": {
-    "@casl/ability": "^5.1.0"
+    "@casl/ability": "7.0.0-rc"
   },
   "devDependencies": {
-    "typescript": "3.9.2"
+    "typescript": "~6.0.0"
   }
 }

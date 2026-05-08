@@ -1,5 +1,5 @@
 import { subject } from "@casl/ability";
-import { User } from "@prisma/client";
+import type { User } from "../../prisma";
 import { FastifyInstance, FastifyPluginAsync } from "fastify";
 import { FromSchema } from "json-schema-to-ts";
 

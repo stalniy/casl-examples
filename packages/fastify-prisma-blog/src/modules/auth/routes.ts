@@ -24,7 +24,15 @@ function defineRegisterRoute(fastify: FastifyInstance) {
     schema,
   }, async function(req, reply) {
     const { email, password } = req.body;
-    const user = await this.prisma.user.findFirst({ where: { email } });
+    const user = await this.prisma.user.findFirst({
+      where: { email },
+      select: {
+        id: true,
+        email: true,
+        password: true,
+        role: true,
+      }
+    });
 
     if (!user || !isValidUserPassword(user, password)) {
       return reply.code(400).send({ message: 'Invalid login or password' });

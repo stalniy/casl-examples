@@ -1,6 +1,6 @@
 import { subject } from "@casl/ability";
-import { accessibleBy } from "@casl/prisma";
-import { Article } from '@prisma/client';
+import { accessibleBy } from "../../prismaAbilities";
+import type { Article } from '../../prisma';
 import { FastifyInstance, FastifyPluginAsync } from "fastify";
 import { FromSchema } from "json-schema-to-ts";
 
@@ -29,12 +29,12 @@ function defineFindAllArticles(fastify: FastifyInstance) {
     const { page, pageSize } = req.query;
     const [count, items] = await Promise.all([
       this.prisma.article.count({
-        where: accessibleBy(req.userAbility).Article
+        where: accessibleBy(req.userAbility).ofType('Article')
       }),
       this.prisma.article.findMany({
-        where: accessibleBy(req.userAbility).Article,
+        where: accessibleBy(req.userAbility).ofType('Article'),
         skip: (page - 1) * pageSize,
-        take: page,
+        take: pageSize,
         include: {
           createdBy: {
             select: {
@@ -148,15 +148,12 @@ function defineDeleteArticles(fastify: FastifyInstance) {
     const article = await this.prisma.article.findFirst({
       where: {
         id: req.params.id,
-        AND: accessibleBy(req.userAbility, 'delete').Article,
+        AND: accessibleBy(req.userAbility, 'delete').ofType('Article'),
       },
-      select: {
-        id: true
-      }
     });
     if (!article) return reply.code(404).send();
 
-    if (!article) return reply.code(403).send();
+    if (!req.userAbility.can('delete', subject('Article', article))) return reply.code(403).send();
 
     await this.prisma.article.delete({
       where: { id: article.id }

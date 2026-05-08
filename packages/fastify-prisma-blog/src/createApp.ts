@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from './prisma';
 import Fastify, { FastifyInstance } from 'fastify'
 import { AppConfig } from './config';
 import { authRoutes, provideAuthentication } from './modules/auth';

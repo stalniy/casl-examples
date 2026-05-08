@@ -1,22 +1,24 @@
-import { AbilityBuilder, PureAbility } from '@casl/ability';
-import { PrismaQuery, Subjects, createPrismaAbility } from '@casl/prisma';
-import { Article, Comment, User } from '@prisma/client';
+import { AbilityBuilder, Ability } from '@casl/ability';
+import { PrismaQuery, Subjects, createPrismaAbility } from '../../prismaAbilities';
+import type { Article, Comment, User } from '../../prisma';
 
-export type AppAbility = PureAbility<[string, 'all' | Subjects<{
+type AbilityUser = Pick<User, 'id' | 'role'>;
+
+export type AppAbility = Ability<[string, 'all' | Subjects<{
   User: User;
   Article: Article;
   Comment: Comment;
 }>], PrismaQuery>;
 
 let ANONYMOUS_ABILITY: AppAbility;
-export function defineAbilityFor(user?: User) {
-  if (user) return createPrismaAbility(defineRulesFor(user));
+export function defineAbilityFor(user?: AbilityUser) {
+  if (user) return createPrismaAbility<AppAbility>(defineRulesFor(user));
 
-  ANONYMOUS_ABILITY = ANONYMOUS_ABILITY || createPrismaAbility(defineRulesFor());
+  ANONYMOUS_ABILITY = ANONYMOUS_ABILITY || createPrismaAbility<AppAbility>(defineRulesFor());
   return ANONYMOUS_ABILITY;
 }
 
-export function defineRulesFor(user?: User) {
+export function defineRulesFor(user?: AbilityUser) {
   const builder = new AbilityBuilder<AppAbility>(createPrismaAbility);
   switch (user?.role) {
     case 'admin':
@@ -38,7 +40,7 @@ function defineAdminRules({ can }: AbilityBuilder<AppAbility>) {
   can('manage', 'all');
 }
 
-function defineWriterRules({ can }: AbilityBuilder<AppAbility>, user: User) {
+function defineWriterRules({ can }: AbilityBuilder<AppAbility>, user: AbilityUser) {
   can(['read', 'create', 'delete', 'update'], ['Article', 'Comment'], {
     author: user.id
   });

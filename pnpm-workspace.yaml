@@ -2,5 +2,9 @@ packages:
   - packages/**
 
 minimumReleaseAgeExclude:
-  - "@casl/ability@7.0.0-rc"
-  - "@casl/mongoose@9.0.0-rc"
+  - "@casl/ability"
+  - "@casl/angular"
+  - "@casl/mongoose"
+  - "@casl/react"
+  - "@casl/vue"
+  - "@casl/prisma"

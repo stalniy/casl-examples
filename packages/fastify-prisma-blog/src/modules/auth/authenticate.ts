@@ -1,9 +1,11 @@
 import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
-import { User } from '@prisma/client';
+import type { User } from '../../prisma';
 import { AppAbility, defineAbilityFor } from "./abilities";
 import { generateToken, verifyToken } from "./services";
 
 const TOKEN_PREFIX = 'Bearer';
+type AuthenticatedUser = Pick<User, 'id' | 'email' | 'password' | 'role'> & Partial<Pick<User, 'name' | 'createdAt' | 'updatedAt'>>;
+
 export async function authenticate(this: FastifyInstance, req: FastifyRequest, reply: FastifyReply) {
     let token = req.headers.authorization || await generateToken(this.appConfig);
     if (token.startsWith('Bearer')) token = token.slice(TOKEN_PREFIX.length + 1);
@@ -23,7 +25,13 @@ export async function authenticate(this: FastifyInstance, req: FastifyRequest, r
         } as unknown as User;
     } else {
         const user = await this.prisma.user.findFirst({
-            where: { id: payload.id }
+            where: { id: payload.id },
+            select: {
+                id: true,
+                email: true,
+                password: true,
+                role: true,
+            }
         });
         if (!user) return reply.code(401).send();
         req.user = user;
@@ -39,7 +47,7 @@ export function provideAuthentication(fastify: FastifyInstance) {
 
 declare module 'fastify' {
     export interface FastifyRequest {
-        user?: User;
+        user?: AuthenticatedUser;
         userAbility: AppAbility;
     }
 }

@@ -2,7 +2,7 @@ version: '3.1'
 
 services:
   mongo:
-    image: prismagraphql/mongo-single-replica:4.4.3-bionic
+    image: prismagraphql/mongo-single-replica:5.0.3
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: blogpwd

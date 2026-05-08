@@ -33,10 +33,7 @@ module.exports = async function createApp() {
   app.use(errorHandler);
 
   mongoose.Promise = global.Promise;
-  await mongoose.connect('mongodb://root:blogpwd@localhost:27017/blog?authSource=admin&retryWrites=true&w=majority', {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  });
+  await mongoose.connect('mongodb://root:blogpwd@localhost:27017/blog?authSource=admin&retryWrites=true&w=majority');
 
   app.on('close', () => mongoose.disconnect());
 

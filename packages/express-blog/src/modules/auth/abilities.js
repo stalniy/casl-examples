@@ -1,18 +1,18 @@
-const { AbilityBuilder, Ability } = require('@casl/ability');
+const { AbilityBuilder, createMongoAbility } = require('@casl/ability');
 
 let ANONYMOUS_ABILITY;
 
 function defineAbilityFor(user) {
   if (user) {
-    return new Ability(defineRulesFor(user));
+    return createMongoAbility(defineRulesFor(user));
   }
 
-  ANONYMOUS_ABILITY = ANONYMOUS_ABILITY || new Ability(defineRulesFor({}));
+  ANONYMOUS_ABILITY = ANONYMOUS_ABILITY || createMongoAbility(defineRulesFor({}));
   return ANONYMOUS_ABILITY;
 }
 
 function defineRulesFor(user) {
-  const builder = new AbilityBuilder(Ability);
+  const builder = new AbilityBuilder(createMongoAbility);
 
   switch (user.role) {
     case 'admin':

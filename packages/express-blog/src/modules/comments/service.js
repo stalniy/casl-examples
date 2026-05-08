@@ -4,7 +4,7 @@ const { accessibleBy } = require('@casl/mongoose');
 const Comment = require('./model')();
 
 async function findAll(req, res) {
-  const comments = await Comment.find(accessibleBy(req.ability).Comment);
+  const comments = await Comment.find(accessibleBy(req.ability).ofType('Comment'));
 
   res.send({ items: comments });
 }

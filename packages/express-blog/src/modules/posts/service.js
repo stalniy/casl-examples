@@ -5,14 +5,12 @@ const Article = require('./model')();
 const { parsePagination } = require('../utils');
 
 async function findAll(req, res) {
-  const articlesQuery = Article.find(accessibleBy(req.ability).ofType('Article'));
+  const articlesQuery = accessibleBy(req.ability).ofType('Article');
   const [page, pageSize] = parsePagination(req.query);
 
   const [count, articles] = await Promise.all([
-    Article.find()
-      .merge(articlesQuery)
-      .count(),
-    articlesQuery
+    Article.find(articlesQuery).countDocuments(),
+    Article.find(articlesQuery)
       .populate('createdBy', 'email')
       .sort({ createdAt: -1 })
       .limit(pageSize)

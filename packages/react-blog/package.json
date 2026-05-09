@@ -1,10 +1,10 @@
 {
-  "name": "react-todo",
+  "name": "react-blog",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@casl/ability": "^6.8.0",
-    "@casl/react": "^6.0.0",
+    "@casl/ability": "7.0.0-rc",
+    "@casl/react": "7.0.0-rc",
     "@material-ui/core": "^4.11.0",
     "@material-ui/icons": "^4.9.1",
     "@material-ui/lab": "^4.0.0-alpha.56",

@@ -29,12 +29,12 @@ describe('Login', () => {
   it('requires email to be non-empty', () => {
     login(' ');
 
-    cy.get('.v-messages__message, .Mui-error').should('exist');
+    cy.get('.field-errors, .Mui-error').should('exist');
   })
 
   it('requires password to be non-empty', () => {
     login('some.email@example.com', ' ');
 
-    cy.get('.v-messages__message, .Mui-error').should('exist');
+    cy.get('.field-errors, .Mui-error').should('exist');
   })
 })

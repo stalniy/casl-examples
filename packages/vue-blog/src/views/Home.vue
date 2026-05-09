@@ -1,18 +1,17 @@
 <template>
-  <v-layout column>
+  <section>
     <ArticleList />
-  </v-layout>
+  </section>
 </template>
 
-<script>
-  import ArticleList from '../components/ArticleList'
+<script setup>
+import { onMounted } from 'vue';
+import { useStore } from 'vuex';
+import ArticleList from '../components/ArticleList.vue';
 
-  export default {
-    components: {
-      ArticleList
-    },
-    created() {
-      this.$store.dispatch('setTitle', 'List of Articles')
-    }
-  }
+const store = useStore();
+
+onMounted(() => {
+  store.dispatch('setTitle', 'List of Articles');
+});
 </script>

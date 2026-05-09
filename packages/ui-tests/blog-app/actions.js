@@ -20,13 +20,13 @@ export function login(email, password = '123456') {
 }
 
 export function logout() {
-  cy.get('.app-header *[name=menu]').click();
+  openMenuIfNeeded();
   cy.wait(200);
   cy.get('#logout').click();
 }
 
 export function createArticle(article) {
-  cy.get('.app-header *[name=menu]').click();
+  openMenuIfNeeded();
   cy.get('#create-article').click();
 
   fillArticleForm({
@@ -52,7 +52,7 @@ function fillArticleForm(article) {
   }
 
   if (article.published) {
-    cy.get('.checkbox[name=published] label').click();
+    cy.get('.checkbox[name=published] label, .toggle').click();
   }
 }
 
@@ -87,4 +87,8 @@ export function ensureHasArticle(article) {
         createArticle(article);
       }
     });
+}
+
+function openMenuIfNeeded() {
+  cy.get('.app-header *[name=menu], .header-actions').click();
 }

@@ -3,34 +3,23 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build"
+    "start": "vite --host --port 8080",
+    "dev": "vite --host --port 8080",
+    "build": "vue-tsc --noEmit && vite build",
+    "preview": "vite preview --host --port 8080"
   },
   "dependencies": {
-    "@casl/ability": "^5.1.0",
-    "@casl/vue": "^1.2.0",
-    "@mdi/font": "^5.8.55",
-    "@vue/cli-plugin-typescript": "^5.0.8",
-    "vue": "^2.6.11",
-    "vue-router": "^3.3.4",
-    "vuetify": "^1.5.24",
-    "vuex": "^3.5.1"
+    "@casl/ability": "7.0.0-rc",
+    "@casl/vue": "3.0.0-rc",
+    "vue": "^3.5.33",
+    "vue-router": "^4.6.3",
+    "vuex": "^4.1.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.0.0",
-    "@vue/babel-preset-app": "^4.4.6",
-    "@vue/cli-plugin-babel": "^5.0.8",
-    "@vue/cli-service": "^5.0.8",
-    "core-js": "^3.6.5",
-    "node-sass": "^8.0.0",
-    "sass-loader": "^10.0.2",
-    "typescript": "3.9.2",
-    "vue-template-compiler": "^2.6.11",
-    "webpack": "^5.78.0"
-  },
-  "browserslist": [
-    "> 1%",
-    "last 2 versions",
-    "not ie <= 8"
-  ]
+    "@types/node": "^24.0.0",
+    "@vitejs/plugin-vue": "^6.0.1",
+    "typescript": "~6.0.2",
+    "vite": "^7.3.2",
+    "vue-tsc": "^3.0.6"
+  }
 }

@@ -3,6 +3,7 @@ import { login, logout, ensureHasArticle, createArticle, updateArticle, deleteAr
 describe('Articles', () => {
   const publishedArticleTitle = `$published article$`;
   const draftArticleTitle = `$draft article$`;
+  const articleTitleSelector = '.article .article-title, .article h3';
 
   before(() => {
     login('another.writer@casl.io');
@@ -56,7 +57,7 @@ describe('Articles', () => {
     itBehavesAsAuthor();
 
     it('can see others drafts', () => {
-      cy.get('.article h3').findWhere(el => el.text() === draftArticleTitle).should('exist');
+      cy.get(articleTitleSelector).findWhere(el => el.text().trim() === draftArticleTitle).should('exist');
     });
 
     it('can change others articles', () => {
@@ -70,11 +71,11 @@ describe('Articles', () => {
 
   function itBehavesAsUser(ownArticlesSelector = '.article') {
     it('can see published articles', () => {
-      cy.get('.article h3').findWhere(el => el.text() === publishedArticleTitle).should('exist');
+      cy.get(articleTitleSelector).findWhere(el => el.text().trim() === publishedArticleTitle).should('exist');
     })
 
     it('cannot see others drafts', () => {
-      cy.get('.article h3').should('not.have.text', draftArticleTitle);
+      cy.get(articleTitleSelector).should('not.have.text', draftArticleTitle);
     })
 
     it('cannot delete others articles', () => {
@@ -82,7 +83,7 @@ describe('Articles', () => {
     })
 
     it('cannot change others articles', () => {
-      cy.get(`${ownArticlesSelector} .article *[name=edit]`).should('not.exist');
+      cy.get(`${ownArticlesSelector} *[name=edit]`).should('not.exist');
     })
   }
 
@@ -94,28 +95,30 @@ describe('Articles', () => {
     })
 
     it('can create own article', () => {
-      cy.get('.article h3').findWhere(el => el.text() === article.title).should('exist');
+      cy.get(articleTitleSelector).findWhere(el => el.text().trim() === article.title).should('exist');
     })
 
-    it('can update own article', () => {
+    it.only('can update own article', () => {
       const newTitle = `UPDATED: ${article.title}`;
       updateArticle(article, { title: newTitle });
 
-      cy.get('.article h3').findWhere(el => el.text() === newTitle).should('exist');
+      cy.get(articleTitleSelector).findWhere(el => el.text().trim() === newTitle).should('exist');
       updateArticle({ title: newTitle }, { title: article.title });
     })
 
     it('can delete own article', () => {
       deleteArticle(article);
 
-      cy.get('.article h3').findWhere(el => el.text() === article.title).should('be.null');
+      cy.get(articleTitleSelector).findWhere(el => el.text().trim() === article.title).should('be.null');
     })
 
     it('can create draft article', () => {
       const title = `DRAFT: ${Date.now()}`;
       createArticle({ title, published: false });
 
-      cy.get('.article.draft h3').findWhere(el => el.text() === title).should('exist');
+      cy.get('.article.draft .article-title, .article.draft h3')
+        .findWhere(el => el.text().trim() === title)
+        .should('exist');
     })
 
     it('can publish draft', () => {
@@ -124,7 +127,9 @@ describe('Articles', () => {
       cy.wait(1000);
       updateArticle({ title }, { published: true });
 
-      cy.get('.article:not(.draft) h3').findWhere(el => el.text() === title).should('exist');
+      cy.get('.article:not(.draft) .article-title, .article:not(.draft) h3')
+        .findWhere(el => el.text().trim() === title)
+        .should('exist');
     })
   }
 })

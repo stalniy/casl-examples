@@ -1,135 +1,147 @@
-import { login, logout, ensureHasArticle, createArticle, updateArticle, deleteArticle } from './actions';
+const { test, expect } = require('@playwright/test');
+const {
+  articleCard,
+  articleTitleLink,
+  createArticle,
+  createArticleViaApi,
+  deleteArticle,
+  ensureHasArticle,
+  login,
+  updateArticle,
+} = require('./actions');
 
-describe('Articles', () => {
-  const publishedArticleTitle = `$published article$`;
-  const draftArticleTitle = `$draft article$`;
-  const articleTitleSelector = '.article .article-title, .article h3';
+const WRITER_EMAIL = 'writer@casl.io';
+const ANOTHER_WRITER_EMAIL = 'another.writer@casl.io';
+const ADMIN_EMAIL = 'admin@casl.io';
+const publishedArticleTitle = '$published article$';
+const draftArticleTitle = '$draft article$';
 
-  before(() => {
-    login('another.writer@casl.io');
-    ensureHasArticle({
+test.describe('Articles', () => {
+  test.beforeAll(async () => {
+    await ensureHasArticle(ANOTHER_WRITER_EMAIL, {
       title: publishedArticleTitle,
     });
-    ensureHasArticle({
+    await ensureHasArticle(ANOTHER_WRITER_EMAIL, {
       title: draftArticleTitle,
-      published: false
+      published: false,
     });
-    logout();
-  })
+  });
 
-  describe('when user is not logged in', () => {
-    before(() => {
-      cy.visit('/');
-    });
-
-    itBehavesAsUser();
-
-    it('cannot create article', () => {
-      cy.get('body')
-        .then(($body) => {
-          expect($body.find('#create-article').length).to.equal(0);
-        })
-    })
-  })
-
-  describe('when user is a writer', () => {
-    before(() => {
-      login('writer@casl.io');
-    })
-
-    itBehavesAsUser('.article:not(.own)');
-    itBehavesAsAuthor();
-  })
-
-  describe('when user is an admin', () => {
-    const notOwnArticle = { title: `Someone else article ${Date.now()}` };
-
-    before(() => {
-      login('another.writer@casl.io');
-      createArticle(notOwnArticle);
-      logout();
-    })
-
-    before(() => {
-      login('admin@casl.io');
-    })
-
-    itBehavesAsAuthor();
-
-    it('can see others drafts', () => {
-      cy.get(articleTitleSelector).findWhere(el => el.text().trim() === draftArticleTitle).should('exist');
+  test.describe('when user is not logged in', () => {
+    test.beforeEach(async ({ page }) => {
+      await page.goto('/');
     });
 
-    it('can change others articles', () => {
-      cy.get('.article:not(.own) *[name=edit]').should('exist');
+    behavesAsReader();
+
+    test('cannot create article', async ({ page }) => {
+      await expect(page.locator('#create-article')).toHaveCount(0);
+    });
+  });
+
+  test.describe('when user is a writer', () => {
+    test.beforeEach(async ({ page }) => {
+      await login(page, WRITER_EMAIL);
     });
 
-    it('can delete others articles', () => {
-      cy.get('.article:not(.own) *[name=delete]').should('exist');
+    behavesAsReader();
+    behavesAsAuthor(WRITER_EMAIL);
+  });
+
+  test.describe('when user is an admin', () => {
+    test.beforeEach(async ({ page }) => {
+      await login(page, ADMIN_EMAIL);
     });
-  })
 
-  function itBehavesAsUser(ownArticlesSelector = '.article') {
-    it('can see published articles', () => {
-      cy.get(articleTitleSelector).findWhere(el => el.text().trim() === publishedArticleTitle).should('exist');
-    })
+    behavesAsAuthor(ADMIN_EMAIL);
 
-    it('cannot see others drafts', () => {
-      cy.get(articleTitleSelector).should('not.have.text', draftArticleTitle);
-    })
+    test('can see others drafts', async ({ page }) => {
+      await page.goto('/');
+      await expect(articleTitleLink(page, draftArticleTitle)).toBeVisible();
+    });
 
-    it('cannot delete others articles', () => {
-      cy.get(`${ownArticlesSelector} *[name=delete]`).should('not.exist');
-    })
+    test('can change others articles', async ({ page }) => {
+      await page.goto('/');
+      await expect(articleCard(page, publishedArticleTitle).locator('[name=edit]')).toBeVisible();
+    });
 
-    it('cannot change others articles', () => {
-      cy.get(`${ownArticlesSelector} *[name=edit]`).should('not.exist');
-    })
-  }
+    test('can delete others articles', async ({ page }) => {
+      await page.goto('/');
+      await expect(articleCard(page, publishedArticleTitle).locator('[name=delete]')).toBeVisible();
+    });
+  });
+});
 
-  function itBehavesAsAuthor() {
-    const article = { title: `own article ${Date.now()}` };
+function behavesAsReader() {
+  test('can see published articles', async ({ page }) => {
+    await page.goto('/');
+    await expect(articleTitleLink(page, publishedArticleTitle)).toBeVisible();
+  });
 
-    before(() => {
-      createArticle(article);
-    })
+  test('cannot see others drafts', async ({ page }) => {
+    await page.goto('/');
+    await expect(articleTitleLink(page, draftArticleTitle)).toHaveCount(0);
+  });
 
-    it('can create own article', () => {
-      cy.get(articleTitleSelector).findWhere(el => el.text().trim() === article.title).should('exist');
-    })
+  test('cannot delete others articles', async ({ page }) => {
+    await page.goto('/');
+    await expect(articleCard(page, publishedArticleTitle).locator('[name=delete]')).toHaveCount(0);
+  });
 
-    it.only('can update own article', () => {
-      const newTitle = `UPDATED: ${article.title}`;
-      updateArticle(article, { title: newTitle });
+  test('cannot change others articles', async ({ page }) => {
+    await page.goto('/');
+    await expect(articleCard(page, publishedArticleTitle).locator('[name=edit]')).toHaveCount(0);
+  });
+}
 
-      cy.get(articleTitleSelector).findWhere(el => el.text().trim() === newTitle).should('exist');
-      updateArticle({ title: newTitle }, { title: article.title });
-    })
+function behavesAsAuthor(email) {
+  test('can create own article', async ({ page }) => {
+    const article = { title: uniqueTitle('own article') };
 
-    it('can delete own article', () => {
-      deleteArticle(article);
+    await createArticle(page, article);
+    await expect(articleCard(page, article.title)).toHaveClass(/own/);
+  });
 
-      cy.get(articleTitleSelector).findWhere(el => el.text().trim() === article.title).should('be.null');
-    })
+  test('can update own article', async ({ page }) => {
+    const article = await createArticleViaApi(email, {
+      title: uniqueTitle('editable article'),
+    });
+    const newTitle = `UPDATED: ${article.title}`;
 
-    it('can create draft article', () => {
-      const title = `DRAFT: ${Date.now()}`;
-      createArticle({ title, published: false });
+    await updateArticle(page, article, { title: newTitle });
+    await expect(articleTitleLink(page, newTitle)).toBeVisible();
+  });
 
-      cy.get('.article.draft .article-title, .article.draft h3')
-        .findWhere(el => el.text().trim() === title)
-        .should('exist');
-    })
+  test('can delete own article', async ({ page }) => {
+    const article = await createArticleViaApi(email, {
+      title: uniqueTitle('deletable article'),
+    });
 
-    it('can publish draft', () => {
-      const title = `DRAFT2: ${Date.now()}`;
-      createArticle({ title, published: false });
-      cy.wait(1000);
-      updateArticle({ title }, { published: true });
+    await deleteArticle(page, article);
+    await expect(articleTitleLink(page, article.title)).toHaveCount(0);
+  });
 
-      cy.get('.article:not(.draft) .article-title, .article:not(.draft) h3')
-        .findWhere(el => el.text().trim() === title)
-        .should('exist');
-    })
-  }
-})
+  test('can create draft article', async ({ page }) => {
+    const article = {
+      title: uniqueTitle('draft article'),
+      published: false,
+    };
+
+    await createArticle(page, article);
+    await expect(articleCard(page, article.title)).toHaveClass(/draft/);
+  });
+
+  test('can publish draft', async ({ page }) => {
+    const article = await createArticleViaApi(email, {
+      title: uniqueTitle('draft to publish'),
+      published: false,
+    });
+
+    await updateArticle(page, article, { published: true });
+    await expect(articleCard(page, article.title)).not.toHaveClass(/draft/);
+  });
+}
+
+function uniqueTitle(prefix) {
+  return `${prefix} ${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+}

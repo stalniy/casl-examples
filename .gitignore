@@ -105,3 +105,4 @@ dist
 src.es
 
 .DS_Store
+test-results/

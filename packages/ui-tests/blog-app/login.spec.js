@@ -1,40 +1,29 @@
-import { login } from './actions';
+const { test, expect } = require('@playwright/test');
+const { login, openLogin, submitLogin } = require('./actions');
 
-describe('Login', () => {
-  beforeEach(() => {
-    cy.visit('/login')
+test.describe('Login', () => {
+  test.beforeEach(async ({ page }) => {
+    await openLogin(page);
   });
 
-  it('can login as a writer@casl.io', () => {
-    const email = 'writer@casl.io';
-    login(email);
+  for (const email of ['writer@casl.io', 'another.writer@casl.io', 'admin@casl.io']) {
+    test(`can login as ${email}`, async ({ page }) => {
+      await login(page, email);
+      await expect(page.locator('#user-email')).toHaveText(email);
+    });
+  }
 
-    cy.get('#user-email').should('have.text', email);
-  })
+  test('requires email to be non-empty', async ({ page }) => {
+    await submitLogin(page, ' ');
 
-  it('can login as a another.writer@casl.io', () => {
-    const email = 'another.writer@casl.io';
-    login(email);
+    await expect(page.locator('.field-errors, .MuiFormHelperText-root.Mui-error').first()).toBeVisible();
+    await expect(page.locator('#user-email')).toHaveCount(0);
+  });
 
-    cy.get('#user-email').should('have.text', email);
-  })
+  test('requires password to be non-empty', async ({ page }) => {
+    await submitLogin(page, 'some.email@example.com', ' ');
 
-  it('can login as an admin admin@casl.io', () => {
-    const email = 'admin@casl.io';
-    login(email);
-
-    cy.get('#user-email').should('have.text', email);
-  })
-
-  it('requires email to be non-empty', () => {
-    login(' ');
-
-    cy.get('.field-errors, .Mui-error').should('exist');
-  })
-
-  it('requires password to be non-empty', () => {
-    login('some.email@example.com', ' ');
-
-    cy.get('.field-errors, .Mui-error').should('exist');
-  })
-})
+    await expect(page.locator('.field-errors, .MuiFormHelperText-root.Mui-error').first()).toBeVisible();
+    await expect(page.locator('#user-email')).toHaveCount(0);
+  });
+});

@@ -1,116 +1,133 @@
-describe('Todo app', () => {
-  before(() => {
-    cy.visit('/')
-  })
+const { test, expect } = require('@playwright/test');
 
-  it('has main screen', () => {
-    cy.get('input[name=title]').should('exist')
-    cy.get('select[name=assignee]').should('exist');
-    cy.get('.footer').should('exist');
+test.describe('Todo app', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto('/');
   });
 
-  describe('user as a "member"', () => {
-    before(() => {
-      selectRole('Member');
+  test('has main screen', async ({ page }) => {
+    await expect(page.locator('input[name="title"]')).toBeVisible();
+    await expect(page.locator('select[name="assignee"]')).toBeVisible();
+    await expect(page.locator('.footer')).toBeVisible();
+  });
+
+  test.describe('user as a "member"', () => {
+    test.beforeEach(async ({ page }) => {
+      await selectRole(page, 'Member');
     });
 
     managingOwnTasks();
 
-    it('create a task and assign it to somebody', () => {
-      const todo = createTodo('somebody else task', 'John Doe');
-      todo().should('exist');
+    test('create a task and assign it to somebody', async ({ page }) => {
+      const todo = await createTodo(page, uniqueTitle('somebody else task'), 'John Doe');
+
+      await expect(todo).toBeVisible();
     });
 
-    it('cannot change somebody else tasks', () => {
-      const todo = createTodo('somebody else task to change', 'John Doe');
+    test('cannot change somebody else tasks', async ({ page }) => {
+      const todo = await createTodo(page, uniqueTitle('somebody else task to change'), 'John Doe');
 
-      todo().find('label').dblclick();
-      todo().find('input.edit').should('not.exist');
+      await todo.locator('label').dblclick();
+      await expect(todo.locator('input.edit')).toHaveCount(0);
     });
 
-    it('cannot delete somebody else tasks', () => {
-      const todo = createTodo('somebody else task to delete', 'John Doe');
+    test('cannot delete somebody else tasks', async ({ page }) => {
+      const todo = await createTodo(page, uniqueTitle('somebody else task to delete'), 'John Doe');
 
-      todo().find('button.destroy').should('not.exist');
+      await expect(todo.locator('button.destroy')).toHaveCount(0);
     });
-  })
+  });
 
-  describe('user as an "admin"', () => {
-    before(() => {
-      selectRole('Admin');
+  test.describe('user as an "admin"', () => {
+    test.beforeEach(async ({ page }) => {
+      await selectRole(page, 'Admin');
     });
 
     managingOwnTasks();
 
-    it('can change somebody else tasks', () => {
-      const todo = createTodo('somebody else task to change', 'John Doe');
-      const newTitle = 'changed by admin';
+    test('can change somebody else tasks', async ({ page }) => {
+      const title = uniqueTitle('somebody else task to change');
+      const todo = await createTodo(page, title, 'John Doe');
+      const newTitle = uniqueTitle('changed by admin');
 
-      todo().find('label').dblclick();
-      todo().find('input.edit')
-        .type('{selectall}')
-        .type(newTitle)
-        .type('{enter}');
+      await todo.locator('label').dblclick();
+      const editInput = editingTodoInput(page);
+      await expect(editInput).toBeVisible();
+      await editInput.fill(newTitle);
+      await editInput.press('Enter');
 
-      todo().find('label').should('have.text', newTitle);
+      await expect(todoByTitle(page, newTitle).locator('label')).toHaveText(newTitle);
     });
 
-    it('can delete somebody else tasks', () => {
-      const todo = createTodo('somebody else task to delete', 'John Doe');
-      const current = todo();
+    test('can delete somebody else tasks', async ({ page }) => {
+      const title = uniqueTitle('somebody else task to delete');
+      const todo = await createTodo(page, title, 'John Doe');
 
-      current.find('button.destroy').click();
-      current.should('not.exist');
+      await todo.hover();
+      await todo.locator('button.destroy').click();
+      await expect(todoByTitle(page, title)).toHaveCount(0);
     });
-  })
+  });
+});
 
-  function managingOwnTasks() {
-    it('can create task and assign it to yourself', () => {
-      const title = genTitle('new todo');
-      const todo = createTodo(title, 'me');
+function managingOwnTasks() {
+  test('can create task and assign it to yourself', async ({ page }) => {
+    const title = uniqueTitle('new todo');
+    const todo = await createTodo(page, title, 'me');
 
-      todo().find('label').should('have.text', title);
-    });
+    await expect(todo.locator('label')).toHaveText(title);
+  });
 
-    it('can change own task', () => {
-      const title = genTitle('edit');
-      const todo = createTodo(title, 'me');
+  test('can change own task', async ({ page }) => {
+    const title = uniqueTitle('edit');
+    const newTitle = `${title}_changed`;
+    const todo = await createTodo(page, title, 'me');
 
-      todo().find('label').dblclick();
-      todo().find('input.edit')
-        .type('_changed')
-        .type('{enter}');
-      todo().find('input.toggle').click();
+    await todo.locator('label').dblclick();
+    const editInput = editingTodoInput(page);
+    await expect(editInput).toBeVisible();
+    await editInput.fill(newTitle);
+    await editInput.press('Enter');
+    await todoByTitle(page, newTitle).locator('input.toggle').check();
 
-      todo().find('label').should('have.text', `${title}_changed`);
-      todo().should('have.class', 'completed');
-    })
+    await expect(todoByTitle(page, newTitle).locator('label')).toHaveText(newTitle);
+    await expect(todoByTitle(page, newTitle)).toHaveClass(/completed/);
+  });
 
-    it('can delete own task', () => {
-      const title = genTitle();
-      const todo = createTodo(title, 'me');
-      const currentTodo = todo();
+  test('can delete own task', async ({ page }) => {
+    const title = uniqueTitle('todo');
+    const todo = await createTodo(page, title, 'me');
 
-      currentTodo.find('button.destroy').click();
-      currentTodo.should('not.exist');
-    })
-  }
+    await todo.hover();
+    await todo.locator('button.destroy').click();
+    await expect(todoByTitle(page, title)).toHaveCount(0);
+  });
+}
 
-  function createTodo(title, assignee) {
-    cy.get('select[name=assignee]').select(assignee);
-    cy.get('input[name=title]')
-      .type(title)
-      .type('{enter}');
+async function createTodo(page, title, assignee) {
+  await page.locator('select[name="assignee"]').selectOption({ label: assignee });
+  await page.locator('input[name="title"]').fill(title);
+  await page.locator('input[name="title"]').press('Enter');
 
+  const todo = todoByTitle(page, title);
+  await expect(todo).toBeVisible();
+  return todo;
+}
 
-    return () => cy.get('.todo-list .todo').last();
-  }
+function todoByTitle(page, title) {
+  return page.locator('.todo-list .todo').filter({
+    has: page.locator('label', { hasText: title }),
+  }).first();
+}
 
-  function selectRole(name) {
-    cy.get('.roles button').contains(name).click();
-  }
+function editingTodoInput(page) {
+  return page.locator('.todo-list .todo.editing input.edit');
+}
 
-  function genTitle(prefix = 'todo') {
-    return `${prefix} #${Date.now()}`;
-  }
-})
+async function selectRole(page, name) {
+  await page.getByRole('button', { name, exact: true }).click();
+}
+
+function uniqueTitle(prefix) {
+  return `${prefix} #${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+}

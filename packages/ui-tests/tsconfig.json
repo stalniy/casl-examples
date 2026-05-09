@@ -2,10 +2,11 @@
   "compilerOptions": {
     "allowJs": true,
     "types": [
-      "cypress"
+      "node",
+      "@playwright/test"
     ]
   },
   "include": [
-    "**/*.spec.js"
+    "**/*.js"
   ]
 }

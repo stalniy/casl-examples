@@ -11,8 +11,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@casl/ability": "7.0.0-rc",
-    "@casl/prisma": "2.0.0-rc",
+    "@casl/ability": "^7.0.0",
+    "@casl/prisma": "^2.0.0",
     "@prisma/client": "6.19.0",
     "fastify": "^4.17.0",
     "jotenv": "^1.1.1",

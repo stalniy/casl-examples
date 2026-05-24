@@ -9,8 +9,8 @@
     "preview": "vite preview --host --port 8080"
   },
   "dependencies": {
-    "@casl/ability": "7.0.0-rc",
-    "@casl/vue": "3.0.0-rc",
+    "@casl/ability": "^7.0.0",
+    "@casl/vue": "^3.0.0",
     "vue": "^3.5.33",
     "vue-router": "^4.6.3",
     "vuex": "^4.1.0"

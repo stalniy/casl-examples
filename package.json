@@ -23,9 +23,6 @@
     "url": "https://github.com/stalniy/casl-examples/issues"
   },
   "homepage": "https://github.com/stalniy/casl-examples#readme",
-  "devDependencies": {
-    "typescript": "3.9.2"
-  },
   "volta": {
     "node": "24.14.1",
     "npm": "11.11.0"

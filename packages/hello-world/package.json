@@ -13,7 +13,7 @@
   "author": "Sergii Stotskyi <sergiy.stotskiy@freaksidea.com>",
   "license": "MIT",
   "dependencies": {
-    "@casl/ability": "7.0.0-rc"
+    "@casl/ability": "^7.0.0"
   },
   "devDependencies": {
     "typescript": "~6.0.0"

@@ -3,10 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@casl/ability": "7.0.0-rc",
-    "@casl/react": "7.0.0-rc",
-    "react": "19.2.5",
-    "react-dom": "19.2.5"
+    "@casl/ability": "^7.0.0",
+    "@casl/react": "^7.0.0",
+    "react": "^19.2.5",
+    "react-dom": "^19.2.5"
   },
   "devDependencies": {
     "@types/node": "~24.0.0",

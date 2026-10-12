@@ -20,3 +20,4 @@ minimumReleaseAgeExclude:
   - "@casl/react"
   - "@casl/vue"
   - "@casl/prisma"
+  - "@ucast/sql"

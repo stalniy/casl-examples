@@ -64,6 +64,7 @@ typings/
 
 # Output of 'npm pack'
 *.tgz
+!packages/fastify-ucast-sql-blog/vendor/ucast-sql-0.2.1.tgz
 
 # Yarn Integrity file
 .yarn-integrity

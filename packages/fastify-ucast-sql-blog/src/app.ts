@@ -51,20 +51,20 @@ export async function createApp(config: AppConfig, injectedRepository?: BlogRepo
   });
   app.get('/api/users/:id', async (req: any, reply) => {
     const user = await repository.findUserById(req.params.id, req.userAbility);
-    return user ? { item: user } : reply.code(404).send();
+    return user ? { item: user } : reply.code(await repository.userExists(req.params.id) ? 403 : 404).send();
   });
   app.patch('/api/users/:id', { schema: { body: userPatch } }, async (req: any, reply) => {
     const existing = await repository.findUserById(req.params.id, req.userAbility);
-    if (!existing) return reply.code(404).send();
+    if (!existing) return reply.code(await repository.userExists(req.params.id) ? 403 : 404).send();
     const proposed = { ...existing, ...req.body, updatedAt: new Date() };
-    if (!req.userAbility.can('update', subject('User', proposed))) return reply.code(404).send();
+    if (!req.userAbility.can('update', subject('User', proposed))) return reply.code(403).send();
     const user = await repository.updateUser(req.params.id, req.body, req.userAbility);
-    return user ? { item: user } : reply.code(404).send();
+    return user ? { item: user } : reply.code(await repository.userExists(req.params.id) ? 403 : 404).send();
   });
   app.get('/api/articles', { schema: { querystring: { type: 'object', required: ['page', 'pageSize'], properties: { page: { type: 'integer', minimum: 1, default: 1 }, pageSize: { type: 'integer', minimum: 5, maximum: 100, default: 100 } } } } }, async (req: any) => repository.listArticles(req.userAbility, req.query.page, req.query.pageSize));
   app.get('/api/articles/:id', async (req: any, reply) => {
     const item = await repository.findArticle(req.params.id, req.userAbility);
-    return item ? { item } : reply.code(404).send();
+    return item ? { item } : reply.code(await repository.articleExists(req.params.id) ? 403 : 404).send();
   });
   app.post('/api/articles', { schema: { body: articleBody } }, async (req: any, reply) => {
     const now = new Date();
@@ -76,7 +76,7 @@ export async function createApp(config: AppConfig, injectedRepository?: BlogRepo
   app.patch('/api/articles/:id', { schema: { body: articlePatch } }, async (req: any, reply) => {
     try {
       const item = await repository.updateArticle(req.params.id, req.body, req.userAbility);
-      return item ? { item } : reply.code(404).send();
+      return item ? { item } : reply.code(await repository.articleExists(req.params.id) ? 403 : 404).send();
     } catch (error) {
       if (error instanceof PublishDeniedError) return reply.code(403).send();
       throw error;
@@ -84,7 +84,7 @@ export async function createApp(config: AppConfig, injectedRepository?: BlogRepo
   });
   app.delete('/api/articles/:id', async (req: any, reply) => {
     const item = await repository.deleteArticle(req.params.id, req.userAbility);
-    return item ? { item } : reply.code(404).send();
+    return item ? { item } : reply.code(await repository.articleExists(req.params.id) ? 403 : 404).send();
   });
   return app;
 }

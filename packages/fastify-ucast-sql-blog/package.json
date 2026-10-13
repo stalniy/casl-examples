@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "start": "tsx src/server.ts",
+    "dev": "tsx --watch src/server.ts",
     "schema:mikro": "tsx src/schema.ts mikro",
     "seed:mikro": "tsx src/seed.ts mikro",
     "schema:typeorm": "tsx src/schema.ts typeorm",

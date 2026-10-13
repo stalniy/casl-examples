@@ -1,8 +1,8 @@
 import Fastify, { type FastifyInstance } from 'fastify';
 import type { AppConfig } from './config.js';
 import type { BlogRepository } from './repositories/types.js';
-import { createMikroRepository } from './repositories/mikro.js';
-import { createTypeOrmRepository } from './repositories/typeorm.js';
+import { initializeOrm } from './services/orm.js';
+import { BlogService, BlogServiceError } from './services/blog.js';
 import { authRoutes, provideAuthentication } from './modules/auth/index.js';
 import { usersRoutes } from './modules/users/index.js';
 import { articlesRoutes } from './modules/articles/index.js';
@@ -11,12 +11,16 @@ export async function createApp(config: AppConfig, injectedRepository?: BlogRepo
   if (!['mikro', 'typeorm'].includes(config.IMPLEMENTATION)) {
     throw new Error(`Unknown implementation "${config.IMPLEMENTATION}". Use mikro or typeorm.`);
   }
-  const filename = config.DATABASE_URL.startsWith('file:') ? config.DATABASE_URL.slice(5) : config.DATABASE_URL;
-  const repository = injectedRepository ?? (config.IMPLEMENTATION === 'mikro'
-    ? await createMikroRepository(filename)
-    : await createTypeOrmRepository(filename));
+  const repository = injectedRepository ?? await initializeOrm(config.IMPLEMENTATION, config.DATABASE_URL);
   const fastify = Fastify({ logger: true });
-  fastify.decorate('repository', repository);
+  fastify.decorate('blogService', new BlogService(repository));
+  fastify.setErrorHandler((error, request, reply) => {
+    if (error instanceof BlogServiceError) {
+      const statusCode = error.code === 'access_denied' ? 403 : 404;
+      return reply.code(statusCode).send();
+    }
+    return reply.send(error);
+  });
   fastify.decorate('appConfig', config);
   fastify.addHook('onClose', async () => { await repository.close(); });
   fastify.addHook('onRequest', provideAuthentication(fastify));
@@ -30,7 +34,7 @@ export async function createApp(config: AppConfig, injectedRepository?: BlogRepo
 
 declare module 'fastify' {
   interface FastifyInstance {
-    repository: BlogRepository;
+    blogService: BlogService;
     appConfig: AppConfig;
   }
 }

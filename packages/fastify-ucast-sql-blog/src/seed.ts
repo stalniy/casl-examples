@@ -1,16 +1,15 @@
 import 'reflect-metadata';
 import { resolve } from 'node:path';
-import { createMikroRepository } from './repositories/mikro.js';
-import { createTypeOrmRepository } from './repositories/typeorm.js';
+import { initializeOrm } from './services/orm.js';
 
 async function seed() {
 const implementation = process.argv[2];
 if (implementation !== 'mikro' && implementation !== 'typeorm') throw new Error('Usage: tsx src/seed.ts mikro|typeorm');
 const configuredPath = process.env.DATABASE_URL ?? `./blog-${implementation}.sqlite`;
 const filename = resolve(configuredPath.startsWith('file:') ? configuredPath.slice(5) : configuredPath);
-const repo = implementation === 'mikro' ? await createMikroRepository(filename) : await createTypeOrmRepository(filename);
+const repo = await initializeOrm(implementation, filename);
 try {
-  const existing = await repo.findLogin('admin@casl.io');
+  const existing = await repo.findUserByEmail('admin@casl.io');
   if (existing) throw new Error('Seed data already exists. Use a new DATABASE_URL to create a clean fixture database.');
   const now = new Date();
   const admin = await repo.createUser({ name: 'Admin', email: 'admin@casl.io', password: '123456', role: 'admin', createdAt: now, updatedAt: now });

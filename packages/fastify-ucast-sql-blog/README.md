@@ -41,6 +41,8 @@ IMPLEMENTATION=typeorm DATABASE_URL=./blog-typeorm.sqlite AUTH_SECRET=local-secr
 
 The API stays under `/api`: `POST /session`, user create/read/update routes, and article list/read/create/update/delete routes. Session response shape, string IDs, article `author`, list `createdBy`, and the reference pagination bounds are retained. Anonymous users see published articles, writers also see their own drafts and manage their own articles, and admins can manage all records. Missing individual resources return 404; existing resources that the caller cannot access or change return 403. Article lists return newest records first, and empty accessible lists return `{ items: [], count: 0 }`. Denied creation and publish transitions return 403.
 
+`src/createApp.ts` composes the app and registers the `auth`, `users`, and `articles` modules under `src/modules`, matching the Fastify Prisma example. Each module exposes its routes through `index.ts`; authentication, ability definitions, and token services live in the auth module. Shared entity types remain in `src/domain.ts`, and app configuration is defined in `src/config.ts`.
+
 The repositories own ORM metadata, query construction, UCAST interpretation, and writes. Their metadata keeps property names and physical column names identical, including `author`, `createdAt`, and `updatedAt`. Access to existing records uses the SQL predicate for list/count/read/update/delete; updates and deletes keep the authorization predicate in the changing statement. Object checks remain for create and proposed publish transitions.
 
 ## Shared SQLite integration suite

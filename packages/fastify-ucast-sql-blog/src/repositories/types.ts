@@ -6,7 +6,7 @@ export type UserPatch = Partial<Pick<User, 'name' | 'email' | 'password'>>;
 export type QueryFilter = { kind: 'all' } | { kind: 'none' } | { kind: 'ast'; ast: any };
 
 export interface BlogRepository {
-  readonly kind: 'mikro' | 'typeorm';
+  readonly kind: 'mikro' | 'typeorm' | 'sequelize' | 'objection';
   schemaMetadata(): Array<{ entity: string; properties: Array<{ propertyName: string; columnName: string }> }>;
   close(): Promise<void>;
   findUserByEmail(email: string): Promise<User | null>;

@@ -41,6 +41,16 @@ jobs:
             mongodb: false
             implementation: typeorm
             database: ./blog-typeorm.sqlite
+          - name: fastify-ucast-sql-blog (Sequelize)
+            package: fastify-ucast-sql-blog
+            mongodb: false
+            implementation: sequelize
+            database: ./blog-sequelize.sqlite
+          - name: fastify-ucast-sql-blog (Objection)
+            package: fastify-ucast-sql-blog
+            mongodb: false
+            implementation: objection
+            database: ./blog-objection.sqlite
     env:
       DATABASE_URL: ${{ matrix.database }}
       AUTH_SECRET: ci-blog-secret

@@ -1,8 +1,12 @@
 import { MikroORM, SqliteDriver } from '@mikro-orm/sqlite';
 import { DataSource } from 'typeorm';
+import { Sequelize } from 'sequelize';
+import knex from 'knex';
 import type { BlogRepository } from '../repositories/types.js';
 import { MikroBlogRepository, MikroUsers, MikroArticles } from '../repositories/mikro.js';
 import { TypeOrmBlogRepository, TypeOrmUsers, TypeOrmArticles } from '../repositories/typeorm.js';
+import { SequelizeBlogRepository } from '../repositories/sequelize.js';
+import { ObjectionBlogRepository } from '../repositories/objection.js';
 
 export async function initializeOrm(implementation: string, databaseUrl: string): Promise<BlogRepository> {
   const filename = databaseUrl.startsWith('file:') ? databaseUrl.slice(5) : databaseUrl;
@@ -27,7 +31,43 @@ export async function initializeOrm(implementation: string, databaseUrl: string)
       await dataSource.initialize();
       return new TypeOrmBlogRepository(dataSource);
     }
+    case 'sequelize': {
+      const sequelize = new Sequelize({ dialect: 'sqlite', storage: filename, logging: false });
+      try {
+        await sequelize.authenticate();
+        return new SequelizeBlogRepository(sequelize);
+      } catch (error) {
+        await sequelize.close();
+        throw error;
+      }
+    }
+    case 'objection': {
+      const connection = knex({
+        client: 'better-sqlite3',
+        connection: { filename },
+        useNullAsDefault: true,
+        pool: {
+          min: 1,
+          max: 1,
+          afterCreate(db: { pragma(sql: string): unknown }, done: (error: Error | null, db: unknown) => void) {
+            try {
+              db.pragma('foreign_keys = ON');
+              done(null, db);
+            } catch (error) {
+              done(error as Error, db);
+            }
+          },
+        },
+      });
+      try {
+        await connection.raw('SELECT 1');
+        return new ObjectionBlogRepository(connection);
+      } catch (error) {
+        await connection.destroy();
+        throw error;
+      }
+    }
     default:
-      throw new Error(`Unknown implementation "${implementation}". Use mikro or typeorm.`);
+      throw new Error(`Unknown implementation "${implementation}". Use mikro, typeorm, sequelize or objection.`);
   }
 }

@@ -18,7 +18,7 @@ Currently this repository contains the next examples:
 | [CASL Vue blog](./packages/vue-blog)  | ACL in Blog app with REST API |  |
 | [CASL Express API](./packages/express-blog)  | ACL in REST API for Blog app |  |
 | [CASL Fastify+Prisma API](./packages/fastify-prisma-blog)  | ACL in REST API for Blog app |  |
-| [CASL Fastify+UCAST SQL API](./packages/fastify-ucast-sql-blog)  | ACL in REST API for Blog app with MikroORM or TypeORM |  |
+| [CASL Fastify+UCAST SQL API](./packages/fastify-ucast-sql-blog)  | ACL in REST API for Blog app with MikroORM, TypeORM, Sequelize and Objection |  |
 
 [CASL HelloWorld]: https://codesandbox.io/s/github/stalniy/casl-examples/tree/master/packages/hello-world
 [CASL React Todo]: https://codesandbox.io/s/github/stalniy/casl-examples/tree/master/packages/react-todo

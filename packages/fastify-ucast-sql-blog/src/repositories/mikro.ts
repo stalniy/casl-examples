@@ -29,6 +29,8 @@ export async function createMikroRepository(filename: string): Promise<BlogRepos
     close: () => orm.close(true),
     findLogin: async email => { const row = await em.findOne(Users, { email }); return row ? user(row) : null; },
     findUserForAuthentication: async id => { const row = await em.findOne(Users, { id }); return row ? user(row) : null; },
+    userExists: async id => (await em.count(Users, { id })) > 0,
+    articleExists: async id => (await em.count(Articles, { id })) > 0,
     findUserById: async (id, ability) => { const c = accessFor(ability, 'read', 'User'); if (c.kind === 'none') return null; const qb = em.createQueryBuilder(Users, 'user').select('*'); if (c.kind === 'ast') interpret(c.ast, qb); qb.andWhere({ id }); const row = await qb.execute('get', false); return row ? user(row) : null; },
     createUser: async value => { const row = em.create(Users, { ...value, createdAt: value.createdAt.toISOString(), updatedAt: value.updatedAt.toISOString(), id: crypto.randomUUID() }); await em.persist(row).flush(); return user(row); },
     updateUser: async (id, patch, ability) => {
@@ -50,7 +52,7 @@ export async function createMikroRepository(filename: string): Promise<BlogRepos
       const access = condition(ability, 'read'); if (access.kind === 'none') return { items: [], count: 0 };
       const make = () => { const qb = em.createQueryBuilder(Articles, 'article').select('*'); if (access.kind === 'ast') interpret(access.ast, qb); return qb; };
       const count = await make().getCount();
-      const rows = await make().orderBy({ createdAt: 'ASC', id: 'ASC' }).limit(pageSize).offset((page - 1) * pageSize).execute('all', false);
+      const rows = await make().orderBy({ createdAt: 'DESC', id: 'ASC' }).limit(pageSize).offset((page - 1) * pageSize).execute('all', false);
       return { items: await Promise.all(rows.map(article)), count };
     },
     createArticle: async value => { const row = em.create(Articles, { ...value, createdAt: value.createdAt.toISOString(), updatedAt: value.updatedAt.toISOString(), id: crypto.randomUUID() }); await em.persist(row).flush(); return article(row); },
@@ -59,11 +61,12 @@ export async function createMikroRepository(filename: string): Promise<BlogRepos
       const target = em.createQueryBuilder(Articles, 'article').select('*'); if (access.kind === 'ast') interpret(access.ast, target);
       target.andWhere({ id }); const current = await target.execute('get', false); if (!current) return null;
       if (patch.published === true && !Boolean(current.published) && !ability.can('publish', subject('Article', { ...current, ...patch } as Article) as any)) throw new PublishDeniedError();
-      const update = em.createQueryBuilder(Articles, 'article').update({ ...patch, updatedAt: new Date().toISOString() }).where({ id });
+      const updatedAt = new Date().toISOString();
+      const update = em.createQueryBuilder(Articles, 'article').update({ ...patch, updatedAt }).where({ id });
       if (access.kind === 'ast') interpret(access.ast, update);
       update.andWhere({ id });
       const result = await update.execute(); em.clear(); if (!result.affectedRows) return null;
-      const updated = { ...current, ...patch, updatedAt: new Date().toISOString() }; return article(updated);
+      const updated = { ...current, ...patch, updatedAt }; return article(updated);
     },
     deleteArticle: async (id, ability) => {
       const access = condition(ability, 'delete'); if (access.kind === 'none') return null;

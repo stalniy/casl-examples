@@ -11,10 +11,12 @@ export interface BlogRepository {
   close(): Promise<void>;
   findLogin(email: string): Promise<User | null>;
   findUserForAuthentication(id: string): Promise<User | null>;
+  userExists(id: string): Promise<boolean>;
   findUserById(id: string, ability: AppAbility): Promise<User | null>;
   createUser(user: Omit<User, 'id'>): Promise<User>;
   updateUser(id: string, patch: Partial<Pick<User, 'name' | 'email' | 'password'>>, ability: AppAbility): Promise<User | null>;
   findArticle(id: string, ability: AppAbility): Promise<Article | null>;
+  articleExists(id: string): Promise<boolean>;
   listArticles(ability: AppAbility, page: number, pageSize: number): Promise<{ items: Article[]; count: number }>;
   createArticle(article: Omit<Article, 'id'>): Promise<Article>;
   updateArticle(id: string, patch: ArticlePatch, ability: AppAbility): Promise<Article | null>;

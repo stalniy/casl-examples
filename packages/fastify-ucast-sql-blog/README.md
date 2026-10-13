@@ -39,7 +39,7 @@ IMPLEMENTATION=typeorm DATABASE_URL=./blog-typeorm.sqlite AUTH_SECRET=local-secr
 
 ## API and rules
 
-The API stays under `/api`: `POST /session`, user create/read/update routes, and article list/read/create/update/delete routes. Session response shape, string IDs, article `author`, list `createdBy`, and the reference pagination bounds are retained. Anonymous users see published articles, writers also see their own drafts and manage their own articles, and admins can manage all records. Unavailable individual resources and writes without an authorized target return 404, empty accessible lists return `{ items: [], count: 0 }`, denied creation returns 403, and a denied publish transition on an authorized target returns 403.
+The API stays under `/api`: `POST /session`, user create/read/update routes, and article list/read/create/update/delete routes. Session response shape, string IDs, article `author`, list `createdBy`, and the reference pagination bounds are retained. Anonymous users see published articles, writers also see their own drafts and manage their own articles, and admins can manage all records. Missing individual resources return 404; existing resources that the caller cannot access or change return 403. Article lists return newest records first, and empty accessible lists return `{ items: [], count: 0 }`. Denied creation and publish transitions return 403.
 
 The repositories own ORM metadata, query construction, UCAST interpretation, and writes. Their metadata keeps property names and physical column names identical, including `author`, `createdAt`, and `updatedAt`. Access to existing records uses the SQL predicate for list/count/read/update/delete; updates and deletes keep the authorization predicate in the changing statement. Object checks remain for create and proposed publish transitions.
 
@@ -58,6 +58,6 @@ IMPLEMENTATION=typeorm volta run --node 24.14.1 node --import tsx spec/run-expre
 
 The suite covers role visibility, stable pagination and matching counts, missing and inaccessible identifiers, atomic owner writes, denied-write persistence, authorized-but-denied publish transitions, create/publish/user access, durable user updates, CASL rule priority/inversion, unconditional and absent permissions, identifier plus condition composition, quoted parameter values, unsupported UCAST translation, and generated property/column metadata.
 
-The source Express contracts include historical 403 expectations for inaccessible article reads and foreign publish attempts. The runner changes those expected statuses to 404 in memory to match this example's no-authorized-target behavior; source files are unchanged. It also converts the session suite's `it.only` to `it` so every contract runs.
+To run the unchanged Express API contracts against a SQL server running on port 3000, run `npm run test:server` from `packages/express-blog`.
 
 To refresh the vendored UCAST artifact, clone UCAST into a disposable directory, check out the pinned commit, install the lockfile, build `@ucast/core` and `@ucast/sql`, correct the generated declaration paths in the isolated `packages/sql/package.json`, pack `@ucast/sql`, then replace `vendor/ucast-sql-0.2.1.tgz` and update this hash. Do not use a registry `@ucast/sql` release for this example.

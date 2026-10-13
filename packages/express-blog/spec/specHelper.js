@@ -28,7 +28,7 @@ function createUserClient(email) {
         config.headers.Authorization = newSession.token;
       }
 
-      return http.defaults.adapter(config);
+      return axios.getAdapter(http.defaults.adapter)(config);
     }
   });
 

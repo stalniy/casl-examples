@@ -79,9 +79,10 @@ async function destroy(req, res) {
   if (article) {
     ForbiddenError.from(req.ability).throwUnlessCan('delete', article);
     await article.deleteOne();
+    res.send({ item: article });
+  } else {
+    res.status(404).end();
   }
-
-  res.send({ item: article });
 }
 
 module.exports = {

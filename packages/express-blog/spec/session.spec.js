@@ -2,7 +2,7 @@ const { http, expect } = require('./specHelper');
 
 describe('session API', () => {
   describe('POST /session', () => {
-    it.only('responds with error if passed email or password is empty', async () => {
+    it('responds with error if passed email or password is empty', async () => {
       const response = await http.post('/session', {});
       expect(response.status).to.equal(400);
     })

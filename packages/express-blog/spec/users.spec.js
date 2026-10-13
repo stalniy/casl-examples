@@ -1,4 +1,4 @@
-const { http, expect } = require('./specHelper');
+const { http, expect, $ } = require('./specHelper');
 
 describe('Users API', () => {
   let newUserResponse;
@@ -33,6 +33,10 @@ describe('Users API', () => {
 
       expect(response.status).to.equal(200);
       expect(response.data.item.password).to.equal('654321');
+
+      const stored = await http.as('admin@casl.io').get(`/users/${newUserResponse.data.item.id}`);
+      expect(stored.status).to.equal(200);
+      expect(stored.data.item.password).to.equal('654321');
     })
   })
 
@@ -58,6 +62,10 @@ describe('Users API', () => {
 
       expect(response.status).to.equal(200);
       expect(response.data.item.name).to.equal(payload.name);
+
+      const stored = await http.as('writer@casl.io').get(`/users/${session.userId}`);
+      expect(stored.status).to.equal(200);
+      expect(stored.data.item.name).to.equal(payload.name);
     })
 
     it('cannot update others', async () => {
@@ -75,5 +83,19 @@ describe('Users API', () => {
       });
       expect(response.status).to.equal(403);
     })
+  })
+
+  describe('when reading a missing user', () => {
+    def('missingId', '000000000000000000000000');
+
+    it('returns 404 when reading a missing user', async () => {
+      const response = await http.as('admin@casl.io').get(`/users/${$.missingId}`);
+      expect(response.status).to.equal(404);
+    });
+
+    it('returns 404 when updating a missing user', async () => {
+      const response = await http.as('admin@casl.io').patch(`/users/${$.missingId}`, { name: 'Missing' });
+      expect(response.status).to.equal(404);
+    });
   })
 })

@@ -16,7 +16,7 @@ export async function createApp(config: AppConfig, injectedRepository?: BlogRepo
   if (!['mikro', 'typeorm'].includes(config.IMPLEMENTATION)) throw new Error(`Unknown implementation "${config.IMPLEMENTATION}". Use mikro or typeorm.`);
   const filename = config.DATABASE_URL.startsWith('file:') ? config.DATABASE_URL.slice(5) : config.DATABASE_URL;
   const repository = injectedRepository ?? (config.IMPLEMENTATION === 'mikro' ? await createMikroRepository(filename) : await createTypeOrmRepository(filename));
-  const app = Fastify({ logger: false });
+  const app = Fastify({ logger: true });
   app.decorate('repository', repository);
   app.decorate('appConfig', config);
   app.addHook('onClose', async () => { await repository.close(); });

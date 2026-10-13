@@ -107,3 +107,4 @@ src.es
 
 .DS_Store
 test-results/
+*.sqlite

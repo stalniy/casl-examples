@@ -9,9 +9,10 @@ export type Subjects = 'User' | 'Article' | 'all'
 export type AppAbility = Ability<[Actions, Subjects], any>;
 
 export function defineRulesFor(user?: Pick<User, 'id' | 'role'>): AppAbility['rules'] {
-  const { can, build } = new AbilityBuilder<AppAbility>(createMongoAbility as any);
-  if (user?.role === 'admin') can('manage', 'all');
-  else {
+  const { can, rules } = new AbilityBuilder<AppAbility>(createMongoAbility);
+  if (user?.role === 'admin') {
+    can('manage', 'all');
+  } else {
     can('read', 'Article', { published: true });
     if (user?.role === 'writer') {
       can(['read', 'create', 'delete', 'update'], 'Article', { author: user.id });
@@ -19,9 +20,9 @@ export function defineRulesFor(user?: Pick<User, 'id' | 'role'>): AppAbility['ru
       can(['read', 'update'], 'User', { id: user.id });
     }
   }
-  return build().rules;
+  return rules;
 }
 
 export function defineAbilityFor(user?: Pick<User, 'id' | 'role'>): AppAbility {
-  return createMongoAbility<AppAbility>(defineRulesFor(user) as any);
+  return createMongoAbility<AppAbility>(defineRulesFor(user));
 }

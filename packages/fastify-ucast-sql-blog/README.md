@@ -43,7 +43,9 @@ The API stays under `/api`: `POST /session`, user create/read/update routes, and
 
 `src/createApp.ts` composes the app and registers the `auth`, `users`, and `articles` modules under `src/modules`, matching the Fastify Prisma example. Each module exposes its routes through `index.ts`; authentication, ability definitions, and token services live in the auth module. Shared entity types remain in `src/domain.ts`, and app configuration is defined in `src/config.ts`.
 
-The repositories own ORM metadata, query construction, UCAST interpretation, and writes. Their metadata keeps property names and physical column names identical, including `author`, `createdAt`, and `updatedAt`. Access to existing records uses the SQL predicate for list/count/read/update/delete; updates and deletes keep the authorization predicate in the changing statement. Object checks remain for create and proposed publish transitions.
+`src/services/orm.ts` initializes the selected ORM and returns a `MikroBlogRepository` or `TypeOrmBlogRepository` instance to `createApp.ts`. The app injects that repository into `BlogService` and exposes the service to routes and authentication. `src/services/blog.ts` owns record permissions, create and publish checks, and missing/forbidden results. It derives query filters from CASL rules through `src/services/authorization.ts` so lists and counts include only accessible records.
+
+Entity schemas live alongside their corresponding repository classes in `src/repositories`. Repositories only perform database operations: metadata inspection, query construction, UCAST interpretation of supplied filters, and writes. They do not receive abilities or decide permissions. Their metadata keeps property names and physical column names identical, including `author`, `createdAt`, and `updatedAt`. Updates and deletes apply the service's filters in the changing SQL statement.
 
 ## Shared SQLite integration suite
 

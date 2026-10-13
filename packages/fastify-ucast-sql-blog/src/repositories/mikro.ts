@@ -1,81 +1,222 @@
-import { MikroORM, EntitySchema } from '@mikro-orm/sqlite';
+import { EntitySchema, type MikroORM } from '@mikro-orm/sqlite';
 import { interpret } from '@ucast/sql/mikro-orm';
-import { PublishDeniedError, type BlogRepository } from './types.js';
-import { accessFor } from './authorization.js';
-import { subject, type AppAbility, type User, type Article } from '../domain.js';
+import type { ArticlePatch, BlogRepository, QueryFilter, UserPatch } from './types.js';
+import type { User, Article } from '../domain.js';
 
-const Users = new EntitySchema<any>({ name: 'User', tableName: 'users', properties: {
-  id: { type: 'string', primary: true, fieldName: 'id' }, name: { type: 'string', nullable: true, fieldName: 'name' }, email: { type: 'string', unique: true, fieldName: 'email' },
-  password: { type: 'string', fieldName: 'password' }, role: { type: 'string', fieldName: 'role' }, createdAt: { type: 'string', fieldName: 'createdAt' }, updatedAt: { type: 'string', fieldName: 'updatedAt' },
-} });
-const Articles = new EntitySchema<any>({ name: 'Article', tableName: 'articles', properties: {
-  id: { type: 'string', primary: true, fieldName: 'id' }, author: { type: 'string', fieldName: 'author' }, title: { type: 'string', fieldName: 'title' }, body: { type: 'text', fieldName: 'body' },
-  published: { type: 'boolean', fieldName: 'published' }, createdAt: { type: 'string', fieldName: 'createdAt' }, updatedAt: { type: 'string', fieldName: 'updatedAt' },
-} });
+type UserRow = Omit<User, 'createdAt' | 'updatedAt'> & { createdAt: string; updatedAt: string };
+type ArticleRow = Omit<Article, 'author' | 'createdAt' | 'updatedAt' | 'createdBy'> & {
+  author: UserRow;
+  createdAt: string;
+  updatedAt: string;
+};
+type ArticleWithAuthorRow = Omit<ArticleRow, 'author'> & {
+  author: string;
+  authorId: string;
+  authorEmail: string;
+};
 
-export async function createMikroRepository(filename: string): Promise<BlogRepository> {
-  const orm = await MikroORM.init({ entities: [Users, Articles], dbName: filename, driver: (await import('@mikro-orm/sqlite')).SqliteDriver, allowGlobalContext: true });
-  const em: any = orm.em;
-  const user = (row: any): User => row && ({ ...row, createdAt: row.createdAt instanceof Date ? row.createdAt : new Date(row.createdAt), updatedAt: row.updatedAt instanceof Date ? row.updatedAt : new Date(row.updatedAt) });
-  const article = async (row: any): Promise<Article> => {
-    if (!row) return row;
-    const author = await em.findOne(Users, { id: row.author });
-    return { ...row, createdAt: row.createdAt instanceof Date ? row.createdAt : new Date(row.createdAt), updatedAt: row.updatedAt instanceof Date ? row.updatedAt : new Date(row.updatedAt), published: !!row.published, createdBy: author ? { id: author.id, email: author.email } : undefined };
-  };
-  const condition = (ability: AppAbility, action: 'read' | 'update' | 'delete') => accessFor(ability, action, 'Article');
-  return {
-    kind: 'mikro',
-    schemaMetadata: () => Array.from(orm.getMetadata().getAll().values()).filter((meta: any) => ['User', 'Article'].includes(meta.className)).map((meta: any) => ({ entity: meta.className, properties: Object.entries(meta.properties).filter(([, property]: any) => property.fieldNames?.length).map(([propertyName, property]: any) => ({ propertyName, columnName: property.fieldNames[0] })) })),
-    close: () => orm.close(true),
-    findLogin: async email => { const row = await em.findOne(Users, { email }); return row ? user(row) : null; },
-    findUserForAuthentication: async id => { const row = await em.findOne(Users, { id }); return row ? user(row) : null; },
-    userExists: async id => (await em.count(Users, { id })) > 0,
-    articleExists: async id => (await em.count(Articles, { id })) > 0,
-    findUserById: async (id, ability) => { const c = accessFor(ability, 'read', 'User'); if (c.kind === 'none') return null; const qb = em.createQueryBuilder(Users, 'user').select('*'); if (c.kind === 'ast') interpret(c.ast, qb); qb.andWhere({ id }); const row = await qb.execute('get', false); return row ? user(row) : null; },
-    createUser: async value => { const row = em.create(Users, { ...value, createdAt: value.createdAt.toISOString(), updatedAt: value.updatedAt.toISOString(), id: crypto.randomUUID() }); await em.persist(row).flush(); return user(row); },
-    updateUser: async (id, patch, ability) => {
-      const c = accessFor(ability, 'update', 'User'); if (c.kind === 'none') return null;
-      const qb = em.createQueryBuilder(Users, 'user').update({ ...patch, updatedAt: new Date().toISOString() }).where({ id }); if (c.kind === 'ast') interpret(c.ast, qb); qb.andWhere({ id });
-      const result = await qb.execute(); em.clear();
-      if (!result.affectedRows) return null;
-      const reread = em.createQueryBuilder(Users, 'user').select('*'); if (c.kind === 'ast') interpret(c.ast, reread); reread.andWhere({ id });
-      const updated = await reread.execute('get', false); return updated ? user(updated) : null;
-    },
-    findArticle: async (id, ability) => {
-      const access = condition(ability, 'read'); if (access.kind === 'none') return null;
-      const qb = em.createQueryBuilder(Articles, 'article').select('*');
-      if (access.kind === 'ast') interpret(access.ast, qb);
-      qb.andWhere({ id });
-      const row = await qb.execute('get', false); return row ? article(row) : null;
-    },
-    listArticles: async (ability, page, pageSize) => {
-      const access = condition(ability, 'read'); if (access.kind === 'none') return { items: [], count: 0 };
-      const make = () => { const qb = em.createQueryBuilder(Articles, 'article').select('*'); if (access.kind === 'ast') interpret(access.ast, qb); return qb; };
-      const count = await make().getCount();
-      const rows = await make().orderBy({ createdAt: 'DESC', id: 'ASC' }).limit(pageSize).offset((page - 1) * pageSize).execute('all', false);
-      return { items: await Promise.all(rows.map(article)), count };
-    },
-    createArticle: async value => { const row = em.create(Articles, { ...value, createdAt: value.createdAt.toISOString(), updatedAt: value.updatedAt.toISOString(), id: crypto.randomUUID() }); await em.persist(row).flush(); return article(row); },
-    updateArticle: async (id, patch, ability) => {
-      const access = condition(ability, 'update'); if (access.kind === 'none') return null;
-      const target = em.createQueryBuilder(Articles, 'article').select('*'); if (access.kind === 'ast') interpret(access.ast, target);
-      target.andWhere({ id }); const current = await target.execute('get', false); if (!current) return null;
-      if (patch.published === true && !Boolean(current.published) && !ability.can('publish', subject('Article', { ...current, ...patch } as Article) as any)) throw new PublishDeniedError();
-      const updatedAt = new Date().toISOString();
-      const update = em.createQueryBuilder(Articles, 'article').update({ ...patch, updatedAt }).where({ id });
-      if (access.kind === 'ast') interpret(access.ast, update);
-      update.andWhere({ id });
-      const result = await update.execute(); em.clear(); if (!result.affectedRows) return null;
-      const updated = { ...current, ...patch, updatedAt }; return article(updated);
-    },
-    deleteArticle: async (id, ability) => {
-      const access = condition(ability, 'delete'); if (access.kind === 'none') return null;
-      const target = em.createQueryBuilder(Articles, 'article').select('*'); if (access.kind === 'ast') interpret(access.ast, target);
-      target.andWhere({ id }); const current = await target.execute('get', false); if (!current) return null;
-      const del = em.createQueryBuilder(Articles, 'article').delete().where({ id });
-      if (access.kind === 'ast') interpret(access.ast, del);
-      del.andWhere({ id });
-      const result = await del.execute(); em.clear(); return result.affectedRows ? article(current) : null;
-    },
-  };
+export const MikroUsers = new EntitySchema<UserRow>({
+  name: 'User',
+  tableName: 'users',
+  properties: {
+    id: { type: 'string', primary: true, fieldName: 'id' },
+    name: { type: 'string', nullable: true, fieldName: 'name' },
+    email: { type: 'string', unique: true, fieldName: 'email' },
+    password: { type: 'string', fieldName: 'password' },
+    role: { type: 'string', fieldName: 'role' },
+    createdAt: { type: 'string', fieldName: 'createdAt' },
+    updatedAt: { type: 'string', fieldName: 'updatedAt' },
+  },
+});
+
+export const MikroArticles = new EntitySchema<ArticleRow>({
+  name: 'Article',
+  tableName: 'articles',
+  properties: {
+    id: { type: 'string', primary: true, fieldName: 'id' },
+    author: { kind: 'm:1', entity: () => MikroUsers, fieldName: 'author' },
+    title: { type: 'string', fieldName: 'title' },
+    body: { type: 'text', fieldName: 'body' },
+    published: { type: 'boolean', fieldName: 'published' },
+    createdAt: { type: 'string', fieldName: 'createdAt' },
+    updatedAt: { type: 'string', fieldName: 'updatedAt' },
+  }
+});
+
+export class MikroBlogRepository implements BlogRepository {
+  readonly kind = 'mikro';
+
+  constructor(private readonly orm: MikroORM) {}
+
+  private get em() {
+    return this.orm.em;
+  }
+
+  schemaMetadata() {
+    return Array.from(this.orm.getMetadata().getAll().values())
+      .filter(metadata => ['User', 'Article'].includes(metadata.className))
+      .map(metadata => ({
+        entity: metadata.className,
+        properties: Object.entries(metadata.properties)
+          .filter(([, property]) => property.fieldNames?.length)
+          .map(([propertyName, property]) => ({
+            propertyName,
+            columnName: property.fieldNames[0],
+          })),
+      }));
+  }
+
+  async close(): Promise<void> {
+    await this.orm.close(true);
+  }
+
+  async findUserByEmail(email: string): Promise<User | null> {
+    const row = await this.em.findOne<UserRow>(MikroUsers, { email });
+    return row ? this.#toUser(row) : null;
+  }
+
+  async userExists(id: string): Promise<boolean> {
+    const user = await this.em.findOne(MikroUsers, { id });
+    return user !== null;
+  }
+
+  async articleExists(id: string): Promise<boolean> {
+    const article = await this.em.findOne(MikroArticles, { id });
+    return article !== null;
+  }
+
+  async findUserById(id: string, filter: QueryFilter = { kind: 'all' }): Promise<User | null> {
+    if (filter.kind === 'none') return null;
+
+    const query = this.em.createQueryBuilder(MikroUsers, 'user').select('*');
+    if (filter.kind === 'ast') interpret(filter.ast, query);
+    query.andWhere({ id });
+    const row = await query.execute('get', false);
+    return row ? this.#toUser(row) : null;
+  }
+
+  async createUser(value: Omit<User, 'id'> & { id?: string }): Promise<User> {
+    const row = this.em.create<UserRow>(MikroUsers, {
+      ...value,
+      id: value.id ?? crypto.randomUUID(),
+      createdAt: value.createdAt.toISOString(),
+      updatedAt: value.updatedAt.toISOString(),
+    });
+    await this.em.persist(row).flush();
+    return this.#toUser(row);
+  }
+
+  async updateUser(id: string, patch: UserPatch, filter: QueryFilter = { kind: 'all' }): Promise<User | null> {
+    if (filter.kind === 'none') return null;
+
+    const query = this.em.createQueryBuilder(MikroUsers, 'user')
+      .update({ ...patch, updatedAt: new Date().toISOString() })
+      .where({ id });
+    if (filter.kind === 'ast') interpret(filter.ast, query);
+    query.andWhere({ id });
+
+    const result = await query.execute();
+    this.em.clear();
+    if (!result.affectedRows) return null;
+
+    return this.findUserById(id);
+  }
+
+  async findArticle(id: string, filter: QueryFilter = { kind: 'all' }): Promise<Article | null> {
+    if (filter.kind === 'none') return null;
+
+    const row = await this.#articleQuery(filter).andWhere({ id }).execute<ArticleWithAuthorRow | null>('get', false);
+    return row ? this.#toArticle(row) : null;
+  }
+
+  async listArticles(filter: QueryFilter, page: number, pageSize: number): Promise<{ items: Article[]; count: number }> {
+    if (filter.kind === 'none') return { items: [], count: 0 };
+
+    const count = await this.#articleQuery(filter).getCount();
+    const rows = await this.#articleQuery(filter)
+      .orderBy({ createdAt: 'DESC', id: 'ASC' })
+      .limit(pageSize)
+      .offset((page - 1) * pageSize)
+      .execute<ArticleWithAuthorRow[]>('all', false);
+    const items = rows.map(row => this.#toArticle(row));
+    return { items, count };
+  }
+
+  async createArticle(value: Omit<Article, 'id'> & { id?: string }): Promise<Article> {
+    const row = this.em.create<ArticleRow>(MikroArticles, {
+      ...value,
+      author: this.em.getReference(MikroUsers, value.author),
+      id: value.id ?? crypto.randomUUID(),
+      createdAt: value.createdAt.toISOString(),
+      updatedAt: value.updatedAt.toISOString(),
+    });
+    await this.em.persist(row).flush();
+    const created = await this.findArticle(row.id);
+    if (!created) throw new Error('Created article could not be loaded with its author');
+    return created;
+  }
+
+  async updateArticle(id: string, patch: ArticlePatch, filter: QueryFilter = { kind: 'all' }): Promise<Article | null> {
+    if (filter.kind === 'none') return null;
+
+    const current = await this.#articleQuery(filter).andWhere({ id }).execute<ArticleWithAuthorRow | null>('get', false);
+    if (!current) return null;
+
+    const updatedAt = new Date().toISOString();
+    const query = this.em.createQueryBuilder(MikroArticles, 'article')
+      .update({ ...patch, updatedAt })
+      .where({ id });
+    if (filter.kind === 'ast') interpret(filter.ast, query);
+    query.andWhere({ id });
+
+    const result = await query.execute();
+    this.em.clear();
+    if (!result.affectedRows) return null;
+    return this.#toArticle({ ...current, ...patch, updatedAt });
+  }
+
+  async deleteArticle(id: string, filter: QueryFilter = { kind: 'all' }): Promise<Article | null> {
+    if (filter.kind === 'none') return null;
+
+    const current = await this.#articleQuery(filter).andWhere({ id }).execute<ArticleWithAuthorRow | null>('get', false);
+    if (!current) return null;
+
+    const query = this.em.createQueryBuilder(MikroArticles, 'article')
+      .delete()
+      .where({ id });
+    if (filter.kind === 'ast') interpret(filter.ast, query);
+    query.andWhere({ id });
+
+    const result = await query.execute();
+    this.em.clear();
+    return result.affectedRows ? this.#toArticle(current) : null;
+  }
+
+  #articleQuery(filter: QueryFilter) {
+    const query = this.em.createQueryBuilder(MikroArticles, 'a')
+      .select('a.*')
+      .innerJoin('a.author', 'u')
+      .addSelect(['u.id as authorId', 'u.email as authorEmail']);
+    if (filter.kind === 'ast') interpret(filter.ast, query);
+    return query;
+  }
+
+  #toUser(row: UserRow): User {
+    return {
+      ...row,
+      createdAt: new Date(row.createdAt),
+      updatedAt: new Date(row.updatedAt),
+    };
+  }
+
+  #toArticle(row: ArticleWithAuthorRow): Article {
+    const { authorId, authorEmail, ...article } = row;
+    return {
+      ...article,
+      createdAt: new Date(article.createdAt),
+      updatedAt: new Date(article.updatedAt),
+      published: Boolean(article.published),
+      createdBy: { id: authorId, email: authorEmail },
+    };
+  }
 }

@@ -16,7 +16,7 @@ export const authRoutes: FastifyPluginAsync = async (fastify) => {
   } as const;
 
   fastify.post<{ Body: { email: string; password: string } }>('/session', { schema }, async (req, reply) => {
-    const found = await fastify.repository.findLogin(req.body.email);
+    const found = await fastify.blogService.findLogin(req.body.email);
     if (!found || !isValidUserPassword(found, req.body.password)) {
       return reply.code(400).send({ message: 'Invalid login or password' });
     }

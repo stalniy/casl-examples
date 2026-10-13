@@ -20,7 +20,7 @@ export async function authenticate(this: FastifyInstance, req: FastifyRequest, r
       };
       req.userAbility = defineAbilityFor();
     } else {
-      const user = await this.repository.findUserForAuthentication(payload.id!);
+      const user = await this.blogService.findUserForAuthentication(payload.id!);
       if (!user) return reply.code(401).send();
       req.user = user;
       req.userAbility = defineAbilityFor(user);

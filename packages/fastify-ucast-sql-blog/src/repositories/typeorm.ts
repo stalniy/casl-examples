@@ -1,75 +1,199 @@
-import { DataSource, EntitySchema } from 'typeorm';
+import { EntitySchema, type DataSource, type Repository } from 'typeorm';
 import { interpret } from '@ucast/sql/typeorm';
-import { PublishDeniedError, type BlogRepository } from './types.js';
-import { accessFor } from './authorization.js';
-import { subject, type AppAbility, type User, type Article } from '../domain.js';
+import type { ArticlePatch, BlogRepository, QueryFilter, UserPatch } from './types.js';
+import type { User, Article } from '../domain.js';
 
-const Users = new EntitySchema<User>({ name: 'User', tableName: 'users', columns: {
-  id: { type: String, primary: true }, name: { type: String, nullable: true }, email: { type: String, unique: true }, password: { type: String }, role: { type: String },
-  createdAt: { type: Date }, updatedAt: { type: Date },
-} });
-const Articles = new EntitySchema<Article>({ name: 'Article', tableName: 'articles', columns: {
-  id: { type: String, primary: true }, author: { type: String }, title: { type: String }, body: { type: 'text' }, published: { type: Boolean },
-  createdAt: { type: Date }, updatedAt: { type: Date },
-} });
+type ArticleRow = Omit<Article, 'author' | 'createdBy'> & { author: User };
 
-export async function createTypeOrmRepository(filename: string): Promise<BlogRepository> {
-  const dataSource = new DataSource({ type: 'better-sqlite3' as any, database: filename, entities: [Users, Articles], synchronize: false });
-  await dataSource.initialize();
-  const users = dataSource.getRepository(Users);
-  const articles = dataSource.getRepository(Articles);
-  const withAuthor = async (row: any): Promise<Article> => {
-    if (!row) return row;
-    const author = await users.findOneBy({ id: row.author } as any);
-    return { ...row, createdBy: author ? { id: author.id, email: author.email } : undefined };
-  };
-  const getAccess = (ability: AppAbility, action: 'read' | 'update' | 'delete') => accessFor(ability, action, 'Article');
-  return {
-    kind: 'typeorm',
-    schemaMetadata: () => dataSource.entityMetadatas.map(meta => ({ entity: meta.name, properties: meta.columns.map(column => ({ propertyName: column.propertyName, columnName: column.databaseName })) })),
-    close: async () => { await dataSource.destroy(); },
-    findLogin: async email => (await users.findOneBy({ email } as any)) as User | null,
-    findUserForAuthentication: async id => await users.findOneBy({ id } as any) as User | null,
-    userExists: async id => users.existsBy({ id }),
-    articleExists: async id => articles.existsBy({ id }),
-    findUserById: async (id, ability) => { const c = accessFor(ability, 'read', 'User'); if (c.kind === 'none') return null; const qb = users.createQueryBuilder('user'); if (c.kind === 'ast') interpret(c.ast, qb); qb.andWhere('user.id = :requestedId', { requestedId: id }); return await qb.getOne() as User | null; },
-    createUser: async value => await users.save(users.create({ ...value, id: crypto.randomUUID() } as any)) as unknown as User,
-    updateUser: async (id, patch, ability) => { const repo = users; const c = accessFor(ability, 'update', 'User'); if (c.kind === 'none') return null; const qb = repo.createQueryBuilder('users').update().set({ ...patch, updatedAt: new Date() } as any).where('id = :requestedId', { requestedId: id }); if (c.kind === 'ast') interpret(c.ast, qb as any); qb.andWhere('id = :requestedId', { requestedId: id }); if (!(await qb.execute()).affected) return null; const read = accessFor(ability, 'read', 'User'); if (read.kind === 'none') return null; const reread = repo.createQueryBuilder('user'); if (read.kind === 'ast') interpret(read.ast, reread); reread.andWhere('user.id = :requestedId', { requestedId: id }); return await reread.getOne() as User | null; },
-    findArticle: async (id, ability) => {
-      const access = getAccess(ability, 'read'); if (access.kind === 'none') return null;
-      const qb = articles.createQueryBuilder('article'); if (access.kind === 'ast') interpret(access.ast, qb);
-      qb.andWhere('article.id = :requestedId', { requestedId: id });
-      return withAuthor(await qb.getOne());
+export const TypeOrmUsers = new EntitySchema<User>({
+  name: 'User',
+  tableName: 'users',
+  columns: {
+    id: { type: String, primary: true },
+    name: { type: String, nullable: true },
+    email: { type: String, unique: true },
+    password: { type: String },
+    role: { type: String },
+    createdAt: { type: Date },
+    updatedAt: { type: Date },
+  },
+});
+
+export const TypeOrmArticles = new EntitySchema<ArticleRow>({
+  name: 'Article',
+  tableName: 'articles',
+  columns: {
+    id: { type: String, primary: true },
+    title: { type: String },
+    body: { type: 'text' },
+    published: { type: Boolean },
+    createdAt: { type: Date },
+    updatedAt: { type: Date },
+  },
+  relations: {
+    author: {
+      type: 'many-to-one',
+      target: 'User',
+      joinColumn: { name: 'author', referencedColumnName: 'id' },
+      nullable: false,
     },
-    listArticles: async (ability, page, pageSize) => {
-      const access = getAccess(ability, 'read'); if (access.kind === 'none') return { items: [], count: 0 };
-      const make = () => { const qb = articles.createQueryBuilder('article'); if (access.kind === 'ast') interpret(access.ast, qb); return qb; };
-      const count = await make().getCount();
-      const rows = await make().orderBy('article.createdAt', 'DESC').addOrderBy('article.id', 'ASC').skip((page - 1) * pageSize).take(pageSize).getMany();
-      return { items: await Promise.all(rows.map(withAuthor)), count };
-    },
-    createArticle: async value => withAuthor(await articles.save(articles.create({ ...value, id: crypto.randomUUID() } as any))),
-    updateArticle: async (id, patch, ability) => {
-      const access = getAccess(ability, 'update'); if (access.kind === 'none') return null;
-      const target = articles.createQueryBuilder('article'); if (access.kind === 'ast') interpret(access.ast, target);
-      target.andWhere('article.id = :requestedId', { requestedId: id });
-      const before = await target.getOne(); if (!before) return null;
-      if (patch.published === true && !before.published && !ability.can('publish', subject('Article', { ...before, ...patch } as Article) as any)) throw new PublishDeniedError();
-      const updatedAt = new Date();
-      const qb = articles.createQueryBuilder('articles').update().set({ ...patch, updatedAt } as any).where('id = :requestedId', { requestedId: id });
-      if (access.kind === 'ast') interpret(access.ast, qb as any);
-      qb.andWhere('id = :requestedId', { requestedId: id });
-      const result = await qb.execute(); return result.affected ? withAuthor({ ...before, ...patch, updatedAt }) : null;
-    },
-    deleteArticle: async (id, ability) => {
-      const access = getAccess(ability, 'delete'); if (access.kind === 'none') return null;
-      const target = articles.createQueryBuilder('article'); if (access.kind === 'ast') interpret(access.ast, target);
-      target.andWhere('article.id = :requestedId', { requestedId: id });
-      const before = await target.getOne(); if (!before) return null;
-      const qb = articles.createQueryBuilder('articles').delete().from(Articles).where('id = :requestedId', { requestedId: id });
-      if (access.kind === 'ast') interpret(access.ast, qb as any);
-      qb.andWhere('id = :requestedId', { requestedId: id });
-      return (await qb.execute()).affected ? withAuthor(before) : null;
-    },
-  };
+  },
+});
+
+export class TypeOrmBlogRepository implements BlogRepository {
+  readonly kind = 'typeorm';
+  private readonly users: Repository<User>;
+  private readonly articles: Repository<ArticleRow>;
+
+  constructor(private readonly dataSource: DataSource) {
+    this.users = dataSource.getRepository<User>('User');
+    this.articles = dataSource.getRepository<ArticleRow>('Article');
+  }
+
+  schemaMetadata() {
+    return this.dataSource.entityMetadatas.map(metadata => ({
+      entity: metadata.name,
+      properties: metadata.columns.map(column => ({
+        propertyName: column.propertyName,
+        columnName: column.databaseName,
+      })),
+    }));
+  }
+
+  async close(): Promise<void> {
+    await this.dataSource.destroy();
+  }
+
+  async findUserByEmail(email: string): Promise<User | null> {
+    return this.users.findOneBy({ email });
+  }
+
+  async userExists(id: string): Promise<boolean> {
+    return this.users.existsBy({ id });
+  }
+
+  async articleExists(id: string): Promise<boolean> {
+    return this.articles.existsBy({ id });
+  }
+
+  async findUserById(id: string, filter: QueryFilter = { kind: 'all' }): Promise<User | null> {
+    if (filter.kind === 'none') return null;
+
+    const query = this.users.createQueryBuilder('user');
+    if (filter.kind === 'ast') interpret(filter.ast, query);
+    query.andWhere('user.id = :requestedId', { requestedId: id });
+    return query.getOne();
+  }
+
+  async createUser(value: Omit<User, 'id'> & { id?: string }): Promise<User> {
+    const user = this.users.create({ ...value, id: value.id ?? crypto.randomUUID() });
+    return this.users.save(user);
+  }
+
+  async updateUser(id: string, patch: UserPatch, filter: QueryFilter = { kind: 'all' }): Promise<User | null> {
+    if (filter.kind === 'none') return null;
+
+    const query = this.users.createQueryBuilder('users')
+      .update()
+      .set({ ...patch, updatedAt: new Date() })
+      .where('id = :requestedId', { requestedId: id });
+    if (filter.kind === 'ast') interpret(filter.ast, query);
+    query.andWhere('id = :requestedId', { requestedId: id });
+
+    const result = await query.execute();
+    if (!result.affected) return null;
+    return this.findUserById(id);
+  }
+
+  async findArticle(id: string, filter: QueryFilter = { kind: 'all' }): Promise<Article | null> {
+    if (filter.kind === 'none') return null;
+
+    const row = await this.articleQuery(filter)
+      .andWhere('article.id = :requestedId', { requestedId: id })
+      .getOne();
+    return row ? this.toArticle(row) : null;
+  }
+
+  async listArticles(filter: QueryFilter, page: number, pageSize: number): Promise<{ items: Article[]; count: number }> {
+    if (filter.kind === 'none') return { items: [], count: 0 };
+
+    const count = await this.articleQuery(filter).getCount();
+    const rows = await this.articleQuery(filter)
+      .orderBy('article.createdAt', 'DESC')
+      .addOrderBy('article.id', 'ASC')
+      .skip((page - 1) * pageSize)
+      .take(pageSize)
+      .getMany();
+    const items = rows.map(row => this.toArticle(row));
+    return { items, count };
+  }
+
+  async createArticle(value: Omit<Article, 'id'> & { id?: string }): Promise<Article> {
+    const article = this.articles.create({
+      ...value,
+      id: value.id ?? crypto.randomUUID(),
+      author: { id: value.author },
+    });
+    const saved = await this.articles.save(article);
+    const created = await this.findArticle(saved.id);
+    if (!created) throw new Error('Created article could not be loaded with its author');
+    return created;
+  }
+
+  async updateArticle(id: string, patch: ArticlePatch, filter: QueryFilter = { kind: 'all' }): Promise<Article | null> {
+    if (filter.kind === 'none') return null;
+
+    const current = await this.articleQuery(filter)
+      .andWhere('article.id = :requestedId', { requestedId: id })
+      .getOne();
+    if (!current) return null;
+
+    const updatedAt = new Date();
+    const query = this.articles.createQueryBuilder('articles')
+      .update()
+      .set({ ...patch, updatedAt })
+      .where('id = :requestedId', { requestedId: id });
+    if (filter.kind === 'ast') interpret(filter.ast, query);
+    query.andWhere('id = :requestedId', { requestedId: id });
+
+    const result = await query.execute();
+    if (!result.affected) return null;
+    return this.toArticle({ ...current, ...patch, updatedAt });
+  }
+
+  async deleteArticle(id: string, filter: QueryFilter = { kind: 'all' }): Promise<Article | null> {
+    if (filter.kind === 'none') return null;
+
+    const current = await this.articleQuery(filter)
+      .andWhere('article.id = :requestedId', { requestedId: id })
+      .getOne();
+    if (!current) return null;
+
+    const query = this.articles.createQueryBuilder('articles')
+      .delete()
+      .from('Article')
+      .where('id = :requestedId', { requestedId: id });
+    if (filter.kind === 'ast') interpret(filter.ast, query);
+    query.andWhere('id = :requestedId', { requestedId: id });
+
+    const result = await query.execute();
+    return result.affected ? this.toArticle(current) : null;
+  }
+
+  private articleQuery(filter: QueryFilter) {
+    const query = this.articles.createQueryBuilder('article')
+      .innerJoin('article.author', 'user')
+      .addSelect(['user.id', 'user.email']);
+    if (filter.kind === 'ast') interpret(filter.ast, query);
+    return query;
+  }
+
+  private toArticle(row: ArticleRow): Article {
+    const { author, ...article } = row;
+    return {
+      ...article,
+      author: author.id,
+      createdBy: { id: author.id, email: author.email },
+    };
+  }
 }

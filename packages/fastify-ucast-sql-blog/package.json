@@ -13,16 +13,14 @@
     "schema:sequelize": "tsx src/schema.ts sequelize",
     "seed:sequelize": "tsx src/seed.ts sequelize",
     "schema:objection": "tsx src/schema.ts objection",
-    "seed:objection": "tsx src/seed.ts objection",
-    "test": "node --import tsx --test spec/*.spec.ts",
-    "test:express-contract": "node --import tsx spec/run-express-contract.cjs"
+    "seed:objection": "tsx src/seed.ts objection"
   },
   "dependencies": {
     "@casl/ability": "^7.0.0",
     "@mikro-orm/core": "^7.0.0",
     "@mikro-orm/sqlite": "^7.0.0",
     "@ucast/mongo2js": "^2.0.0",
-    "@ucast/sql": "file:vendor/ucast-sql-0.2.1.tgz",
+    "@ucast/sql": "~0.2.1",
     "better-sqlite3": "^12.11.1",
     "fastify": "^5.0.0",
     "jsonwebtoken": "^9.0.0",

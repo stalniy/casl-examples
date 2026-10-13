@@ -2,8 +2,6 @@
 
 This example shares the Fastify blog API while selecting MikroORM 7.x, TypeORM 1.x, Sequelize 6.x, or Objection 3.x before startup. All repositories run CASL's effective rule AST through the matching `@ucast/sql` ORM interpreter. SQLite files are independent: selecting another implementation does not move or migrate data. Sequelize uses the `sqlite3` driver; Objection uses Knex with `better-sqlite3`.
 
-The checked-in UCAST package is a reproducible packed build from UCAST commit `61b4ef843efe00e753d19c3e62c80c170fd8195a` (release PR 87, `@ucast/sql@0.2.1`). Its SHA-256 is `b660f717424eb6a59f8b851fcde5fcb66cec8d7ad69ccd09eaaa5a562a7983b0`. The build was performed in an isolated checkout under `/private/tmp/ucast-pr87`; the user's local UCAST checkout was not used. The upstream package's declaration export paths did not match the generated `dist/types/src/...` layout, so the isolated package manifest was corrected before packing. Runtime files are built from the pinned source; the tarball resolves `@ucast/core` to its declared `2.0.0` package dependency.
-
 ## Local setup
 
 Install workspace dependencies from the repository root. The example test commands below invoke the checked-in Node scripts directly, so they also work in workspaces where pnpm has not approved all third-party install scripts.
@@ -50,5 +48,3 @@ Sequelize combines the interpreter's `where` expression with the requested ident
 ## Testing
 
 To test api contracts, run server running on port 3000 (default), and then run `npm run test:server` from `packages/express-blog`.
-
-To refresh the vendored UCAST artifact, clone UCAST into a disposable directory, check out the pinned commit, install the lockfile, build `@ucast/core` and `@ucast/sql`, correct the generated declaration paths in the isolated `packages/sql/package.json`, pack `@ucast/sql`, then replace `vendor/ucast-sql-0.2.1.tgz` and update this hash. Do not use a registry `@ucast/sql` release for this example.

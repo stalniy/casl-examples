@@ -1,5 +1,6 @@
 import 'reflect-metadata';
-import { createApp, type AppConfig } from './app.js';
+import { createApp } from './createApp.js';
+import type { AppConfig } from './config.js';
 
 const config: AppConfig = {
   IMPLEMENTATION: process.env.IMPLEMENTATION ?? 'mikro',

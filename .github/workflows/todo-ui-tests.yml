@@ -1,0 +1,89 @@
+name: Todo UI tests
+
+on:
+  pull_request:
+    paths:
+      - ./packages/angular-todo
+      - ./packages/react-todo
+      - ./packages/vue-todo
+      - ./packages/ui-tests
+      - ./pnpm-lock.yaml
+
+permissions:
+  contents: read
+
+jobs:
+  todo-contract:
+    name: ${{ matrix.app }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        app:
+          - angular-todo
+          - react-todo
+          - vue-todo
+    env:
+      TODO_APP: ${{ matrix.app }}
+      PLAYWRIGHT_BASE_URL: http://localhost:8080
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: pnpm/action-setup@v6
+        with:
+          version: 11.4.0
+          standalone: true
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: package.json
+          cache: pnpm
+
+      - name: Install app and test dependencies
+        run: pnpm --filter "./packages/$TODO_APP" --filter ./packages/ui-tests install --frozen-lockfile
+
+      - name: Install Chromium
+        working-directory: packages/ui-tests
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: Run todo Playwright tests
+        shell: bash
+        run: | # shell
+          pnpm --dir "packages/$TODO_APP" start > "$RUNNER_TEMP/todo-app.log" 2>&1 &
+          server_pid=$!
+          cleanup() {
+            kill "$server_pid" 2>/dev/null || true
+            cat "$RUNNER_TEMP/todo-app.log"
+          }
+          trap cleanup EXIT
+
+          ready=false
+          for ((attempt = 0; attempt < 120; attempt++)); do
+            if curl --fail --silent --output /dev/null --max-time 2 "$PLAYWRIGHT_BASE_URL"; then
+              ready=true
+              break
+            fi
+            if ! kill -0 "$server_pid" 2>/dev/null; then
+              echo "Todo app exited before becoming ready"
+              exit 1
+            fi
+            sleep 1
+          done
+          if [ "$ready" != true ]; then
+            echo "Todo app did not become ready"
+            exit 1
+          fi
+          pnpm --dir packages/ui-tests test.todo --retries=1
+
+      - name: Upload failure artifacts
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: todo-ui-${{ matrix.app }}
+          path: |
+            packages/ui-tests/test-results/
+            ${{ runner.temp }}/todo-app.log
+          retention-days: 7
+          if-no-files-found: ignore

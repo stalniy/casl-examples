@@ -3,11 +3,14 @@ name: Todo UI tests
 on:
   pull_request:
     paths:
-      - ./packages/angular-todo
-      - ./packages/react-todo
-      - ./packages/vue-todo
-      - ./packages/ui-tests
-      - ./pnpm-lock.yaml
+      - 'packages/angular-todo/**'
+      - 'packages/react-todo/**'
+      - 'packages/vue-todo/**'
+      - 'packages/ui-tests/**'
+      - 'pnpm-workspace.yaml'
+      - 'pnpm-lock.yaml'
+      - 'package.json'
+      - '.github/workflows/todo-ui-tests.yml'
 
 permissions:
   contents: read

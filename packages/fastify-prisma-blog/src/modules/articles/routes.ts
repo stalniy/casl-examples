@@ -35,6 +35,7 @@ function defineFindAllArticles(fastify: FastifyInstance) {
         where: accessibleBy(req.userAbility).ofType('Article'),
         skip: (page - 1) * pageSize,
         take: pageSize,
+        orderBy: [{ createdAt: 'desc' }, { id: 'desc' }],
         include: {
           createdBy: {
             select: {
@@ -112,14 +113,14 @@ function defineUpdateArticles(fastify: FastifyInstance) {
       properties: {
         title: { type: "string" },
         body: { type: "string" },
-        published: { type: "boolean", default: false },
+        published: { type: "boolean" },
       },
     }
   } as const;
   fastify.patch<{
     Body: FromSchema<typeof schema.body>;
     Params: { id: string }
-  }>('/articles/:id', async function (req, reply) {
+  }>('/articles/:id', { schema }, async function (req, reply) {
     const article = await this.prisma.article.findFirst({
       where: {
         id: req.params.id,
@@ -134,12 +135,12 @@ function defineUpdateArticles(fastify: FastifyInstance) {
       return reply.code(403).send();
     }
 
-    await this.prisma.article.update({
+    const item = await this.prisma.article.update({
       where: { id: article.id },
       data: req.body
     });
 
-    reply.send({ item: updatedArticle });
+    reply.send({ item });
   });
 }
 
@@ -148,7 +149,6 @@ function defineDeleteArticles(fastify: FastifyInstance) {
     const article = await this.prisma.article.findFirst({
       where: {
         id: req.params.id,
-        AND: accessibleBy(req.userAbility, 'delete').ofType('Article'),
       },
     });
     if (!article) return reply.code(404).send();

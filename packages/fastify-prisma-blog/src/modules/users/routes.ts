@@ -45,13 +45,16 @@ function defineUserUpdateRoute(fastify: FastifyInstance) {
     });
     if (!user) return reply.code(404).send();
 
-    Object.assign(user, req.body);
-    user.updatedAt = new Date();
     if (!req.userAbility.can('update', subject('User', user))) {
       return reply.code(403).send();
     }
 
-    return reply.send({ item: user });
+    const item = await this.prisma.user.update({
+      where: { id: user.id },
+      data: req.body,
+    });
+
+    return reply.send({ item });
   });
 }
 

@@ -104,6 +104,17 @@ describe('posts API', () => {
       expect(response.data.item.title).to.equal('New Article');
     })
 
+    it('keeps an article published when updating only its title', async () => {
+      const created = await $.subject.post('/articles', { ...$.article, published: true });
+      expect(created.status).to.equal(200);
+      const response = await $.subject.patch(`/articles/${created.data.item.id}`, { title: 'Updated published article' });
+      expect(response.status).to.equal(200);
+      expect(response.data.item.published).to.be.true;
+      const stored = await $.subject.get(`/articles/${created.data.item.id}`);
+      expect(stored.status).to.equal(200);
+      expect(stored.data.item).to.deep.equal(response.data.item);
+    })
+
     it('can delete own article', async () => {
       const created = await $.subject.post('/articles', $.article);
       const deleteResponse = await $.subject.delete(`/articles/${created.data.item.id}`);

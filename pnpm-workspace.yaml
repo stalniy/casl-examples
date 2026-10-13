@@ -2,15 +2,16 @@ packages:
   - packages/**
 
 allowBuilds:
-  '@parcel/watcher': set this to true or false
-  '@prisma/client': set this to true or false
-  '@prisma/engines': set this to true or false
-  esbuild: set this to true or false
+  '@parcel/watcher': false
+  '@prisma/client': true
+  '@prisma/engines': true
+  better-sqlite3: true
+  esbuild: false
   fsevents: set this to true or false
-  lmdb: set this to true or false
-  msgpackr-extract: set this to true or false
+  lmdb: false
+  msgpackr-extract: false
   nodemon: set this to true or false
-  prisma: set this to true or false
+  prisma: true
 
 minimumReleaseAgeExclude:
   - "@casl/ability"

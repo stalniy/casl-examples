@@ -59,7 +59,7 @@ jobs:
       - name: Start MongoDB and restore fixtures
         if: matrix.mongodb
         working-directory: packages/express-blog
-        run: |
+        run: | # shell
           docker compose up -d
           ready=false
           for ((attempt = 0; attempt < 60; attempt++)); do
@@ -81,13 +81,13 @@ jobs:
       - name: Prepare SQLite fixtures
         if: ${{ !matrix.mongodb }}
         working-directory: packages/fastify-ucast-sql-blog
-        run: |
+        run: | # shell
           pnpm "schema:$IMPLEMENTATION"
           pnpm "seed:$IMPLEMENTATION"
 
       - name: Run Express API contract tests
         shell: bash
-        run: |
+        run: | # shell
           pnpm --dir "packages/$API_PACKAGE" start > "$RUNNER_TEMP/blog-api.log" 2>&1 &
           server_pid=$!
           cleanup() {

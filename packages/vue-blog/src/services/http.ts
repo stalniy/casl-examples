@@ -21,7 +21,7 @@ const http: HttpFunction = <TBody = Record<string, unknown>>(
 ) => {
   const requestHeaders: HttpHeaders = {
     Accept: 'application/json',
-    'Content-Type': 'application/json',
+    ...(data ? { 'Content-Type': 'application/json' } : {}),
     ...headers,
   };
 

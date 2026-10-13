@@ -2,6 +2,14 @@ name: Blog API tests
 
 on:
   pull_request:
+    paths:
+      - 'packages/express-blog/**'
+      - 'packages/fastify-ucast-sql-blog/**'
+      - 'packages/fastify-prisma-blog/**'
+      - 'pnpm-workspace.yaml'
+      - 'pnpm-lock.yaml'
+      - 'package.json'
+      - '.github/workflows/blog-api-tests.yml'
 
 permissions:
   contents: read

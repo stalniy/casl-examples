@@ -2,15 +2,15 @@ name: Blog UI tests
 
 on:
   pull_request:
-    # paths:
-    #   - 'packages/react-blog/**'
-    #   - 'packages/vue-blog/**'
-    #   - 'packages/fastify-ucast-sql-blog/**'
-    #   - 'packages/ui-tests/**'
-    #   - 'pnpm-lock.yaml'
-    #   - 'pnpm-workspace.yaml'
-    #   - 'package.json'
-    #   - '.github/workflows/blog-ui-tests.yml'
+    paths:
+      - 'packages/react-blog/**'
+      - 'packages/vue-blog/**'
+      - 'packages/fastify-ucast-sql-blog/**'
+      - 'packages/ui-tests/**'
+      - 'pnpm-lock.yaml'
+      - 'pnpm-workspace.yaml'
+      - 'package.json'
+      - '.github/workflows/blog-ui-tests.yml'
 
 permissions:
   contents: read

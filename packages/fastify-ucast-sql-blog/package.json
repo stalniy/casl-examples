@@ -10,20 +10,28 @@
     "seed:mikro": "tsx src/seed.ts mikro",
     "schema:typeorm": "tsx src/schema.ts typeorm",
     "seed:typeorm": "tsx src/seed.ts typeorm",
+    "schema:sequelize": "tsx src/schema.ts sequelize",
+    "seed:sequelize": "tsx src/seed.ts sequelize",
+    "schema:objection": "tsx src/schema.ts objection",
+    "seed:objection": "tsx src/seed.ts objection",
     "test": "node --import tsx --test spec/*.spec.ts",
     "test:express-contract": "node --import tsx spec/run-express-contract.cjs"
   },
   "dependencies": {
     "@casl/ability": "^7.0.0",
-    "@ucast/mongo2js": "^2.0.0",
-    "@ucast/sql": "file:vendor/ucast-sql-0.2.1.tgz",
     "@mikro-orm/core": "^7.0.0",
     "@mikro-orm/sqlite": "^7.0.0",
+    "@ucast/mongo2js": "^2.0.0",
+    "@ucast/sql": "file:vendor/ucast-sql-0.2.1.tgz",
+    "better-sqlite3": "^12.11.1",
     "fastify": "^5.0.0",
     "jsonwebtoken": "^9.0.0",
+    "knex": "^3.3.0",
+    "objection": "^3.8.0",
     "reflect-metadata": "^0.2.2",
-    "typeorm": "^1.0.0",
-    "better-sqlite3": "^12.11.1"
+    "sequelize": "^6.37.8",
+    "sqlite3": "^5.1.7",
+    "typeorm": "^1.0.0"
   },
   "devDependencies": {
     "@types/better-sqlite3": "^7.6.0",

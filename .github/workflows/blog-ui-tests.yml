@@ -1,0 +1,108 @@
+name: Blog UI tests
+
+on:
+  pull_request:
+    # paths:
+    #   - 'packages/react-blog/**'
+    #   - 'packages/vue-blog/**'
+    #   - 'packages/fastify-ucast-sql-blog/**'
+    #   - 'packages/ui-tests/**'
+    #   - 'pnpm-lock.yaml'
+    #   - 'pnpm-workspace.yaml'
+    #   - 'package.json'
+    #   - '.github/workflows/blog-ui-tests.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  blog-contract:
+    name: ${{ matrix.app }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        app:
+          - react-blog
+          - vue-blog
+    env:
+      BLOG_APP: ${{ matrix.app }}
+      IMPLEMENTATION: mikro
+      DATABASE_URL: ./blog-ci.sqlite
+      AUTH_SECRET: ci-blog-secret
+      SERVER_PORT: 3000
+      API_PROXY_TARGET: http://127.0.0.1:3000
+      VITE_API_URL: /api
+      PLAYWRIGHT_BASE_URL: http://localhost:8080
+      PLAYWRIGHT_BLOG_API_URL: http://127.0.0.1:3000/api
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: pnpm/action-setup@v6
+        with:
+          version: 11.4.0
+          standalone: true
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: package.json
+          cache: pnpm
+
+      - name: Install app, API, and test dependencies
+        run: pnpm --filter "./packages/$BLOG_APP" --filter ./packages/fastify-ucast-sql-blog --filter ./packages/ui-tests install --frozen-lockfile
+
+      - name: Install Chromium
+        working-directory: packages/ui-tests
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: Prepare SQLite fixtures
+        working-directory: packages/fastify-ucast-sql-blog
+        run: | # shell
+          pnpm "schema:$IMPLEMENTATION"
+          pnpm "seed:$IMPLEMENTATION"
+
+      - name: Run blog Playwright tests
+        shell: bash
+        run: | # shell
+          pnpm --dir packages/fastify-ucast-sql-blog start > "$RUNNER_TEMP/blog-api.log" 2>&1 &
+          api_pid=$!
+          pnpm --dir "packages/$BLOG_APP" start > "$RUNNER_TEMP/blog-app.log" 2>&1 &
+          app_pid=$!
+          cleanup() {
+            kill "$api_pid" "$app_pid" 2>/dev/null || true
+            cat "$RUNNER_TEMP/blog-api.log" "$RUNNER_TEMP/blog-app.log"
+          }
+          trap cleanup EXIT
+
+          wait_for_server() {
+            local url="$1" pid="$2" name="$3"
+            for ((attempt = 0; attempt < 120; attempt++)); do
+              if curl --fail --silent --output /dev/null --max-time 2 "$url"; then
+                return 0
+              fi
+              if ! kill -0 "$pid" 2>/dev/null; then
+                echo "$name exited before becoming ready"
+                return 1
+              fi
+              sleep 1
+            done
+            echo "$name did not become ready"
+            return 1
+          }
+          wait_for_server "$PLAYWRIGHT_BLOG_API_URL/articles" "$api_pid" "Blog API"
+          wait_for_server "$PLAYWRIGHT_BASE_URL" "$app_pid" "Blog UI"
+          pnpm --dir packages/ui-tests test.blog --retries=1
+
+      - name: Upload failure artifacts
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: blog-ui-${{ matrix.app }}
+          path: |
+            packages/ui-tests/test-results/
+            ${{ runner.temp }}/blog-api.log
+            ${{ runner.temp }}/blog-app.log
+          retention-days: 7
+          if-no-files-found: ignore

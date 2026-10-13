@@ -164,7 +164,7 @@ async function createArticleViaApi(emailOrSession, article) {
 
 async function findArticleByTitle(emailOrSession, title) {
   const session = await toSession(emailOrSession);
-  const response = await requestJson('/articles?pageSize=500', {
+  const response = await requestJson('/articles?pageSize=100', {
     token: session.token,
   });
 

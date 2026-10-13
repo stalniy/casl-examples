@@ -1,0 +1,125 @@
+name: Blog API tests
+
+on:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  express-contract:
+    name: ${{ matrix.name }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: express-blog
+            package: express-blog
+            mongodb: true
+            database: mongodb://root:blogpwd@localhost:27017/blog?authSource=admin&retryWrites=true&w=majority
+          - name: fastify-prisma-blog
+            package: fastify-prisma-blog
+            mongodb: true
+            database: mongodb://root:blogpwd@localhost:27017/blog?authSource=admin&retryWrites=true&w=majority
+          - name: fastify-ucast-sql-blog (MikroORM)
+            package: fastify-ucast-sql-blog
+            mongodb: false
+            implementation: mikro
+            database: ./blog-mikro.sqlite
+          - name: fastify-ucast-sql-blog (TypeORM)
+            package: fastify-ucast-sql-blog
+            mongodb: false
+            implementation: typeorm
+            database: ./blog-typeorm.sqlite
+    env:
+      DATABASE_URL: ${{ matrix.database }}
+      AUTH_SECRET: ci-blog-secret
+      SERVER_PORT: 3000
+      IMPLEMENTATION: ${{ matrix.implementation }}
+      API_PACKAGE: ${{ matrix.package }}
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: pnpm/action-setup@v6
+        with:
+          version: 11.4.0
+          standalone: true
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: package.json
+          cache: pnpm
+
+      - name: Install API and test dependencies
+        run: pnpm --filter "./packages/$API_PACKAGE" --filter ./packages/express-blog install --frozen-lockfile
+
+      - name: Start MongoDB and restore fixtures
+        if: matrix.mongodb
+        working-directory: packages/express-blog
+        run: |
+          docker compose up -d
+          ready=false
+          for ((attempt = 0; attempt < 60; attempt++)); do
+            if docker compose exec -T mongo mongo --quiet \
+              --host localhost -u root -p blogpwd --authenticationDatabase admin \
+              --eval 'quit(db.isMaster().ismaster ? 0 : 1)'; then
+              ready=true
+              break
+            fi
+            sleep 2
+          done
+          if [ "$ready" != true ]; then
+            echo "MongoDB did not become a writable replica-set primary"
+            exit 1
+          fi
+          docker compose exec -T mongo mongorestore \
+            --uri='mongodb://root:blogpwd@localhost:27017/?authSource=admin' /var/app/db
+
+      - name: Prepare SQLite fixtures
+        if: ${{ !matrix.mongodb }}
+        working-directory: packages/fastify-ucast-sql-blog
+        run: |
+          pnpm "schema:$IMPLEMENTATION"
+          pnpm "seed:$IMPLEMENTATION"
+
+      - name: Run Express API contract tests
+        shell: bash
+        run: |
+          pnpm --dir "packages/$API_PACKAGE" start > "$RUNNER_TEMP/blog-api.log" 2>&1 &
+          server_pid=$!
+          cleanup() {
+            kill "$server_pid" 2>/dev/null || true
+            cat "$RUNNER_TEMP/blog-api.log"
+          }
+          trap cleanup EXIT
+
+          ready=false
+          for ((attempt = 0; attempt < 60; attempt++)); do
+            if curl --fail --silent --output /dev/null --max-time 2 http://localhost:3000/api/articles; then
+              ready=true
+              break
+            fi
+            if ! kill -0 "$server_pid" 2>/dev/null; then
+              echo "API exited before becoming ready"
+              exit 1
+            fi
+            sleep 1
+          done
+          if [ "$ready" != true ]; then
+            echo "API did not become ready"
+            exit 1
+          fi
+          pnpm --dir packages/express-blog test:server
+
+      - name: Show MongoDB logs on failure
+        if: ${{ failure() && matrix.mongodb }}
+        working-directory: packages/express-blog
+        run: docker compose logs
+
+      - name: Stop MongoDB
+        if: ${{ always() && matrix.mongodb }}
+        working-directory: packages/express-blog
+        run: docker compose down --volumes

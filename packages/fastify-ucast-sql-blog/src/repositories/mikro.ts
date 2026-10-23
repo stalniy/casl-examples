@@ -1,5 +1,5 @@
 import { EntitySchema, type MikroORM } from '@mikro-orm/sqlite';
-import { interpret } from '@ucast/sql/mikro-orm';
+import { createMikroORMInterpreter } from '@ucast/sql/mikro-orm';
 import type { ArticlePatch, BlogRepository, QueryFilter, UserPatch } from './types.js';
 import type { User, Article } from '../domain.js';
 
@@ -46,7 +46,14 @@ export const MikroArticles = new EntitySchema<ArticleRow>({
 export class MikroBlogRepository implements BlogRepository {
   readonly kind = 'mikro';
 
-  constructor(private readonly orm: MikroORM) {}
+  private readonly interpret;
+
+  constructor(private readonly orm: MikroORM) {
+    this.interpret = createMikroORMInterpreter({
+      metadata: orm.getMetadata(),
+      platform: orm.em.getPlatform(),
+    });
+  }
 
   private get em() {
     return this.orm.em;
@@ -89,7 +96,7 @@ export class MikroBlogRepository implements BlogRepository {
     if (filter.kind === 'none') return null;
 
     const query = this.em.createQueryBuilder(MikroUsers, 'user').select('*');
-    if (filter.kind === 'ast') interpret(filter.ast, query);
+    if (filter.kind === 'ast') query.andWhere(this.interpret(filter.ast, MikroUsers));
     query.andWhere({ id });
     const row = await query.execute('get', false);
     return row ? this.#toUser(row) : null;
@@ -112,7 +119,7 @@ export class MikroBlogRepository implements BlogRepository {
     const query = this.em.createQueryBuilder(MikroUsers, 'user')
       .update({ ...patch, updatedAt: new Date().toISOString() })
       .where({ id });
-    if (filter.kind === 'ast') interpret(filter.ast, query);
+    if (filter.kind === 'ast') query.andWhere(this.interpret(filter.ast, MikroUsers));
     query.andWhere({ id });
 
     const result = await query.execute();
@@ -166,7 +173,7 @@ export class MikroBlogRepository implements BlogRepository {
     const query = this.em.createQueryBuilder(MikroArticles, 'article')
       .update({ ...patch, updatedAt })
       .where({ id });
-    if (filter.kind === 'ast') interpret(filter.ast, query);
+    if (filter.kind === 'ast') query.andWhere(this.interpret(filter.ast, MikroArticles));
     query.andWhere({ id });
 
     const result = await query.execute();
@@ -184,7 +191,7 @@ export class MikroBlogRepository implements BlogRepository {
     const query = this.em.createQueryBuilder(MikroArticles, 'article')
       .delete()
       .where({ id });
-    if (filter.kind === 'ast') interpret(filter.ast, query);
+    if (filter.kind === 'ast') query.andWhere(this.interpret(filter.ast, MikroArticles));
     query.andWhere({ id });
 
     const result = await query.execute();
@@ -197,7 +204,7 @@ export class MikroBlogRepository implements BlogRepository {
       .select('a.*')
       .innerJoin('a.author', 'u')
       .addSelect(['u.id as authorId', 'u.email as authorEmail']);
-    if (filter.kind === 'ast') interpret(filter.ast, query);
+    if (filter.kind === 'ast') query.andWhere(this.interpret(filter.ast, MikroArticles));
     return query;
   }
 

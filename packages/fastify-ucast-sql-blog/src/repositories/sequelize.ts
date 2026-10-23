@@ -1,5 +1,6 @@
-import { col, DataTypes, fn, Model, Op, type ModelStatic, type Sequelize, type WhereOptions } from 'sequelize';
+import { col, DataTypes, fn, literal, Model, Op, type ModelStatic, type Sequelize, type WhereOptions } from 'sequelize';
 import { interpret } from '@ucast/sql/sequelize';
+import sqlUtils from 'sequelize/lib/utils/sql';
 import type { User, Article } from '../domain.js';
 import type { ArticlePatch, BlogRepository, QueryFilter, UserPatch } from './types.js';
 
@@ -43,7 +44,7 @@ export class SequelizeBlogRepository implements BlogRepository {
 
   async findUserById(id: string, filter: QueryFilter = { kind: 'all' }): Promise<User | null> {
     if (filter.kind === 'none') return null;
-    const row = await this.users.findOne({ where: this.#where(this.users, filter, id, 'User') });
+    const row = await this.users.findOne(this.#queryOptions(this.users, filter, id, 'User'));
     return row ? this.#toUser(row) : null;
   }
 
@@ -55,7 +56,7 @@ export class SequelizeBlogRepository implements BlogRepository {
   async updateUser(id: string, patch: UserPatch, filter: QueryFilter): Promise<User | null> {
     if (filter.kind === 'none') return null;
     const [affected] = await this.users.update({ ...patch, updatedAt: new Date() }, {
-      where: this.#where(this.users, filter, id),
+      ...this.#queryOptions(this.users, filter, id),
     });
     return affected ? this.findUserById(id) : null;
   }
@@ -63,7 +64,7 @@ export class SequelizeBlogRepository implements BlogRepository {
   async findArticle(id: string, filter: QueryFilter = { kind: 'all' }): Promise<Article | null> {
     if (filter.kind === 'none') return null;
     const row = await this.articles.findOne({
-      where: this.#where(this.articles, filter, id, 'Article'),
+      ...this.#queryOptions(this.articles, filter, id, 'Article'),
       include: [{ association: 'createdBy', attributes: ['id', 'email'], required: true }],
     });
     return row ? this.#toArticle(row) : null;
@@ -72,7 +73,7 @@ export class SequelizeBlogRepository implements BlogRepository {
   async listArticles(filter: QueryFilter, page: number, pageSize: number): Promise<{ items: Article[]; count: number }> {
     if (filter.kind === 'none') return { items: [], count: 0 };
     const { rows, count } = await this.articles.findAndCountAll({
-      where: this.#where(this.articles, filter, undefined, 'Article'),
+      ...this.#queryOptions(this.articles, filter, undefined, 'Article'),
       include: [{ association: 'createdBy', attributes: ['id', 'email'], required: true }],
       // Existing SQLite files can contain both ISO and Sequelize timestamp formats.
       order: [[fn('julianday', col('Article.createdAt')), 'DESC'], ['id', 'ASC']],
@@ -96,7 +97,7 @@ export class SequelizeBlogRepository implements BlogRepository {
     if (!current) return null;
     const updatedAt = new Date();
     const [affected] = await this.articles.update({ ...patch, updatedAt }, {
-      where: this.#where(this.articles, filter, id),
+      ...this.#queryOptions(this.articles, filter, id),
     });
     return affected ? { ...current, ...patch, updatedAt } : null;
   }
@@ -105,13 +106,20 @@ export class SequelizeBlogRepository implements BlogRepository {
     if (filter.kind === 'none') return null;
     const current = await this.findArticle(id, filter);
     if (!current) return null;
-    const affected = await this.articles.destroy({ where: this.#where(this.articles, filter, id) });
+    const affected = await this.articles.destroy(this.#queryOptions(this.articles, filter, id));
     return affected ? current : null;
   }
 
-  #where(model: typeof this.users | typeof this.articles, filter: QueryFilter, id?: string, rootAlias?: string): WhereOptions {
-    const condition = filter.kind === 'ast' ? interpret(filter.ast, model, { rootAlias }).where : {};
-    return id === undefined ? condition : { [Op.and]: [{ id }, condition] };
+  #queryOptions(model: typeof this.users | typeof this.articles, filter: QueryFilter, id?: string, alias?: string) {
+    let condition: WhereOptions = {};
+    if (filter.kind === 'ast') {
+      const { where, replacements } = interpret(filter.ast, model, { alias });
+      // Sequelize 6 UPDATE generates binds internally, which cannot coexist with replacements.
+      // Use its own SQL-aware replacement escaping before composing the native query.
+      const dialect = (this.sequelize as unknown as { dialect: Parameters<typeof sqlUtils.injectReplacements>[1] }).dialect;
+      condition = literal(sqlUtils.injectReplacements(where.val as string, dialect, replacements));
+    }
+    return { where: id === undefined ? condition : { [Op.and]: [{ id }, condition] } };
   }
 
   #toUser(model: Model<User>): User {

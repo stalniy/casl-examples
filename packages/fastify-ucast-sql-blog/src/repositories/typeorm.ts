@@ -80,7 +80,7 @@ export class TypeOrmBlogRepository implements BlogRepository {
     if (filter.kind === 'none') return null;
 
     const query = this.users.createQueryBuilder('user');
-    if (filter.kind === 'ast') interpret(filter.ast, query);
+    if (filter.kind === 'ast') query.andWhere(interpret(filter.ast));
     query.andWhere('user.id = :requestedId', { requestedId: id });
     return query.getOne();
   }
@@ -97,7 +97,7 @@ export class TypeOrmBlogRepository implements BlogRepository {
       .update()
       .set({ ...patch, updatedAt: new Date() })
       .where('id = :requestedId', { requestedId: id });
-    if (filter.kind === 'ast') interpret(filter.ast, query);
+    if (filter.kind === 'ast') query.andWhere(interpret(filter.ast));
     query.andWhere('id = :requestedId', { requestedId: id });
 
     const result = await query.execute();
@@ -153,7 +153,7 @@ export class TypeOrmBlogRepository implements BlogRepository {
       .update()
       .set({ ...patch, updatedAt })
       .where('id = :requestedId', { requestedId: id });
-    if (filter.kind === 'ast') interpret(filter.ast, query);
+    if (filter.kind === 'ast') query.andWhere(interpret(filter.ast));
     query.andWhere('id = :requestedId', { requestedId: id });
 
     const result = await query.execute();
@@ -173,7 +173,7 @@ export class TypeOrmBlogRepository implements BlogRepository {
       .delete()
       .from('Article')
       .where('id = :requestedId', { requestedId: id });
-    if (filter.kind === 'ast') interpret(filter.ast, query);
+    if (filter.kind === 'ast') query.andWhere(interpret(filter.ast));
     query.andWhere('id = :requestedId', { requestedId: id });
 
     const result = await query.execute();
@@ -184,7 +184,7 @@ export class TypeOrmBlogRepository implements BlogRepository {
     const query = this.articles.createQueryBuilder('article')
       .innerJoin('article.author', 'user')
       .addSelect(['user.id', 'user.email']);
-    if (filter.kind === 'ast') interpret(filter.ast, query);
+    if (filter.kind === 'ast') query.andWhere(interpret(filter.ast));
     return query;
   }
 

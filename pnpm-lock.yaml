@@ -190,8 +190,8 @@ importers:
         specifier: ^2.0.0
         version: 2.0.0
       '@ucast/sql':
-        specifier: ~0.2.1
-        version: 0.2.1(@mikro-orm/core@7.2.5)(objection@3.8.0(knex@3.3.0(better-sqlite3@12.11.1)(sqlite3@5.1.7)))(sequelize@6.37.8(sqlite3@5.1.7))(typeorm@1.1.2(better-sqlite3@12.11.1)(mongodb@7.2.0(socks@2.8.7))(ts-node@10.9.2(@types/node@24.0.15)(typescript@5.9.3)))
+        specifier: ~0.3.0
+        version: 0.3.0(@mikro-orm/core@7.2.5)(objection@3.8.0(knex@3.3.0(better-sqlite3@12.11.1)(sqlite3@5.1.7)))(sequelize@6.37.8(sqlite3@5.1.7))(typeorm@1.1.2(better-sqlite3@12.11.1)(mongodb@7.2.0(socks@2.8.7))(ts-node@10.9.2(@types/node@24.0.15)(typescript@5.9.3)))
       better-sqlite3:
         specifier: ^12.11.1
         version: 12.11.1
@@ -221,7 +221,7 @@ importers:
         version: 1.1.2(better-sqlite3@12.11.1)(mongodb@7.2.0(socks@2.8.7))(ts-node@10.9.2(@types/node@24.0.15)(typescript@5.9.3))
     devDependencies:
       '@types/better-sqlite3':
-        specifier: ^7.6.0
+        specifier: ^7.6.13
         version: 7.6.13
       '@types/jsonwebtoken':
         specifier: ^9.0.0
@@ -3035,15 +3035,18 @@ packages:
   '@ucast/mongo@3.0.0':
     resolution: {integrity: sha512-kwuSH+kdB4GCR0LGhy/PEDm4PCflur89AlK82kNiYD0FvsA8A/p+0sx7m+/R8mMFAlmlkAd3VXp7sM/cLLYWYg==}
 
-  '@ucast/sql@0.2.1':
-    resolution: {integrity: sha512-RorCOrZ7iJam0ouCH3wsVNSFNjbYUwfNfq1wR5T1u8b8hQtW+dm2aOpljWrXLPhxNFRun86srYRaeMLkxCpXoQ==}
+  '@ucast/sql@0.3.0':
+    resolution: {integrity: sha512-wSwtVKW/ix04UqpJuJG4WKIfNe/IDuUz1hD0JDwZL3dQvpFa0XJCvtHJH/WFaSkGr+5jEpZ6KyQNmJIRyOW4iw==}
     peerDependencies:
       '@mikro-orm/core': ^6.0.0 || ^7.0.0
+      drizzle-orm: '>=0.36.2 <1.0.0 || ^1.0.0-rc.1'
       objection: ^2.0.0 || ^3.0.0
       sequelize: ^5.0.0 || ^6.0.0
       typeorm: ^0.2.0 || ^0.3.0 || ^1.0.0
     peerDependenciesMeta:
       '@mikro-orm/core':
+        optional: true
+      drizzle-orm:
         optional: true
       objection:
         optional: true
@@ -9599,7 +9602,7 @@ snapshots:
     dependencies:
       '@ucast/core': 2.0.0
 
-  '@ucast/sql@0.2.1(@mikro-orm/core@7.2.5)(objection@3.8.0(knex@3.3.0(better-sqlite3@12.11.1)(sqlite3@5.1.7)))(sequelize@6.37.8(sqlite3@5.1.7))(typeorm@1.1.2(better-sqlite3@12.11.1)(mongodb@7.2.0(socks@2.8.7))(ts-node@10.9.2(@types/node@24.0.15)(typescript@5.9.3)))':
+  '@ucast/sql@0.3.0(@mikro-orm/core@7.2.5)(objection@3.8.0(knex@3.3.0(better-sqlite3@12.11.1)(sqlite3@5.1.7)))(sequelize@6.37.8(sqlite3@5.1.7))(typeorm@1.1.2(better-sqlite3@12.11.1)(mongodb@7.2.0(socks@2.8.7))(ts-node@10.9.2(@types/node@24.0.15)(typescript@5.9.3)))':
     dependencies:
       '@ucast/core': 2.0.0
     optionalDependencies:

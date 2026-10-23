@@ -107,7 +107,7 @@ export class ObjectionBlogRepository implements BlogRepository {
   }
 
   #filter<T extends Model>(query: QueryBuilder<T, T[]>, filter: QueryFilter) {
-    if (filter.kind === 'ast') interpret(filter.ast, query);
+    if (filter.kind === 'ast') query.where(interpret(filter.ast, query.modelClass()));
     return query;
   }
 

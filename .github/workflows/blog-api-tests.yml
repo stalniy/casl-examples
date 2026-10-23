@@ -51,6 +51,11 @@ jobs:
             mongodb: false
             implementation: objection
             database: ./blog-objection.sqlite
+          - name: fastify-ucast-sql-blog (Drizzle 1.0.0-rc.5)
+            package: fastify-ucast-sql-blog
+            mongodb: false
+            implementation: drizzle-v1
+            database: ./blog-drizzle-v1.sqlite
     env:
       DATABASE_URL: ${{ matrix.database }}
       AUTH_SECRET: ci-blog-secret

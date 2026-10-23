@@ -4,7 +4,7 @@ import { initializeOrm } from './services/orm.js';
 
 async function seed() {
 const implementation = process.argv[2];
-if (!['mikro', 'typeorm', 'sequelize', 'objection'].includes(implementation)) throw new Error('Usage: tsx src/seed.ts mikro|typeorm|sequelize|objection');
+if (!['mikro', 'typeorm', 'sequelize', 'objection', 'drizzle-v1'].includes(implementation)) throw new Error('Usage: tsx src/seed.ts mikro|typeorm|sequelize|objection|drizzle-v1');
 const configuredPath = process.env.DATABASE_URL ?? `./blog-${implementation}.sqlite`;
 const filename = resolve(configuredPath.startsWith('file:') ? configuredPath.slice(5) : configuredPath);
 const repo = await initializeOrm(implementation, filename);

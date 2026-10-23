@@ -8,8 +8,8 @@ import { usersRoutes } from './modules/users/index.js';
 import { articlesRoutes } from './modules/articles/index.js';
 
 export async function createApp(config: AppConfig, injectedRepository?: BlogRepository): Promise<FastifyInstance> {
-  if (!['mikro', 'typeorm', 'sequelize', 'objection'].includes(config.IMPLEMENTATION)) {
-    throw new Error(`Unknown implementation "${config.IMPLEMENTATION}". Use mikro, typeorm, sequelize or objection.`);
+  if (!['mikro', 'typeorm', 'sequelize', 'objection', 'drizzle-v1'].includes(config.IMPLEMENTATION)) {
+    throw new Error(`Unknown implementation "${config.IMPLEMENTATION}". Use mikro, typeorm, sequelize, objection or drizzle-v1.`);
   }
   const repository = injectedRepository ?? await initializeOrm(config.IMPLEMENTATION, config.DATABASE_URL);
   const fastify = Fastify({ logger: true });

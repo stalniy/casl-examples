@@ -2,6 +2,7 @@ import { MikroORM, SqliteDriver } from '@mikro-orm/sqlite';
 import { DataSource } from 'typeorm';
 import { Sequelize } from 'sequelize';
 import knex from 'knex';
+import { DrizzleV1BlogRepository } from '../repositories/drizzle-v1.js';
 import type { BlogRepository } from '../repositories/types.js';
 import { MikroBlogRepository, MikroUsers, MikroArticles } from '../repositories/mikro.js';
 import { TypeOrmBlogRepository, TypeOrmUsers, TypeOrmArticles } from '../repositories/typeorm.js';
@@ -67,7 +68,9 @@ export async function initializeOrm(implementation: string, databaseUrl: string)
         throw error;
       }
     }
+    case 'drizzle-v1':
+      return new DrizzleV1BlogRepository(filename);
     default:
-      throw new Error(`Unknown implementation "${implementation}". Use mikro, typeorm, sequelize or objection.`);
+      throw new Error(`Unknown implementation "${implementation}". Use mikro, typeorm, sequelize, objection or drizzle-v1.`);
   }
 }

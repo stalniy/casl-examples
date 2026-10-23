@@ -2,9 +2,10 @@ import 'reflect-metadata';
 import { createApp } from './createApp.js';
 import type { AppConfig } from './config.js';
 
+const implementation = process.env.IMPLEMENTATION ?? 'mikro';
 const config: AppConfig = {
-  IMPLEMENTATION: process.env.IMPLEMENTATION ?? 'mikro',
-  DATABASE_URL: process.env.DATABASE_URL ?? './blog-mikro.sqlite',
+  IMPLEMENTATION: implementation,
+  DATABASE_URL: process.env.DATABASE_URL ?? `./blog-${implementation}.sqlite`,
   SERVER_PORT: Number(process.env.SERVER_PORT ?? 3000),
   AUTH_SECRET: process.env.AUTH_SECRET ?? 'development-only-secret',
   AUTH_ISSUER: process.env.AUTH_ISSUER ?? 'CASL.Fastify.UcastSql',

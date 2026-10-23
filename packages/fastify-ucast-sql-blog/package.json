@@ -13,7 +13,9 @@
     "schema:sequelize": "tsx src/schema.ts sequelize",
     "seed:sequelize": "tsx src/seed.ts sequelize",
     "schema:objection": "tsx src/schema.ts objection",
-    "seed:objection": "tsx src/seed.ts objection"
+    "seed:objection": "tsx src/seed.ts objection",
+    "schema:drizzle-v1": "tsx src/schema.ts drizzle-v1",
+    "seed:drizzle-v1": "tsx src/seed.ts drizzle-v1"
   },
   "dependencies": {
     "@casl/ability": "^7.0.0",
@@ -29,7 +31,8 @@
     "reflect-metadata": "^0.2.2",
     "sequelize": "^6.37.8",
     "sqlite3": "^5.1.7",
-    "typeorm": "^1.0.0"
+    "typeorm": "^1.0.0",
+    "drizzle-orm": "1.0.0-rc.5"
   },
   "devDependencies": {
     "@types/better-sqlite3": "^7.6.13",

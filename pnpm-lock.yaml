@@ -35,11 +35,11 @@ importers:
         specifier: 21.2.14
         version: 21.2.14(@angular/common@21.2.14(@angular/core@21.2.14(@angular/compiler@21.2.14)(rxjs@7.8.2)(zone.js@0.16.1))(rxjs@7.8.2))(@angular/core@21.2.14(@angular/compiler@21.2.14)(rxjs@7.8.2)(zone.js@0.16.1))(@angular/platform-browser@21.2.14(@angular/animations@21.2.14(@angular/core@21.2.14(@angular/compiler@21.2.14)(rxjs@7.8.2)(zone.js@0.16.1)))(@angular/common@21.2.14(@angular/core@21.2.14(@angular/compiler@21.2.14)(rxjs@7.8.2)(zone.js@0.16.1))(rxjs@7.8.2))(@angular/core@21.2.14(@angular/compiler@21.2.14)(rxjs@7.8.2)(zone.js@0.16.1)))(rxjs@7.8.2)
       '@casl/ability':
-        specifier: ^7.0.0
-        version: 7.0.0
+        specifier: ^7.1.0
+        version: 7.1.0
       '@casl/angular':
-        specifier: ^10.0.0
-        version: 10.0.0(@angular/core@21.2.14(@angular/compiler@21.2.14)(rxjs@7.8.2)(zone.js@0.16.1))(@casl/ability@7.0.0)(rxjs@7.8.2)(tslib@2.8.1)
+        specifier: ^10.1.0
+        version: 10.1.0(@angular/core@21.2.14(@angular/compiler@21.2.14)(rxjs@7.8.2)(zone.js@0.16.1))(@casl/ability@7.1.0)(rxjs@7.8.2)(tslib@2.8.1)
       rxjs:
         specifier: ^7.5.5
         version: 7.8.2
@@ -81,11 +81,11 @@ importers:
   packages/express-blog:
     dependencies:
       '@casl/ability':
-        specifier: ^7.0.0
-        version: 7.0.0
+        specifier: ^7.1.0
+        version: 7.1.0
       '@casl/mongoose':
-        specifier: ^9.0.0
-        version: 9.0.0(@casl/ability@7.0.0)(mongoose@9.6.1(socks@2.8.7))
+        specifier: ^9.1.0
+        version: 9.1.0(@casl/ability@7.1.0)(mongoose@9.6.1(socks@2.8.7))
       body-parser:
         specifier: ^1.19.0
         version: 1.20.4
@@ -133,11 +133,11 @@ importers:
   packages/fastify-prisma-blog:
     dependencies:
       '@casl/ability':
-        specifier: ^7.0.0
-        version: 7.0.0
+        specifier: ^7.1.0
+        version: 7.1.0
       '@casl/prisma':
-        specifier: ^2.0.0
-        version: 2.0.0(@casl/ability@7.0.0)(@prisma/client@6.19.0(prisma@6.19.0(typescript@4.9.5))(typescript@4.9.5))
+        specifier: ^2.2.0
+        version: 2.2.0(@casl/ability@7.1.0)(@prisma/client@6.19.0(prisma@6.19.0(typescript@4.9.5))(typescript@4.9.5))
       '@prisma/client':
         specifier: 6.19.0
         version: 6.19.0(prisma@6.19.0(typescript@4.9.5))(typescript@4.9.5)
@@ -178,8 +178,8 @@ importers:
   packages/fastify-ucast-sql-blog:
     dependencies:
       '@casl/ability':
-        specifier: ^7.0.0
-        version: 7.0.0
+        specifier: ^7.1.0
+        version: 7.1.0
       '@mikro-orm/core':
         specifier: ^7.0.0
         version: 7.2.5
@@ -242,8 +242,8 @@ importers:
   packages/hello-world:
     dependencies:
       '@casl/ability':
-        specifier: ^7.0.0
-        version: 7.0.0
+        specifier: ^7.1.0
+        version: 7.1.0
     devDependencies:
       typescript:
         specifier: ~6.0.0
@@ -252,11 +252,11 @@ importers:
   packages/react-blog:
     dependencies:
       '@casl/ability':
-        specifier: ^7.0.0
-        version: 7.0.0
+        specifier: ^7.1.0
+        version: 7.1.0
       '@casl/react':
-        specifier: ^7.0.0
-        version: 7.0.0(@casl/ability@7.0.0)(react@18.3.1)
+        specifier: ^7.1.0
+        version: 7.1.0(@casl/ability@7.1.0)(react@18.3.1)
       '@material-ui/core':
         specifier: ^4.11.0
         version: 4.12.4(@types/react@18.3.28)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -310,11 +310,11 @@ importers:
   packages/react-todo:
     dependencies:
       '@casl/ability':
-        specifier: ^7.0.0
-        version: 7.0.0
+        specifier: ^7.1.0
+        version: 7.1.0
       '@casl/react':
-        specifier: ^7.0.0
-        version: 7.0.0(@casl/ability@7.0.0)(react@19.2.5)
+        specifier: ^7.1.0
+        version: 7.1.0(@casl/ability@7.1.0)(react@19.2.5)
       react:
         specifier: ^19.2.5
         version: 19.2.5
@@ -350,11 +350,11 @@ importers:
   packages/vue-blog:
     dependencies:
       '@casl/ability':
-        specifier: ^7.0.0
-        version: 7.0.0
+        specifier: ^7.1.0
+        version: 7.1.0
       '@casl/vue':
-        specifier: ^3.0.0
-        version: 3.0.0(@casl/ability@7.0.0)(vue@3.5.33(typescript@6.0.2))
+        specifier: ^3.1.0
+        version: 3.1.0(@casl/ability@7.1.0)(vue@3.5.33(typescript@6.0.2))
       vue:
         specifier: ^3.5.33
         version: 3.5.33(typescript@6.0.2)
@@ -384,11 +384,11 @@ importers:
   packages/vue-todo:
     dependencies:
       '@casl/ability':
-        specifier: ^7.0.0
-        version: 7.0.0
+        specifier: ^7.1.0
+        version: 7.1.0
       '@casl/vue':
-        specifier: ^3.0.0
-        version: 3.0.0(@casl/ability@7.0.0)(vue@3.5.33(typescript@6.0.2))
+        specifier: ^3.1.0
+        version: 3.1.0(@casl/ability@7.1.0)(vue@3.5.33(typescript@6.0.2))
       vue:
         specifier: ^3.5.33
         version: 3.5.33(typescript@6.0.2)
@@ -1207,37 +1207,37 @@ packages:
     resolution: {integrity: sha512-LwdZHpScM4Qz8Xw2iKSzS+cfglZzJGvofQICy7W7v4caru4EaAmyUuO6BGrbyQ2mYV11W0U8j5mBhd14dd3B0A==}
     engines: {node: '>=6.9.0'}
 
-  '@casl/ability@7.0.0':
-    resolution: {integrity: sha512-QhwRflkTucpdS2uw1XScrzLWbgLYJGvPoq2Xm5OjeRci3dwtPixxnjUKJ04Ss1ivNS9tZQ8y4sjWeelWsrwo4g==}
+  '@casl/ability@7.1.0':
+    resolution: {integrity: sha512-M7eETIffU3x38Oy7ggpSgjMZkIo+6q/vVIboWtlrSxEplIfP3c66g8Vi3ulImvo2WOjh+Xv9uWnJkjRhCajOiA==}
 
-  '@casl/angular@10.0.0':
-    resolution: {integrity: sha512-gMF6QiCfDfFLIdV2k6ey0oIV0iz7+xX1ZUx5Zh7PogusiWSPLVU0BLoVarYiikwM8nU5OjAA2I+poLLZ0cZTag==}
+  '@casl/angular@10.1.0':
+    resolution: {integrity: sha512-SEk9ZaeeJgATxqo07hoaNxbizVfZYSzq/YMqv8sCWbfZcuRyKW7ThMKdFMisWR2ioAmHwJjd8UQALV9MivkepA==}
     peerDependencies:
-      '@angular/core': ^16.0.0 || ^17.0.0 || ^18.0.0 || ^19.0.0 || ^20.0.0 || ^21.0.0
+      '@angular/core': ^16.0.0 || ^17.0.0 || ^18.0.0 || ^19.0.0 || ^20.0.0 || ^21.0.0 || ^22.0.0
       '@casl/ability': ^7.0.0
       rxjs: ^7.5.5
       tslib: ^2.0.0
 
-  '@casl/mongoose@9.0.0':
-    resolution: {integrity: sha512-qzTlvH5jjyu6R2vcbn/ssS4RBYVVrfSazT1LWRkBjsBHGkxNcMfA/ynfV0qc/wzypQNrecRH5k1UJFI3lRRklg==}
+  '@casl/mongoose@9.1.0':
+    resolution: {integrity: sha512-EMr1I/5CUX6KQ1sadCL/WUaFaELeHljC1Uy86PSrzYqqL7b4CNS0ISaUp3WWVac5/QHZrkIQLY4yjD+5f2xp2A==}
     peerDependencies:
       '@casl/ability': ^7.0.0
       mongoose: ^6.0.13 || ^7.0.0 || ^8.0.0 || ^9.0.0
 
-  '@casl/prisma@2.0.0':
-    resolution: {integrity: sha512-UYiCDy/Pmo171jRbbmfB892Y8Jcrp3YANTJDT6kWJkaUAIdIO1E9A7bv0VtvI53h4Xg5lsCbWwEsN0w1Hy3y+Q==}
+  '@casl/prisma@2.2.0':
+    resolution: {integrity: sha512-WJjCgxQjp1rQUXnph7J7vkzIUcJ2gcdMlByCp6KSn4vRr0BeD3Yfyxo2KdZsyeAGjJBluUkXM4pYyWKr82TnXw==}
     peerDependencies:
       '@casl/ability': ^7.0.0
       '@prisma/client': ^4.16.0 || ^5.0.0 || ^6.0.0 || ^7.0.0
 
-  '@casl/react@7.0.0':
-    resolution: {integrity: sha512-TfSujWNo4IosHoYZpkGdKXwlKdUBeJCm5CxaApjsOeyNFRfXcGWhHkikK4b6D0L+HgiRiizE7PxHhpc7lv3Z/g==}
+  '@casl/react@7.1.0':
+    resolution: {integrity: sha512-z0TkQNReAGGOGhPhtfrLBB2uJTxS2b55rBZH4aEw7dYUQQSYMj688NwCT75SwfyiKFnmwn0+B+II/DsoJKNe4w==}
     peerDependencies:
       '@casl/ability': ^4.0.0 || ^5.1.0 || ^6.0.0 || ^7.0.0
       react: ^18.0.0 || ^19.0.0
 
-  '@casl/vue@3.0.0':
-    resolution: {integrity: sha512-ZLJeVchZvmtz0VLTvHwsH4epE+CREBSbFQi0bIUmi0vZh4tF8B4Ylp6YiRWCP4Am7O5caJJqxARQGya2XUX4fw==}
+  '@casl/vue@3.1.0':
+    resolution: {integrity: sha512-vX7VHeanuQfH9hLHnOzFVETFILGbkQaVHh5xAg41EyDItSTGssREpsbdVQ4SVZ1V+0CpL/YPLTMbJj9nW6fGjw==}
     peerDependencies:
       '@casl/ability': ^2.0.0 || ^3.0.0 || ^4.0.0 || ^5.1.0 || ^6.0.0 || ^7.0.0
       vue: ^3.0.0
@@ -8186,42 +8186,42 @@ snapshots:
       '@babel/helper-string-parser': 7.27.1
       '@babel/helper-validator-identifier': 7.28.5
 
-  '@casl/ability@7.0.0':
+  '@casl/ability@7.1.0':
     dependencies:
       '@ucast/mongo2js': 2.0.0
 
-  '@casl/angular@10.0.0(@angular/core@21.2.14(@angular/compiler@21.2.14)(rxjs@7.8.2)(zone.js@0.16.1))(@casl/ability@7.0.0)(rxjs@7.8.2)(tslib@2.8.1)':
+  '@casl/angular@10.1.0(@angular/core@21.2.14(@angular/compiler@21.2.14)(rxjs@7.8.2)(zone.js@0.16.1))(@casl/ability@7.1.0)(rxjs@7.8.2)(tslib@2.8.1)':
     dependencies:
       '@angular/core': 21.2.14(@angular/compiler@21.2.14)(rxjs@7.8.2)(zone.js@0.16.1)
-      '@casl/ability': 7.0.0
+      '@casl/ability': 7.1.0
       rxjs: 7.8.2
       tslib: 2.8.1
 
-  '@casl/mongoose@9.0.0(@casl/ability@7.0.0)(mongoose@9.6.1(socks@2.8.7))':
+  '@casl/mongoose@9.1.0(@casl/ability@7.1.0)(mongoose@9.6.1(socks@2.8.7))':
     dependencies:
-      '@casl/ability': 7.0.0
+      '@casl/ability': 7.1.0
       mongoose: 9.6.1(socks@2.8.7)
 
-  '@casl/prisma@2.0.0(@casl/ability@7.0.0)(@prisma/client@6.19.0(prisma@6.19.0(typescript@4.9.5))(typescript@4.9.5))':
+  '@casl/prisma@2.2.0(@casl/ability@7.1.0)(@prisma/client@6.19.0(prisma@6.19.0(typescript@4.9.5))(typescript@4.9.5))':
     dependencies:
-      '@casl/ability': 7.0.0
+      '@casl/ability': 7.1.0
       '@prisma/client': 6.19.0(prisma@6.19.0(typescript@4.9.5))(typescript@4.9.5)
       '@ucast/core': 2.0.0
       '@ucast/js': 4.0.1
 
-  '@casl/react@7.0.0(@casl/ability@7.0.0)(react@18.3.1)':
+  '@casl/react@7.1.0(@casl/ability@7.1.0)(react@18.3.1)':
     dependencies:
-      '@casl/ability': 7.0.0
+      '@casl/ability': 7.1.0
       react: 18.3.1
 
-  '@casl/react@7.0.0(@casl/ability@7.0.0)(react@19.2.5)':
+  '@casl/react@7.1.0(@casl/ability@7.1.0)(react@19.2.5)':
     dependencies:
-      '@casl/ability': 7.0.0
+      '@casl/ability': 7.1.0
       react: 19.2.5
 
-  '@casl/vue@3.0.0(@casl/ability@7.0.0)(vue@3.5.33(typescript@6.0.2))':
+  '@casl/vue@3.1.0(@casl/ability@7.1.0)(vue@3.5.33(typescript@6.0.2))':
     dependencies:
-      '@casl/ability': 7.0.0
+      '@casl/ability': 7.1.0
       vue: 3.5.33(typescript@6.0.2)
 
   '@cspotcode/source-map-support@0.8.1':

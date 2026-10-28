@@ -18,7 +18,7 @@
     "seed:drizzle-v1": "tsx src/seed.ts drizzle-v1"
   },
   "dependencies": {
-    "@casl/ability": "^7.0.0",
+    "@casl/ability": "^7.1.0",
     "@mikro-orm/core": "^7.0.0",
     "@mikro-orm/sqlite": "^7.0.0",
     "@ucast/mongo2js": "^2.0.0",

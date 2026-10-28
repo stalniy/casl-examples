@@ -20,8 +20,8 @@
     "@angular/platform-browser": "21.2.14",
     "@angular/platform-browser-dynamic": "21.2.14",
     "@angular/router": "21.2.14",
-    "@casl/ability": "^7.0.0",
-    "@casl/angular": "^10.0.0",
+    "@casl/ability": "^7.1.0",
+    "@casl/angular": "^10.1.0",
     "rxjs": "^7.5.5",
     "tslib": "^2.4.1",
     "zone.js": "~0.16.0"

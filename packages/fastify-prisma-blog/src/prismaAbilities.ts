@@ -1,4 +1,4 @@
-import type { Prisma } from '@prisma/client';
+import type { Prisma } from './prisma';
 
 import type { PrismaModel, PrismaQueryFactory, PrismaTypes } from '@casl/prisma/runtime';
 

@@ -22,7 +22,7 @@
     "@feathersjs/feathers": "^5.0.50",
     "cors": "^2.8.6",
     "jsonwebtoken": "^9.0.3",
-    "mongoose": "^9.12.1"
+    "mongoose": "^9.11.4"
   },
   "devDependencies": {
     "@types/cors": "^2.8.19",

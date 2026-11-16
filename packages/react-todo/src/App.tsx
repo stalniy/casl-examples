@@ -11,12 +11,10 @@ if (import.meta.env.DEV) {
   (window as any).ability = ability;
 }
 
-export default () => {
+export default function App() {
   return (
     <AbilityProvider value={ability}>
-      <div className="todoapp">
-        <TodoList />
-      </div>
+      <TodoList />
     </AbilityProvider>
   );
-};
+}

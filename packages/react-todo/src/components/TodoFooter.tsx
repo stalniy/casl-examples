@@ -1,45 +1,101 @@
-import React, { memo, useMemo, useState } from 'react';
+import React, { memo, useState } from 'react';
 import { useAbility } from '@casl/react';
-import { Todo } from '../services/todo-storage';
 import type { AppAbility } from '../config/ability';
 import defineRulesFor from '../config/ability';
 
-type Props = {
-  items: Todo[]
-};
-
-const hint = 'Admin - can do anything.\nMember can read everything and manage todos with assignee "me"';
-
-export default memo(function TodoFooter({ items }: Props) {
+export default memo(function TodoFooter() {
   const ability = useAbility<AppAbility>();
   const [role, setRole] = useState('member');
-  const remaining = useMemo(() => items.filter(item => !item.completed).length, [items]);
-
-  const selectedIfRole = (value: string) => {
-    return role === value ? 'selected' : '';
-  };
-
   const setCurrentRole = (value: string) => {
     ability.update(defineRulesFor(value));
     setRole(value);
   };
 
   return (
-    <footer className="footer">
-      <span className="todo-count"><b>{remaining}</b> left</span>
-      <ul className="roles">
-        <li className="help" title={hint}>Switch roles:</li>
-        <li>
-          <button type="button" className={selectedIfRole('admin')} onClick={() => setCurrentRole('admin')}>
-            Admin
+    <aside className="footer" aria-labelledby="permissions-heading">
+      <div className="permission-heading">
+        <img
+          className="shield-icon"
+          src="/casl-shield.png"
+          alt=""
+          width="25"
+          height="30"
+        />
+        <span className="eyebrow">POWERED BY CASL</span>
+        <span className="status-dot" />
+      </div>
+      <h2 id="permissions-heading">A role changes everything.</h2>
+      <p>
+        Same tasks. Different permissions.
+        <br />
+        Switch roles to see the magic.
+      </p>
+      <div className="role-label">EXPLORE AS</div>
+      <div className="roles" role="group" aria-label="Switch roles">
+        {['member', 'admin'].map((value) => (
+          <button
+            key={value}
+            type="button"
+            aria-pressed={role === value}
+            className={role === value ? 'selected' : ''}
+            onClick={() => setCurrentRole(value)}
+          >
+            {value === 'member' ? 'Member' : 'Admin'}
           </button>
-        </li>
-        <li>
-          <button type="button" className={selectedIfRole('member')} onClick={() => setCurrentRole('member')}>
-            Member
-          </button>
-        </li>
-      </ul>
-    </footer>
+        ))}
+      </div>
+      <div className="role-description" aria-live="polite">
+        <strong>
+          {role === 'admin'
+            ? 'The whole workspace is yours.'
+            : 'Your tasks, your control.'}
+        </strong>
+        <p>
+          {role === 'admin'
+            ? 'Manage every task, no matter who it belongs to.'
+            : 'View every task. Edit, complete, and delete only the ones assigned to you.'}
+        </p>
+      </div>
+      <div className="permission-list">
+        <div>
+          <span>✓</span> View all tasks
+        </div>
+        <div>
+          <span>✓</span> Create new tasks
+        </div>
+        <div>
+          <span>✓</span> Manage your own tasks
+        </div>
+        <div className={role !== 'admin' ? 'restricted' : ''}>
+          <span>{role === 'admin' ? '✓' : '−'}</span> Manage others’ tasks
+        </div>
+      </div>
+      <div className="rule-snippet">
+        <div>
+          <span className="code-dot" /> THE RULE BEHIND IT
+        </div>
+        {role === 'admin' ? (
+          <code>
+            <span>can</span>(<span className="code-string">'manage'</span>,{' '}
+            <span className="code-string">'all'</span>);
+          </code>
+        ) : (
+          <code>
+            <span>can</span>([<span className="code-string">'read'</span>,{' '}
+            <span className="code-string">'create'</span>],{' '}
+            <span className="code-string">'Todo'</span>);
+            <br />
+            <span>can</span>([<span className="code-string">'update'</span>,{' '}
+            <span className="code-string">'delete'</span>],
+            <br />
+            &nbsp; <span className="code-string">'Todo'</span>, {'{'} assignee:{' '}
+            <span className="code-string">'me'</span> {'}'});
+          </code>
+        )}
+      </div>
+      <a className="rules-link" href="https://casl.js.org/v6/en/guide/intro">
+        A few lines. Fine-grained control. <span>↗</span>
+      </a>
+    </aside>
   );
 });

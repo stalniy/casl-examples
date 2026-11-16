@@ -1,17 +1,21 @@
-const { NotFound } = require('http-errors');
-const { ForbiddenError } = require('@casl/ability');
-const { accessibleBy } = require('@casl/mongoose');
-const Article = require('./model')();
-const { parsePagination } = require('../utils');
+import type { Request, Response } from 'express';
+import httpErrors from 'http-errors';
+import { ForbiddenError } from '@casl/ability';
+import { accessibleBy } from '@casl/mongoose';
+import Article from './model.ts';
+import type User from '../users/model.ts';
+import { parsePagination } from '../utils/index.ts';
 
-async function findAll(req, res) {
+const { NotFound } = httpErrors;
+
+export async function findAll(req: Request, res: Response) {
   const articlesQuery = accessibleBy(req.ability).ofType('Article');
   const [page, pageSize] = parsePagination(req.query);
 
   const [count, articles] = await Promise.all([
     Article.find(articlesQuery).countDocuments(),
     Article.find(articlesQuery)
-      .populate('createdBy', 'email')
+      .populate<{ createdBy: InstanceType<typeof User> | null }>('createdBy', 'email')
       .sort({ createdAt: -1 })
       .limit(pageSize)
       .skip((page - 1) * pageSize),
@@ -25,7 +29,7 @@ async function findAll(req, res) {
   res.send({ items, count });
 }
 
-async function find(req, res) {
+export async function find(req: Request, res: Response) {
   const article = await Article.findById(req.params.id);
 
   if (!article) {
@@ -36,11 +40,11 @@ async function find(req, res) {
   res.send({ item: article });
 }
 
-async function create(req, res) {
+export async function create(req: Request, res: Response) {
   const { published, ...body } = req.body;
   const article = new Article({
     ...body,
-    author: req.user._id
+    author: req.user!._id
   });
 
   ForbiddenError.from(req.ability).throwUnlessCan('create', article);
@@ -55,7 +59,7 @@ async function create(req, res) {
   res.send({ item: article });
 }
 
-async function update(req, res) {
+export async function update(req: Request, res: Response) {
   const article = await Article.findById(req.params.id);
 
   if (!article) {
@@ -73,7 +77,7 @@ async function update(req, res) {
   res.send({ item: article });
 }
 
-async function destroy(req, res) {
+export async function destroy(req: Request, res: Response) {
   const article = await Article.findById(req.params.id);
 
   if (article) {
@@ -85,10 +89,3 @@ async function destroy(req, res) {
   }
 }
 
-module.exports = {
-  create,
-  update,
-  destroy,
-  find,
-  findAll
-};

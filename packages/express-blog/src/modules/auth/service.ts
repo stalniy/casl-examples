@@ -1,16 +1,19 @@
-const mongoose = require('mongoose');
-const { BadRequest } = require('http-errors');
-const jwt = require('jsonwebtoken');
-const { defineRulesFor } = require('./abilities');
+import type { Request, Response } from 'express';
+import User from '../users/model.ts';
+import httpErrors from 'http-errors';
+import jwt from 'jsonwebtoken';
+import { defineRulesFor } from './abilities.ts';
 
-async function create(req, res) {
+const { BadRequest } = httpErrors;
+
+export async function create(req: Request, res: Response) {
   const { email, password } = req.body || {};
 
   if (!email || !password) {
     throw new BadRequest('Please specify "email" and "password" fields in body');
   }
 
-  const user = await mongoose.model('User').findOne({ email });
+  const user = await User.findOne({ email });
 
   if (!user || !user.isValidPassword(password)) {
     throw new BadRequest('Invalid login or password');
@@ -30,4 +33,3 @@ async function create(req, res) {
   });
 }
 
-module.exports = { create };

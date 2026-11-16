@@ -1,4 +1,4 @@
-const { startServer } = require('./specHelper');
+const { startServer } = require('./specHelper.cjs');
 
 let server;
 

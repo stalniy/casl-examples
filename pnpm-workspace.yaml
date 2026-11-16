@@ -22,3 +22,8 @@ minimumReleaseAgeExclude:
   - "@casl/vue"
   - "@casl/prisma"
   - "@ucast/sql"
+
+# Passport middleware uses the Express 5 request types in this workspace.
+overrides:
+  "@types/passport>@types/express": "^5.0.0"
+  "@types/passport-strategy>@types/express": "^5.0.0"

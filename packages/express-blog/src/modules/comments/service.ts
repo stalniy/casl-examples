@@ -1,22 +1,25 @@
-const { NotFound } = require('http-errors');
-const { ForbiddenError } = require('@casl/ability');
-const { accessibleBy } = require('@casl/mongoose');
-const Comment = require('./model')();
+import type { Request, Response } from 'express';
+import httpErrors from 'http-errors';
+import { ForbiddenError } from '@casl/ability';
+import { accessibleBy } from '@casl/mongoose';
+import Comment from './model.ts';
 
-async function findAll(req, res) {
+const { NotFound } = httpErrors;
+
+export async function findAll(req: Request, res: Response) {
   const comments = await Comment.find(accessibleBy(req.ability).ofType('Comment'));
 
   res.send({ items: comments });
 }
 
-async function create(req, res) {
+export async function create(req: Request, res: Response) {
   const comment = new Comment({
     ...req.body,
     post: req.params.postId
   });
 
-  if (req.user._id) {
-    comment.author = req.user._id;
+  if (req.user!._id) {
+    comment.author = req.user!._id.toString();
   }
 
   ForbiddenError.from(req.ability).throwUnlessCan('create', comment);
@@ -25,7 +28,7 @@ async function create(req, res) {
   res.send({ item: comment });
 }
 
-async function update(req, res) {
+export async function update(req: Request, res: Response) {
   const comment = await Comment.findById(req.params.id);
 
   if (!comment) {
@@ -39,20 +42,14 @@ async function update(req, res) {
   res.send({ item: comment });
 }
 
-async function destroy(req, res) {
+export async function destroy(req: Request, res: Response) {
   const comment = await Comment.findById(req.params.id);
 
   if (comment) {
     ForbiddenError.from(req.ability).throwUnlessCan('delete', comment);
-    await comment.remove();
+    await comment.deleteOne();
   }
 
   res.send({ item: comment });
 }
 
-module.exports = {
-  create,
-  update,
-  destroy,
-  findAll
-};

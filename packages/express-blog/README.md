@@ -1,4 +1,4 @@
-# Example of CASL integration in expressjs app
+# Example of CASL integration with Express 5 and TypeScript 6
 
 Read [CASL in Expressjs app][casl-express-example] for details.
 
@@ -9,36 +9,60 @@ This is an example API which shows how integrate CASL in blog application. There
 * Post
 * Comment
 
-Permission logic (i.e., abilities) are define in `src/modules/auth/abilities.js`. Rules can be specified for authenticated and anonymous users, so potentially it's quite easy to give access to anonymous users to write comments.
+Permission logic (i.e., abilities) is defined in `src/modules/auth/abilities.ts`. Rules can be specified for authenticated and anonymous users, so potentially it's quite easy to give access to anonymous users to write comments.
 
 Application uses `passport-jwt` for authentication. The main logic is built on top of modules, all in `src/modules`.
 
-**Note**: refactored to use CASL 4.0. See [@casl/ability][casl-ability] and [@casl/mongoose][casl-mongoose] for details.
+The API uses CASL 7 and Mongoose 9. See [@casl/ability][casl-ability] and [@casl/mongoose][casl-mongoose] for details.
+
 **Warning**: this code is just an example and doesn't follow best practices everywhere (e.g. it stores passwords without hashing).
 
 ## Installation
 
-```sh
-git clone https://github.com/stalniy/casl-express-example.git
-cd casl-express-example
-npm install
-npm start # `npm run dev` to run in dev mode
-```
-
-Also you need mongodb database up and running. Application will connect to `mongodb://localhost:27017/blog`. This repository contains three demo users and five technical articles about CASL and authorization (four published and one writer-owned draft), shared with the SQL blog through [frontmatter fixtures](../../fixtures/blog/README.md). Load the checked-in dump into a fresh database using `mongorestore`. From `packages/express-blog`, run:
+Use Node.js 24 and pnpm. From the repository root:
 
 ```sh
-mongorestore --uri='mongodb://root:blogpwd@localhost:27017' ./db
+pnpm install
+pnpm --dir packages/express-blog seed
+pnpm --filter blog-express start
 ```
 
-Alternatively, you can run mongodb in container:
+`start` compiles the strict TypeScript source to `dist` before starting the API on port 3000. Express 5 forwards rejected async handlers to the error middleware directly.
+
+From `packages/express-blog`, the available development commands are:
+
+```sh
+pnpm dev        # Run TypeScript with Node.js type stripping and --watch
+pnpm seed       # Seed MongoDB from the shared Markdown fixtures
+pnpm typecheck  # Check types with TypeScript 6
+pnpm build      # Compile to dist
+pnpm test       # Build and run the API tests against MongoDB
+```
+
+The tests require a database loaded with the demo fixtures below. They create and update records, so use a separate test database. Set `MONGODB_URI` to override the default connection, for example:
+
+```sh
+export MONGODB_URI=mongodb://localhost:27017/blog_test
+pnpm seed
+pnpm test
+```
+
+MongoDB must be running before seeding or starting the API. By default, both commands connect to `mongodb://root:blogpwd@localhost:27017/blog?authSource=admin&retryWrites=true&w=majority`. Set `MONGODB_URI` to use another database.
+
+This repository contains three demo users and five technical articles about CASL and authorization (four published and one writer-owned draft), shared with the SQL blog through [frontmatter fixtures](../../fixtures/blog/README.md). From `packages/express-blog`, seed a fresh database:
+
+```sh
+pnpm seed
+```
+
+To run MongoDB in a container, start it before seeding and wait until it is ready to accept connections:
 
 ```sh
 docker compose up -d
-docker compose exec mongo mongorestore --uri='mongodb://root:blogpwd@localhost:27017' /var/app/db
+pnpm seed
 ```
 
-To edit the articles, change the files in `fixtures/blog/articles` at the repository root, then run `pnpm fixtures:build` from this package and restore into a fresh database. Rebuilding the dump does not modify a running database. Restoring into an existing database can retain old records; use a fresh database to preview the clean fixtures.
+The TypeScript seed script reads `fixtures/blog/articles` directly and preserves the stable user and article IDs, author references, publication status, and timestamps. After editing those files, run `pnpm seed` against a fresh database to preview the changes. Seeding refuses to overwrite existing fixture IDs or demo user emails.
 
 ## Instruction to login
 
@@ -61,8 +85,8 @@ POST http://localhost:3000/api/session
   "password": "123456"
 }
 
-201 Created
-{ "token": "...." }
+200 OK
+{ "token": "....", "rules": [], "email": "admin@casl.io", "userId": "..." }
 ```
 
 3. Put access token in `Authorization` header for all future requests

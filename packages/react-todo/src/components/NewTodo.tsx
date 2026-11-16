@@ -1,49 +1,50 @@
 import React, { memo, useState } from 'react';
+import Icon from './Icon';
 
-type Todo = { title: string, assignee: string };
-type Props = {
-  onNewTodo: (todo: Todo) => void
-};
+type Todo = { title: string; assignee: string };
+type Props = { onNewTodo: (todo: Todo) => void };
 
 export default memo(function NewTodo({ onNewTodo }: Props) {
   const [title, setTitle] = useState('');
   const [assignee, setAssignee] = useState('');
 
-  const updateTodoTitle = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setTitle(event.target.value);
-  };
-
-  const updateTodoAssignee = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    setAssignee(event.target.value);
-  };
-
-  const addTodo = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.key !== 'Enter') {
-      return;
-    }
-
-    onNewTodo({ title, assignee });
+  const addTodo = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (!title.trim()) return;
+    onNewTodo({ title: title.trim(), assignee });
     setTitle('');
     setAssignee('');
   };
 
   return (
-    <div className="new-todo">
-      <input
-        name="title"
-        autoFocus
-        autoComplete="off"
-        placeholder="What needs to be done?"
-        value={title}
-        onChange={updateTodoTitle}
-        onKeyUp={addTodo} />
-
-      <select name="assignee" value={assignee} onChange={updateTodoAssignee}>
-        <option value="" disabled>Choose Assignee</option>
+    <form className="new-todo" onSubmit={addTodo}>
+      <div className="title-field">
+        <Icon name="plus" />
+        <input
+          name="title"
+          aria-label="Task title"
+          autoComplete="off"
+          placeholder="What needs to be done?"
+          value={title}
+          onChange={(event) => setTitle(event.target.value)}
+        />
+      </div>
+      <select
+        name="assignee"
+        aria-label="Assign task"
+        value={assignee}
+        onChange={(event) => setAssignee(event.target.value)}
+      >
+        <option value="" disabled>
+          Choose Assignee
+        </option>
         <option>me</option>
         <option>John Doe</option>
         <option>Alex Pupkin</option>
       </select>
-    </div>
+      <button className="add-button" type="submit">
+        Add task <Icon name="plus" />
+      </button>
+    </form>
   );
 });

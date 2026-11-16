@@ -2,25 +2,35 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Can, useAbility } from '@casl/react';
 import type { AppAbility } from '../config/ability';
 import { Todo } from '../services/todo-storage';
+import Icon from './Icon';
 
 export interface Props {
-  todo: Todo
-  onEdited(todo: Todo): void
-  onRemove(todo: Todo): void
-  onComplete(todo: Todo, completed: boolean): void
-};
+  todo: Todo;
+  onEdited(todo: Todo): void;
+  onRemove(todo: Todo): void;
+  onComplete(todo: Todo, completed: boolean): void;
+}
 
-export default function TodoItem({ todo, onEdited, onRemove, onComplete }: Props) {
+export default function TodoItem({
+  todo,
+  onEdited,
+  onRemove,
+  onComplete
+}: Props) {
   const ability = useAbility<AppAbility>();
   const editInputRef = useRef<HTMLInputElement>(null);
   const [editingTitle, setEditingTitle] = useState('');
   const [isEditing, setIsEditing] = useState(false);
+  const canUpdate = ability.can('update', todo);
 
   useEffect(() => {
-    if (isEditing) {
+    if (isEditing && !canUpdate) {
+      setIsEditing(false);
+      setEditingTitle('');
+    } else if (isEditing) {
       editInputRef.current?.focus();
     }
-  }, [isEditing]);
+  }, [isEditing, canUpdate]);
 
   const cancelEdit = () => {
     setIsEditing(false);
@@ -36,7 +46,7 @@ export default function TodoItem({ todo, onEdited, onRemove, onComplete }: Props
       return;
     }
 
-    const nextTitle = editInputRef.current?.value || '';
+    const nextTitle = editInputRef.current?.value.trim() || '';
 
     if (!nextTitle) {
       removeTodo();
@@ -56,10 +66,11 @@ export default function TodoItem({ todo, onEdited, onRemove, onComplete }: Props
   };
 
   const editTodo = () => {
-    if (!ability.can('update', todo)) {
+    if (!canUpdate) {
       return;
     }
 
+    setEditingTitle(todo.title);
     setIsEditing(true);
   };
 
@@ -68,17 +79,17 @@ export default function TodoItem({ todo, onEdited, onRemove, onComplete }: Props
   };
 
   const className = useMemo(() => {
-    const css = ['todo']
+    const css = ['todo'];
 
     if (todo.completed) {
-      css.push('completed')
+      css.push('completed');
     }
 
     if (isEditing) {
-      css.push('editing')
+      css.push('editing');
     }
 
-    return css.join(' ')
+    return css.join(' ');
   }, [isEditing, todo.completed]);
 
   const completeTodo = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -89,6 +100,7 @@ export default function TodoItem({ todo, onEdited, onRemove, onComplete }: Props
     <li className={className}>
       <Can I="update" a={todo}>
         <input
+          aria-label={`Complete ${todo.title}`}
           type="checkbox"
           checked={todo.completed}
           onChange={completeTodo}
@@ -96,16 +108,41 @@ export default function TodoItem({ todo, onEdited, onRemove, onComplete }: Props
         />
       </Can>
 
+      {!canUpdate && (
+        <span
+          className="task-lock"
+          title="Only the assignee or an admin can change this task"
+        >
+          <Icon name="lock" />
+        </span>
+      )}
       <div className="view">
-        <label onDoubleClick={editTodo}>{todo.title}</label>
+        <label
+          onDoubleClick={editTodo}
+          tabIndex={canUpdate ? 0 : undefined}
+          role={canUpdate ? 'button' : undefined}
+          title={canUpdate ? 'Double-click or press Enter to edit' : undefined}
+          onKeyDown={(event) => {
+            if (canUpdate && event.key === ' ') event.preventDefault();
+          }}
+          onKeyUp={(event) => {
+            if (event.key === 'Enter' || event.key === ' ') editTodo();
+          }}
+        >
+          {todo.title}
+        </label>
+        <span className="task-access">
+          {canUpdate ? 'You can manage this task' : 'Read-only for your role'}
+        </span>
       </div>
 
       <Can I="update" a={todo}>
         <input
+          aria-label="Edit task title"
           className="edit"
           type="text"
           ref={editInputRef}
-          value={editingTitle || todo.title}
+          value={editingTitle}
           onBlur={doneEdit}
           onKeyUp={doneOrCancelEdit}
           onChange={updateTitle}
@@ -113,11 +150,21 @@ export default function TodoItem({ todo, onEdited, onRemove, onComplete }: Props
       </Can>
 
       <div className="assignee">
-        {todo.assignee}
+        <span className="avatar" aria-hidden="true">
+          {(todo.assignee || '?').slice(0, 1).toUpperCase()}
+        </span>
+        {todo.assignee || 'Unassigned'}
       </div>
 
       <Can I="delete" a={todo}>
-        <button className="destroy" onClick={removeTodo}></button>
+        <button
+          type="button"
+          className="destroy"
+          aria-label={`Delete ${todo.title}`}
+          onClick={removeTodo}
+        >
+          <Icon name="trash" />
+        </button>
       </Can>
     </li>
   );

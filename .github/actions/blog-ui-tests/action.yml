@@ -1,0 +1,74 @@
+name: Blog UI tests
+description: Run blog ui tests using the workflow environment
+runs:
+  using: composite
+  steps:
+    - uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86 # v6.0.10
+      with:
+        version: 11.4.0
+        standalone: true
+
+    - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6.5.0
+      with:
+        node-version-file: package.json
+        cache: pnpm
+
+    - name: Install app, API, and test dependencies
+      shell: bash
+      run: pnpm --filter "./packages/$BLOG_APP" --filter ./packages/fastify-ucast-sql-blog --filter ./packages/ui-tests install --frozen-lockfile
+
+    - name: Install Chromium
+      working-directory: packages/ui-tests
+      shell: bash
+      run: pnpm exec playwright install --with-deps chromium
+
+    - name: Prepare SQLite fixtures
+      working-directory: packages/fastify-ucast-sql-blog
+      shell: bash
+      run: | # shell
+        pnpm "schema:$IMPLEMENTATION"
+        pnpm "seed:$IMPLEMENTATION"
+
+    - name: Run blog Playwright tests
+      shell: bash
+      run: | # shell
+        pnpm --dir packages/fastify-ucast-sql-blog start > "$RUNNER_TEMP/blog-api.log" 2>&1 &
+        api_pid=$!
+        pnpm --dir "packages/$BLOG_APP" start > "$RUNNER_TEMP/blog-app.log" 2>&1 &
+        app_pid=$!
+        cleanup() {
+          kill "$api_pid" "$app_pid" 2>/dev/null || true
+          cat "$RUNNER_TEMP/blog-api.log" "$RUNNER_TEMP/blog-app.log"
+        }
+        trap cleanup EXIT
+
+        wait_for_server() {
+          local url="$1" pid="$2" name="$3"
+          for ((attempt = 0; attempt < 120; attempt++)); do
+            if curl --fail --silent --output /dev/null --max-time 2 "$url"; then
+              return 0
+            fi
+            if ! kill -0 "$pid" 2>/dev/null; then
+              echo "$name exited before becoming ready"
+              return 1
+            fi
+            sleep 1
+          done
+          echo "$name did not become ready"
+          return 1
+        }
+        wait_for_server "$PLAYWRIGHT_BLOG_API_URL/articles" "$api_pid" "Blog API"
+        wait_for_server "$PLAYWRIGHT_BASE_URL" "$app_pid" "Blog UI"
+        pnpm --dir packages/ui-tests test.blog --retries=1
+
+    - name: Upload failure artifacts
+      if: ${{ failure() }}
+      uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+      with:
+        name: blog-ui-${{ env.BLOG_APP }}
+        path: |
+          packages/ui-tests/test-results/
+          ${{ runner.temp }}/blog-api.log
+          ${{ runner.temp }}/blog-app.log
+        retention-days: 7
+        if-no-files-found: ignore

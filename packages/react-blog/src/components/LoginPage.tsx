@@ -3,10 +3,9 @@ import {
   TextField,
   Button,
   Container,
-  makeStyles,
-  createStyles,
+  Box,
   Paper,
-} from '@material-ui/core';
+} from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useAppStore } from '../hooks/useAppStore';
 import { useFormField, validation, required, minLength, email } from '../hooks/useFormField';
@@ -23,16 +22,6 @@ function useLoginForm() {
   return { email, password };
 }
 
-const useStyles = makeStyles(theme => createStyles({
-  formField: {
-    marginBottom: theme.spacing(2),
-  },
-  form: {
-    marginTop: theme.spacing(5),
-    padding: theme.spacing(2),
-  }
-}));
-
 const validate = validation<ReturnType<typeof useLoginForm>>({
   email: [required, email],
   password: [minLength(6)]
@@ -41,7 +30,6 @@ const validate = validation<ReturnType<typeof useLoginForm>>({
 export default () => {
   const store = useAppStore();
   const form = useLoginForm();
-  const styles = useStyles();
   const navigate = useNavigate();
   const loginTask = useAsyncTask((task) => {
     return store.login(form.email.value!, form.password.value!)
@@ -58,9 +46,9 @@ export default () => {
     <Container maxWidth="sm" className="login-page">
       <div className="page-intro"><span className="eyebrow">YOUR NEXT CHAPTER</span><h1>Welcome back.</h1><p>Sign in to share your perspective and see CASL permissions in action.</p></div>
       <Paper elevation={0} className="form-panel">
-        <form className={styles.form} noValidate autoComplete="off" onSubmit={loginTask.exec}>
+        <Box component="form" sx={{ mt: 5, p: 2 }} noValidate autoComplete="off" onSubmit={loginTask.exec}>
           <TaskErrorNotification task={loginTask} />
-          <div className={styles.formField}>
+          <Box sx={{ mb: 2 }}>
             <TextField
               fullWidth
               autoComplete="username"
@@ -72,8 +60,8 @@ export default () => {
               error={!!form.email.error}
               helperText={form.email.error}
             />
-          </div>
-          <div className={styles.formField}>
+          </Box>
+          <Box sx={{ mb: 2 }}>
             <TextField
               fullWidth
               autoComplete="current-password"
@@ -85,7 +73,7 @@ export default () => {
               error={!!form.password.error}
               helperText={form.password.error}
             />
-          </div>
+          </Box>
           <Button
             fullWidth
             type="submit"
@@ -96,7 +84,7 @@ export default () => {
           >
             Login
           </Button>
-        </form>
+        </Box>
       </Paper>
     </Container>
   );

@@ -1,5 +1,5 @@
 import React from 'react';
-import { ThemeProvider, createTheme } from '@material-ui/core/styles';
+import { ThemeProvider, StyledEngineProvider, createTheme } from '@mui/material/styles';
 import { AbilityProvider as CaslAbilityProvider } from '@casl/react';
 import { BrowserRouter } from 'react-router-dom';
 import { StoreContext, defaultStore } from './hooks/useAppStore';
@@ -16,7 +16,10 @@ const theme = createTheme({
   },
   typography: { fontFamily: '"Inter", "Segoe UI", sans-serif', button: { textTransform: 'none', fontWeight: 600 } },
   shape: { borderRadius: 12 },
-  props: { MuiButton: { disableElevation: true } },
+  components: {
+    MuiButton: { defaultProps: { disableElevation: true } },
+    MuiTextField: { defaultProps: { variant: 'standard' } },
+  },
 });
 
 const AppAbilityProvider = (props: { children: React.ReactNode }) => (
@@ -38,17 +41,19 @@ const Footer = () => (
 );
 
 export default () => (
-  <ThemeProvider theme={theme}>
-    <StoreContext.Provider value={defaultStore}>
-      <AppAbilityProvider>
-        <BrowserRouter>
-          <div className="blog-app">
-            <Header />
-            <main id="main-content"><Routes /></main>
-            <Footer />
-          </div>
-        </BrowserRouter>
-      </AppAbilityProvider>
-    </StoreContext.Provider>
-  </ThemeProvider>
+  <StyledEngineProvider injectFirst>
+    <ThemeProvider theme={theme}>
+      <StoreContext.Provider value={defaultStore}>
+        <AppAbilityProvider>
+          <BrowserRouter>
+            <div className="blog-app">
+              <Header />
+              <main id="main-content"><Routes /></main>
+              <Footer />
+            </div>
+          </BrowserRouter>
+        </AppAbilityProvider>
+      </StoreContext.Provider>
+    </ThemeProvider>
+  </StyledEngineProvider>
 );

@@ -1,13 +1,12 @@
 import React from 'react';
 import {
   Container,
+  Box,
   Paper,
-  makeStyles,
-  createStyles,
   TextField,
   Checkbox,
   Button,
-} from '@material-ui/core';
+} from '@mui/material';
 import TaskErrorNotification from './TaskErrorNotification';
 import { useFormField, formToObject, minLength, required, validation } from '../hooks/useFormField';
 import { useNavigate } from 'react-router-dom';
@@ -15,21 +14,6 @@ import { useAsyncTask } from '../hooks/useAsyncTask';
 import { useAppStore } from '../hooks/useAppStore';
 import { useAppAbility } from '../hooks/useAppAbility';
 import { Article } from '../models/Article';
-
-const useStyles = makeStyles(theme => createStyles({
-  formField: {
-    marginBottom: theme.spacing(2),
-  },
-  form: {
-    marginTop: theme.spacing(5),
-    padding: theme.spacing(2),
-  },
-  actions: {
-    '& > *': {
-      marginRight: theme.spacing(2)
-    }
-  }
-}));
 
 function useArticleForm(article?: Article) {
   const title = useFormField(article?.title);
@@ -50,7 +34,6 @@ type Props = {
 }
 
 export default ({ article, onUpdate }: Props) => {
-  const styles = useStyles();
   const form = useArticleForm(article);
   const store = useAppStore();
   const navigate = useNavigate();
@@ -72,9 +55,9 @@ export default ({ article, onUpdate }: Props) => {
     <Container maxWidth="md" className="editor-page">
       <div className="page-intro"><span className="eyebrow">THE AUTHOR’S DESK</span><h1>{article ? 'Refine your perspective.' : 'Share what you know.'}</h1><p>A practical idea today could be someone’s breakthrough tomorrow.</p></div>
       <Paper elevation={0} className="form-panel">
-        <form className={styles.form} noValidate autoComplete="off" onSubmit={saveTask.exec}>
+        <Box component="form" sx={{ mt: 5, p: 2 }} noValidate autoComplete="off" onSubmit={saveTask.exec}>
           <TaskErrorNotification task={saveTask} />
-          <div className={styles.formField}>
+          <Box sx={{ mb: 2 }}>
             <TextField
               id="title"
               name="title"
@@ -86,8 +69,8 @@ export default ({ article, onUpdate }: Props) => {
               helperText={form.title.error}
               fullWidth
             />
-          </div>
-          <div className={styles.formField}>
+          </Box>
+          <Box sx={{ mb: 2 }}>
             <TextField
               multiline
               minRows={12}
@@ -101,8 +84,8 @@ export default ({ article, onUpdate }: Props) => {
               helperText={form.body.error}
               fullWidth
             />
-          </div>
-          <div className={`${styles.formField} checkbox`} {...{ name: "published" }}>
+          </Box>
+          <Box sx={{ mb: 2 }} className="checkbox" {...{ name: "published" }}>
             {(!article || can('publish', article)) && (
               <label>
                 <Checkbox
@@ -111,8 +94,8 @@ export default ({ article, onUpdate }: Props) => {
                 /> Publish
               </label>
             )}
-          </div>
-          <div className={styles.actions}>
+          </Box>
+          <Box sx={{ '& > *': { mr: 2 } }}>
             <Button onClick={() => navigate('/')}>Back</Button>
             <Button
               name="save"
@@ -123,8 +106,8 @@ export default ({ article, onUpdate }: Props) => {
             >
               {article ? 'Update' : 'Create'}
             </Button>
-          </div>
-        </form>
+          </Box>
+        </Box>
       </Paper>
     </Container>
   );

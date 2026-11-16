@@ -9,9 +9,9 @@ import {
   Avatar,
   Typography,
   Box,
-} from '@material-ui/core';
-import EditIcon from '@material-ui/icons/EditOutlined';
-import DeleteIcon from '@material-ui/icons/DeleteOutlined';
+} from '@mui/material';
+import EditIcon from '@mui/icons-material/EditOutlined';
+import DeleteIcon from '@mui/icons-material/DeleteOutlined';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAppStoreEffect, useAppStore } from '../hooks/useAppStore';
 import { formatDate } from '../services/date';

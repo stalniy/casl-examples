@@ -6,10 +6,10 @@ import {
   Button,
   Menu,
   MenuItem,
-} from '@material-ui/core';
+} from '@mui/material';
 import { Link, useNavigate } from 'react-router-dom';
 import { observer } from 'mobx-react';
-import MoreIcon from '@material-ui/icons/MoreVert';
+import MoreIcon from '@mui/icons-material/MoreVert';
 import { useAppTitle } from '../hooks/useAppTitle';
 import { useAppStore } from '../hooks/useAppStore';
 import { useAppAbility } from '../hooks/useAppAbility';

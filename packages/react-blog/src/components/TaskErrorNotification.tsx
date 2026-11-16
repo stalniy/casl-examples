@@ -1,5 +1,5 @@
 import React from 'react';
-import { Snackbar } from '@material-ui/core';
+import { Snackbar } from '@mui/material';
 import Alert from './Alert';
 import { AsyncTask } from '../hooks/useAsyncTask'
 

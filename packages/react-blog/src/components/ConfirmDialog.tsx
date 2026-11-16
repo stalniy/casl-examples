@@ -6,7 +6,7 @@ import {
   DialogContentText,
   DialogActions,
   Button,
-} from '@material-ui/core';
+} from '@mui/material';
 
 interface Props {
   open: boolean
@@ -16,9 +16,9 @@ interface Props {
   onClose(): void
 };
 
-export default React.forwardRef<typeof Dialog, Props>((props, ref) => {
+export default React.forwardRef<HTMLDivElement, Props>((props, ref) => {
   return (
-    <Dialog open={props.open} onExited={props.onClose} ref={ref}>
+    <Dialog open={props.open} slotProps={{ transition: { onExited: props.onClose } }} ref={ref}>
       <DialogTitle>{props.title || 'Confirmation'}</DialogTitle>
       <DialogContent>
         <DialogContentText>{props.content}</DialogContentText>

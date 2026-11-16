@@ -5,6 +5,7 @@ on:
     paths:
       - 'fixtures/blog/**'
       - 'packages/express-blog/**'
+      - 'packages/feathersjs-blog/**'
       - 'packages/fastify-ucast-sql-blog/**'
       - 'packages/fastify-prisma-blog/**'
       - 'pnpm-workspace.yaml'
@@ -30,6 +31,10 @@ jobs:
             database: mongodb://root:blogpwd@localhost:27017/blog?authSource=admin&retryWrites=true&w=majority
           - name: fastify-prisma-blog
             package: fastify-prisma-blog
+            mongodb: true
+            database: mongodb://root:blogpwd@localhost:27017/blog?authSource=admin&retryWrites=true&w=majority
+          - name: feathersjs-blog
+            package: feathersjs-blog
             mongodb: true
             database: mongodb://root:blogpwd@localhost:27017/blog?authSource=admin&retryWrites=true&w=majority
           - name: fastify-ucast-sql-blog (MikroORM)

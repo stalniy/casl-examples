@@ -25,5 +25,6 @@ minimumReleaseAgeExclude:
 
 # Passport middleware uses the Express 5 request types in this workspace.
 overrides:
+  "mongodb-connection-string-url": "7.0.2"
   "@types/passport>@types/express": "^5.0.0"
   "@types/passport-strategy>@types/express": "^5.0.0"

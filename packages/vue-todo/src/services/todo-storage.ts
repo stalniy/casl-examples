@@ -14,7 +14,16 @@ export default {
   },
 
   fetch(): Todo[] {
-    const items = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]') as Todo[];
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved === null) {
+      return [
+        { ...this.build({ title: 'Explore what CASL can do', assignee: 'me' }), completed: true },
+        this.build({ title: 'Define permissions for your next big idea', assignee: 'me' }),
+        this.build({ title: 'Try switching between Member and Admin', assignee: 'John Doe' }),
+        this.build({ title: 'Ship authorization with confidence', assignee: 'Alex Pupkin' }),
+      ];
+    }
+    const items = JSON.parse(saved) as Todo[];
     const lastItem = items[items.length - 1];
 
     if (lastItem) {

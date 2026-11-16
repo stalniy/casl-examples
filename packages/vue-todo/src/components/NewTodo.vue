@@ -1,21 +1,21 @@
 <template>
-  <div class="new-todo">
+  <form class="new-todo" @submit.prevent="submit">
+    <span class="add-symbol" aria-hidden="true">＋</span>
     <input
       name="title"
-      autofocus
+      aria-label="Task title"
       autocomplete="off"
-      placeholder="What needs to be done?"
+      placeholder="What's your next authorization task?"
       v-model.trim="newTodo.title"
-      @keyup.enter="submit"
     >
-
-    <select name="assignee" v-model="newTodo.assignee" @keyup.enter="submit">
-      <option value="" disabled>Choose Assignee</option>
+    <select name="assignee" aria-label="Assign task to" v-model="newTodo.assignee">
+      <option value="" disabled>Assign to</option>
       <option>me</option>
       <option>John Doe</option>
       <option>Alex Pupkin</option>
     </select>
-  </div>
+    <button class="add-button" type="submit" :disabled="!newTodo.title || !newTodo.assignee">Add task <span aria-hidden="true">↵</span></button>
+  </form>
 </template>
 
 <script setup lang="ts">
@@ -26,18 +26,11 @@ const emit = defineEmits<{
   submit: [todo: TodoInput]
 }>();
 
-const newTodo = reactive<TodoInput>({
-  title: '',
-  assignee: '',
-});
+const newTodo = reactive<TodoInput>({ title: '', assignee: 'me' });
 
 function submit() {
-  if (!newTodo.title) {
-    return;
-  }
-
+  if (!newTodo.title || !newTodo.assignee) return;
   emit('submit', { ...newTodo });
   newTodo.title = '';
-  newTodo.assignee = '';
 }
 </script>

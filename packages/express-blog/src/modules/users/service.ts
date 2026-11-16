@@ -1,8 +1,11 @@
-const { NotFound } = require('http-errors');
-const { ForbiddenError } = require('@casl/ability');
-const User = require('./model')();
+import type { Request, Response } from 'express';
+import httpErrors from 'http-errors';
+import { ForbiddenError } from '@casl/ability';
+import User from './model.ts';
 
-async function find(req, res) {
+const { NotFound } = httpErrors;
+
+export async function find(req: Request, res: Response) {
   const user = await User.findById(req.params.id);
 
   if (!user) {
@@ -13,7 +16,7 @@ async function find(req, res) {
   res.send({ item: user });
 }
 
-async function update(req, res) {
+export async function update(req: Request, res: Response) {
   const user = await User.findById(req.params.id);
 
   if (!user) {
@@ -28,7 +31,7 @@ async function update(req, res) {
   res.send({ item: user });
 }
 
-async function create(req, res) {
+export async function create(req: Request, res: Response) {
   const user = new User(req.body);
 
   ForbiddenError.from(req.ability).throwUnlessCan('create', user);
@@ -37,8 +40,3 @@ async function create(req, res) {
   res.status(201).send({ item: user });
 }
 
-module.exports = {
-  create,
-  find,
-  update
-};

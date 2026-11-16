@@ -59,6 +59,7 @@ jobs:
             database: ./blog-drizzle-v1.sqlite
     env:
       DATABASE_URL: ${{ matrix.database }}
+      MONGODB_URI: ${{ matrix.database }}
       AUTH_SECRET: ci-blog-secret
       SERVER_PORT: 3000
       IMPLEMENTATION: ${{ matrix.implementation }}
@@ -80,14 +81,7 @@ jobs:
       - name: Install API and test dependencies
         run: pnpm --filter "./packages/$API_PACKAGE" --filter ./packages/express-blog install --frozen-lockfile
 
-      - name: Verify MongoDB fixtures match their source
-        if: matrix.mongodb
-        working-directory: packages/express-blog
-        run: |
-          pnpm fixtures:build
-          git diff --exit-code -- db/blog
-
-      - name: Start MongoDB and restore fixtures
+      - name: Start MongoDB and seed fixtures
         if: matrix.mongodb
         working-directory: packages/express-blog
         run: | # shell
@@ -106,8 +100,7 @@ jobs:
             echo "MongoDB did not become a writable replica-set primary"
             exit 1
           fi
-          docker compose exec -T mongo mongorestore \
-            --uri='mongodb://root:blogpwd@localhost:27017/?authSource=admin' /var/app/db
+          pnpm seed
 
       - name: Prepare SQLite fixtures
         if: ${{ !matrix.mongodb }}

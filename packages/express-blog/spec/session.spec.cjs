@@ -1,4 +1,4 @@
-const { http, expect } = require('./specHelper');
+const { http, expect } = require('./specHelper.cjs');
 
 describe('session API', () => {
   describe('POST /session', () => {

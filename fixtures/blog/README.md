@@ -4,17 +4,17 @@ The MongoDB blogs and the SQL blog share five technical articles from [articles]
 
 Each `.md` file contains JSON frontmatter between `---` delimiters, followed by the article body. JSON is valid YAML and lets both examples read the same metadata without a parser dependency. Required fields are `id` (a unique, stable 24-character hex identifier), `title`, `author` (a demo email), `published` (a boolean), `createdAt`, and `updatedAt` (ISO timestamps). Keep paragraphs as plain prose: the existing React and Vue readers display the body as text with preserved line breaks.
 
-`index.cjs` validates the metadata, resolves author emails to stable user IDs, and returns database-independent records. Keep articles here instead of editing database dumps or SQL seed code.
+`index.mjs` validates the metadata, resolves author emails to stable user IDs, and returns database-independent records. Keep articles here instead of editing database dumps or SQL seed code.
 
 ## MongoDB
 
-After editing content, regenerate the checked-in BSON dumps from the repository root:
+The TypeScript seed script reads these files directly. Start MongoDB, then run from the repository root:
 
 ```sh
-pnpm --dir packages/express-blog fixtures:build
+pnpm --dir packages/express-blog seed
 ```
 
-Then follow the [MongoDB setup instructions](../../packages/express-blog/README.md) to restore into a fresh database. The same dump supports the Fastify Prisma MongoDB example. Generation writes local fixture files only; it does not connect to a database. Legacy posts and comments collections are empty.
+Set `MONGODB_URI` to choose a database. Follow the [MongoDB setup instructions](../../packages/express-blog/README.md) for the default connection and Docker setup. The same seeded database supports the Fastify Prisma MongoDB example. Seeding refuses to overwrite existing fixture IDs or demo user emails; use a fresh database to preview edited fixtures.
 
 ## SQL
 

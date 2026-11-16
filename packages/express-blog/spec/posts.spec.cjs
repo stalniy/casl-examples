@@ -1,4 +1,4 @@
-const { http, expect, def, $ } = require('./specHelper');
+const { http, expect, def, $ } = require('./specHelper.cjs');
 
 describe('posts API', () => {
   subject(() => http.as($.username));

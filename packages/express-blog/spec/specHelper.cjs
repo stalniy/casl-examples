@@ -1,7 +1,7 @@
 const { default: axios } = require('axios');
 const chai = require('chai');
 const lazyVar = require('bdd-lazy-var/getter');
-const createApp = require('../src/app');
+const createApp = require('../dist/app').default;
 
 const isNotServerError = status => status < 500;
 const http = axios.create({

@@ -5,58 +5,35 @@ import { TodoInput } from '../../models/Todo';
   selector: 'todo-form',
   standalone: false,
   template: `
-    <div class="new-todo">
-      <input
-        name="title"
-        autofocus
-        autocomplete="off"
-        [placeholder]="placeholder"
-        [ngModel]="newTodo().title"
-        (ngModelChange)="updateTitle($event)"
-        (keyup.enter)="addTodo()">
-
-      <select
-        name="assignee"
-        [ngModel]="newTodo().assignee"
-        (ngModelChange)="updateAssignee($event)">
-        <option value="" disabled i18n>Choose Assignee</option>
-        <option>me</option>
-        <option>John Doe</option>
-        <option>Alex Pupkin</option>
+    <form class="new-todo" (ngSubmit)="addTodo()">
+      <span class="add-symbol" aria-hidden="true">＋</span>
+      <input name="title" aria-label="Task title" autofocus autocomplete="off" placeholder="What needs to be done?"
+        [ngModel]="newTodo().title" (ngModelChange)="updateTitle($event)"
+        (keydown.enter)="$event.preventDefault()" (keyup.enter)="addTodo()">
+      <select name="assignee" aria-label="Assign task to" [ngModel]="newTodo().assignee" (ngModelChange)="updateAssignee($event)">
+        <option value="" disabled>Choose Assignee</option><option>me</option><option>John Doe</option><option>Alex Pupkin</option>
       </select>
-    </div>
+      <button class="add-button" type="submit" [disabled]="!newTodo().title.trim() || !newTodo().assignee" aria-label="Add task">Add task <span aria-hidden="true">↗</span></button>
+    </form>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TodoForm {
   readonly onNewTodo = output<TodoInput>({ alias: 'newTodo' });
-
-  readonly placeholder: string = 'What needs to be done?';
-  readonly newTodo = signal<TodoInput>({
-    title: '',
-    assignee: ''
-  });
+  readonly newTodo = signal<TodoInput>({ title: '', assignee: '' });
 
   addTodo() {
     const currentTodo = this.newTodo();
-    this.onNewTodo.emit({ ...currentTodo });
-    this.newTodo.set({
-      title: '',
-      assignee: '',
-    });
+    if (!currentTodo.title.trim() || !currentTodo.assignee) return;
+    this.onNewTodo.emit({ ...currentTodo, title: currentTodo.title.trim() });
+    this.newTodo.set({ title: '', assignee: '' });
   }
 
   updateTitle(title: string) {
-    this.newTodo.update(todo => ({
-      ...todo,
-      title,
-    }));
+    this.newTodo.update(todo => ({ ...todo, title }));
   }
 
   updateAssignee(assignee: string) {
-    this.newTodo.update(todo => ({
-      ...todo,
-      assignee,
-    }));
+    this.newTodo.update(todo => ({ ...todo, assignee }));
   }
 }

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, input, output, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, inject, input, output, signal } from '@angular/core';
 import { AppAbility } from '../../services/AppAbility';
 import { Todo } from '../../models/Todo';
 import { AbilityServiceSignal } from '@casl/angular';
@@ -15,19 +15,24 @@ import { AbilityServiceSignal } from '@casl/angular';
               class="toggle"
               type="checkbox"
               [(ngModel)]="todo.completed"
+              (ngModelChange)="onChange.emit()"
+              [attr.aria-label]="'Complete ' + todo.title"
             >
           }
 
+          @if (!can('update', todo)) {
+            <span class="locked-check" aria-hidden="true">−</span>
+          }
           <div class="view">
             @if (can('update', todo)) {
-              <label (dblclick)="editTodo(todo)">{{ todo.title }}</label>
+              <label tabindex="0" role="button" [attr.aria-label]="'Edit ' + todo.title" (dblclick)="editTodo(todo)" (keyup.enter)="editTodo(todo)">{{ todo.title }}</label>
             } @else {
               <label>{{ todo.title }}</label>
             }
           </div>
 
           @if (can('update', todo)) {
-            <input class="edit" type="text"
+            <input class="edit" type="text" [attr.aria-label]="'Edit ' + todo.title"
               [(ngModel)]="todo.title"
               (blur)="doneEdit(todo)"
               (keyup.enter)="doneEdit(todo)"
@@ -36,16 +41,23 @@ import { AbilityServiceSignal } from '@casl/angular';
           }
 
           <div class="assignee">
-            {{ todo.assignee }}
+            <span class="avatar" [class.own]="todo.assignee === 'me'" aria-hidden="true">{{ todo.assignee === 'me' ? 'Y' : todo.assignee.charAt(0) }}</span>
+            {{ todo.assignee === 'me' ? 'You' : todo.assignee }}
           </div>
 
           @if (can('delete', todo)) {
             <button
               class="destroy"
+              type="button"
+              [attr.aria-label]="'Delete ' + todo.title"
               (click)="removeTodo(todo)"
             ></button>
+          } @else {
+            <span class="read-only" title="Only the assignee or an admin can manage this task">Read only</span>
           }
         </li>
+      } @empty {
+        <li class="empty-state"><span aria-hidden="true">✳</span><h3>A little space for your next idea.</h3><p>Add a task above, or switch filters to see your work.</p></li>
       }
     </ul>
   `,
@@ -54,8 +66,11 @@ import { AbilityServiceSignal } from '@casl/angular';
 export class TodoList {
   private readonly abilityService = inject<AbilityServiceSignal<AppAbility>>(AbilityServiceSignal);
 
+  private readonly element = inject<ElementRef<HTMLElement>>(ElementRef);
+
   readonly items = input<Todo[]>([]);
   readonly onRemoveTodo = output<Todo>({ alias: 'remove' });
+  readonly onChange = output<void>({ alias: 'change' });
   readonly can = this.abilityService.can;
 
   private readonly editedTodo = signal<Todo | null>(null);
@@ -71,6 +86,7 @@ export class TodoList {
   editTodo(todo: Todo) {
     this.editedTodo.set(todo);
     this.beforeEditTodo.set({ ...todo });
+    setTimeout(() => this.element.nativeElement.querySelector<HTMLInputElement>('.todo.editing .edit')?.focus());
   }
 
   doneEdit(todo: Todo) {
@@ -81,6 +97,7 @@ export class TodoList {
     this.beforeEditTodo.set(null);
     this.editedTodo.set(null);
     todo.title = todo.title.trim();
+    this.onChange.emit();
 
     if (!todo.title) {
       this.removeTodo(todo);

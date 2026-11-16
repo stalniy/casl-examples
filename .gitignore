@@ -108,3 +108,5 @@ src.es
 .DS_Store
 test-results/
 *.sqlite
+
+.pnpm-store/

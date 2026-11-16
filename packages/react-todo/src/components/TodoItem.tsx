@@ -2,7 +2,6 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Can, useAbility } from '@casl/react';
 import type { AppAbility } from '../config/ability';
 import { Todo } from '../services/todo-storage';
-import Icon from './Icon';
 
 export interface Props {
   todo: Todo;
@@ -110,10 +109,10 @@ export default function TodoItem({
 
       {!canUpdate && (
         <span
-          className="task-lock"
+          className="locked-check"
           title="Only the assignee or an admin can change this task"
         >
-          <Icon name="lock" />
+          {todo.completed ? '✓' : '−'}
         </span>
       )}
       <div className="view">
@@ -131,9 +130,6 @@ export default function TodoItem({
         >
           {todo.title}
         </label>
-        <span className="task-access">
-          {canUpdate ? 'You can manage this task' : 'Read-only for your role'}
-        </span>
       </div>
 
       <Can I="update" a={todo}>
@@ -150,10 +146,18 @@ export default function TodoItem({
       </Can>
 
       <div className="assignee">
-        <span className="avatar" aria-hidden="true">
-          {(todo.assignee || '?').slice(0, 1).toUpperCase()}
+        <span
+          className={`avatar${todo.assignee === 'me' ? ' own' : ''}`}
+          aria-hidden="true"
+        >
+          {todo.assignee === 'me'
+            ? 'Y'
+            : todo.assignee
+                .split(' ')
+                .map((part) => part[0])
+                .join('')}
         </span>
-        {todo.assignee || 'Unassigned'}
+        {todo.assignee === 'me' ? 'You' : todo.assignee || 'Unassigned'}
       </div>
 
       <Can I="delete" a={todo}>
@@ -162,10 +166,11 @@ export default function TodoItem({
           className="destroy"
           aria-label={`Delete ${todo.title}`}
           onClick={removeTodo}
-        >
-          <Icon name="trash" />
-        </button>
+        />
       </Can>
+      {!ability.can('delete', todo) && (
+        <span className="read-only">Read only</span>
+      )}
     </li>
   );
 }

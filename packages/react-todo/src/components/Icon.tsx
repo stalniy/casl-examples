@@ -6,7 +6,6 @@ type Props = {
   className?: string;
 };
 const paths = {
-  shield: 'M12 3 4 6v6c0 4 8 9 8 9s8-5 8-9V6l-8-3Zm-4 9 3 3 5-6',
   arrow: 'M5 12h14m-6-6 6 6-6 6',
   plus: 'M12 5v14M5 12h14',
   check: 'm5 12 4 4L19 6',
@@ -16,6 +15,18 @@ const paths = {
   trash: 'M3 6h18M9 6V3h6v3M5 6l1 15h12l1-15M10 10v7M14 10v7'
 };
 export default function Icon({ name, className = '' }: Props) {
+  if (name === 'shield') {
+    return (
+      <img
+        className={`icon shield-icon ${className}`}
+        src="/casl-shield.png"
+        alt=""
+        width="25"
+        height="30"
+      />
+    );
+  }
+
   return (
     <svg
       className={`icon ${className}`}

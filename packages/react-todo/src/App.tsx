@@ -22,10 +22,14 @@ export default function App() {
             href="https://casl.js.org/"
             aria-label="CASL home"
           >
-            <span className="brand-mark">
-              <Icon name="shield" />
-            </span>
-            casl<span className="brand-dot">.</span>
+            <img
+              className="brand-mark"
+              src="/casl-shield.png"
+              alt=""
+              width="35"
+              height="42"
+            />
+            CASL
           </a>
           <div className="sidebar-label">THE PLAYGROUND</div>
           <a className="nav-item active" href="#workspace">

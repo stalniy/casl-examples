@@ -2,8 +2,13 @@
 
 :root {
   font-family: 'DM Sans', sans-serif;
-  color: #223d35;
-  background: #f7f8f3;
+  --ink: #242537;
+  --muted: #80808f;
+  --purple: #7560d8;
+  --line: #ededf3;
+  --green: #35a68a;
+  color: var(--ink);
+  background: #f8f9fc;
   font-synthesis: none;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -43,7 +48,7 @@ a {
   outline-offset: 4px;
 }
 :focus-visible {
-  outline: 2px solid #45856c;
+  outline: 2px solid #a99ae9;
 }
 button,
 a {
@@ -57,8 +62,8 @@ button:disabled {
   cursor: default;
 }
 ::selection {
-  background: #d6edaa;
-  color: #173d30;
+  background: #e6dff9;
+  color: #242537;
 }
 @media (prefers-reduced-motion: reduce) {
   *,

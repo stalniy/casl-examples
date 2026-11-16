@@ -55,12 +55,15 @@ export default () => {
   useAppTitle('Login');
 
   return (
-    <Container>
-      <Paper elevation={3}>
+    <Container maxWidth="sm" className="login-page">
+      <div className="page-intro"><span className="eyebrow">YOUR NEXT CHAPTER</span><h1>Welcome back.</h1><p>Sign in to share your perspective and see CASL permissions in action.</p></div>
+      <Paper elevation={0} className="form-panel">
         <form className={styles.form} noValidate autoComplete="off" onSubmit={loginTask.exec}>
           <TaskErrorNotification task={loginTask} />
           <div className={styles.formField}>
             <TextField
+              fullWidth
+              autoComplete="username"
               id="email"
               type="email"
               label="E-mail"
@@ -72,6 +75,8 @@ export default () => {
           </div>
           <div className={styles.formField}>
             <TextField
+              fullWidth
+              autoComplete="current-password"
               id="password"
               label="Password"
               type="password"
@@ -82,6 +87,7 @@ export default () => {
             />
           </div>
           <Button
+            fullWidth
             type="submit"
             variant="contained"
             color="primary"

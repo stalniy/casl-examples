@@ -1,5 +1,7 @@
-body {
-  margin: 0;
-  padding: 0;
-  font-family: sans-serif;
-}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 24px; }
+body { margin: 0; background: #f8f7f3; color: #242334; font-family: Inter, "Segoe UI", sans-serif; -webkit-font-smoothing: antialiased; }
+a { color: inherit; }
+button, input, textarea { font: inherit; }
+::selection { background: #ded5ff; color: #292139; }
+:focus-visible { outline: 3px solid #8c73dd; outline-offset: 5px; }

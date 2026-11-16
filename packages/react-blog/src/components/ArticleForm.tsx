@@ -69,8 +69,9 @@ export default ({ article, onUpdate }: Props) => {
   }, () => validate(form));
 
   return (
-    <Container>
-      <Paper elevation={3}>
+    <Container maxWidth="md" className="editor-page">
+      <div className="page-intro"><span className="eyebrow">THE AUTHOR’S DESK</span><h1>{article ? 'Refine your perspective.' : 'Share what you know.'}</h1><p>A practical idea today could be someone’s breakthrough tomorrow.</p></div>
+      <Paper elevation={0} className="form-panel">
         <form className={styles.form} noValidate autoComplete="off" onSubmit={saveTask.exec}>
           <TaskErrorNotification task={saveTask} />
           <div className={styles.formField}>
@@ -89,7 +90,7 @@ export default ({ article, onUpdate }: Props) => {
           <div className={styles.formField}>
             <TextField
               multiline
-              rows="20"
+              minRows={12}
               id="body"
               name="content"
               label="Content"
@@ -112,7 +113,7 @@ export default ({ article, onUpdate }: Props) => {
             )}
           </div>
           <div className={styles.actions}>
-            <Button onClick={() => history.push('/')}>Back</Button>
+            <Button onClick={() => navigate('/')}>Back</Button>
             <Button
               name="save"
               type="submit"

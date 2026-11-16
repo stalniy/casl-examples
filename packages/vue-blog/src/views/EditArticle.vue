@@ -1,6 +1,7 @@
 <template>
-  <section class="editor panel">
-    <form class="editor-form" @submit.prevent="save">
+  <section class="editor-page">
+    <div class="page-intro"><span class="eyebrow">THE AUTHOR’S DESK</span><h1>{{ route.params.id ? 'Refine your perspective.' : 'Share what you know.' }}</h1><p>A practical idea today could be someone’s breakthrough tomorrow.</p></div>
+    <form class="editor-form form-panel" @submit.prevent="save">
       <div class="field">
         <label for="title">Title</label>
         <input id="title" v-model.trim="article.title" name="title" />
@@ -118,33 +119,3 @@ onMounted(() => {
   }
 });
 </script>
-
-<style scoped>
-.editor {
-  padding: 1.5rem;
-}
-
-.editor-form {
-  display: grid;
-  gap: 1.15rem;
-}
-
-.toggle {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.75rem;
-  font-weight: 600;
-  color: #33415b;
-}
-
-.toggle input {
-  width: 1.1rem;
-  height: 1.1rem;
-}
-
-.editor-actions {
-  display: flex;
-  gap: 0.75rem;
-  flex-wrap: wrap;
-}
-</style>

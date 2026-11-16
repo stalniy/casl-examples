@@ -7,6 +7,9 @@ import Article from './views/Article.vue';
 
 const router = createRouter({
   history: createWebHistory(),
+  scrollBehavior(to, _from, savedPosition) {
+    return savedPosition || (to.hash ? { el: to.hash } : { top: 0 });
+  },
   routes: [
     {
       path: '/',

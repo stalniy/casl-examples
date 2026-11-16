@@ -18,11 +18,11 @@ This application is a basic blog with login, logout, article listing, article ed
 
 The CASL integration lives in [src/store/ability.js](src/store/ability.js). When `createSession` is committed, the shared ability instance is updated from the API rules. When `destroySession` runs, ability is reset to a read-only baseline.
 
-The HTTP service is built on top of `fetch` and reads its base URL from `VITE_API_URL`, falling back to `http://localhost:3000/api`.
+The HTTP service is built on top of `fetch` and reads its base URL from `VITE_API_URL`, falling back to `/api`. Vite proxies `/api` requests to `http://localhost:3000`, so the browser uses the same origin and the API does not need CORS support. Set `API_PROXY_TARGET` to use a different backend address.
 
 ## Server side
 
-REST API is expected to be available at `http://localhost:3000/api` and support CORS headers.
+REST API is expected to be available at `http://localhost:3000/api`. For production, configure your web server to forward `/api` to the backend, or set `VITE_API_URL` to a suitable API URL.
 
 This example was originally implemented against [Rails + CanCanCan][rails-api], but any backend that returns the same session and article payloads can be used.
 

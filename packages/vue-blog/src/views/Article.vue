@@ -1,15 +1,19 @@
 <template>
-  <article class="article-view panel">
-    <p class="article-label">Article</p>
-    <h2>{{ article.title }}</h2>
-    <p class="article-content">{{ article.body }}</p>
-  </article>
+  <section class="reading-page">
+    <router-link to="/" class="text-link">← Back to the journal</router-link>
+    <article v-if="article.title">
+      <header class="reading-header"><span class="eyebrow">AUTHORIZATION / {{ article.published ? 'JOURNAL' : 'DRAFT' }}</span><h1>{{ article.title }}</h1><p>{{ article.createdBy?.email || 'CASL contributor' }}<template v-if="article.createdAt"> · {{ formatDate(article.createdAt) }}</template></p></header>
+      <p class="article-body">{{ article.body }}</p>
+    </article>
+    <aside class="reading-note">Thoughtful permissions start with expressive rules. <a href="https://casl.js.org/">Build with CASL ↗</a></aside>
+  </section>
 </template>
 
 <script setup>
 import { onMounted, reactive } from 'vue';
 import { useRoute } from 'vue-router';
 import { useStore } from 'vuex';
+import { formatDate } from '../services/date';
 
 const store = useStore();
 const route = useRoute();
@@ -35,30 +39,3 @@ onMounted(() => {
     .catch((error) => store.dispatch('notifications/error', error.message));
 });
 </script>
-
-<style scoped>
-.article-view {
-  padding: 1.75rem;
-}
-
-.article-label {
-  margin: 0 0 0.75rem;
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
-  font-size: 0.8rem;
-  font-weight: 800;
-  color: #6a7a95;
-}
-
-h2 {
-  margin: 0 0 1rem;
-  font-size: clamp(1.8rem, 4vw, 2.5rem);
-}
-
-.article-content {
-  margin: 0;
-  color: #364154;
-  line-height: 1.8;
-  white-space: pre-line;
-}
-</style>

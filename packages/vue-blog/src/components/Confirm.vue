@@ -48,7 +48,7 @@ const mergedOptions = computed(() => ({
 }));
 
 const accentColor = computed(() => (
-  mergedOptions.value.color === 'error' ? '#d64545' : '#1e6fd9'
+  mergedOptions.value.color === 'error' ? '#d64545' : '#6850cb'
 ));
 
 function handleEscape(event) {
@@ -87,8 +87,8 @@ onBeforeUnmount(() => {
 
 .dialog {
   max-width: 100%;
-  border-radius: 22px;
-  background: #ffffff;
+  border-radius: 12px;
+  background: #fffefa;
   box-shadow: 0 24px 80px rgba(14, 18, 29, 0.26);
   overflow: hidden;
 }
@@ -105,7 +105,7 @@ onBeforeUnmount(() => {
 
 .dialog-body {
   padding: 1.25rem;
-  color: #3f4654;
+  color: #6c6a78;
 }
 
 .dialog-body p {
@@ -122,17 +122,17 @@ onBeforeUnmount(() => {
 
 .button {
   border: 0;
-  border-radius: 999px;
+  border-radius: 7px;
   padding: 0.8rem 1.2rem;
   font: inherit;
   font-weight: 600;
   cursor: pointer;
   color: #ffffff;
-  background: var(--accent, #1e6fd9);
+  background: var(--accent, #6850cb);
 }
 
 .button-muted {
-  color: #1b2433;
-  background: #eef2f8;
+  color: #242334;
+  background: #eeebf4;
 }
 </style>

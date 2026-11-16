@@ -1,13 +1,13 @@
 <template>
-  <section class="login-layout">
-    <div class="login-card panel">
-      <div class="login-copy">
-        <p class="login-kicker">Sign in</p>
-        <h2>Welcome back</h2>
-        <p>Use the demo API credentials from the server example to load your CASL rules and manage articles.</p>
+  <section class="login-page">
+    <div class="login-card">
+      <div class="page-intro">
+        <span class="eyebrow">YOUR NEXT CHAPTER</span>
+        <h1>Welcome back.</h1>
+        <p>Sign in to share your perspective and see CASL permissions in action.</p>
       </div>
 
-      <form class="login-form" @submit.prevent="loginUser">
+      <form class="login-form form-panel" @submit.prevent="loginUser">
         <div class="field">
           <label for="email">Email</label>
           <input id="email" v-model.trim="details.email" type="email" autocomplete="email" />
@@ -78,55 +78,3 @@ onMounted(() => {
   store.dispatch('setTitle', 'Login');
 });
 </script>
-
-<style scoped>
-.login-layout {
-  min-height: calc(100vh - 10rem);
-  display: grid;
-  place-items: center;
-}
-
-.login-card {
-  width: min(100%, 860px);
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  overflow: hidden;
-}
-
-.login-copy {
-  padding: 2rem;
-  color: #ffffff;
-  background: linear-gradient(145deg, #163b79, #1d7db1);
-}
-
-.login-kicker {
-  margin: 0 0 0.75rem;
-  text-transform: uppercase;
-  letter-spacing: 0.14em;
-  font-weight: 800;
-  opacity: 0.8;
-}
-
-.login-copy h2 {
-  margin: 0 0 1rem;
-  font-size: clamp(2rem, 4vw, 2.8rem);
-}
-
-.login-copy p {
-  margin: 0;
-  line-height: 1.7;
-}
-
-.login-form {
-  display: grid;
-  gap: 1.15rem;
-  padding: 2rem;
-  align-content: center;
-}
-
-@media (max-width: 800px) {
-  .login-card {
-    grid-template-columns: 1fr;
-  }
-}
-</style>

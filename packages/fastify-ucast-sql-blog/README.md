@@ -10,7 +10,7 @@ Install workspace dependencies from the repository root. The example test comman
 pnpm install
 ```
 
-Pick one implementation and prepare its SQLite file. The schema command is explicit and safe to rerun. The seed command inserts the admin, writer, another writer, one published article, and one draft. Seed refuses to run when the admin fixture already exists.
+Pick one implementation and prepare its SQLite file. The schema command is explicit and safe to rerun. The seed command inserts the admin, writer, another writer, and five technical articles about CASL and authorization (four published and one writer-owned draft). Content lives in shared [frontmatter fixtures](../../fixtures/blog/README.md). Seed refuses to run when fixture records already exist.
 
 ```sh
 cd packages/fastify-ucast-sql-blog

@@ -3,6 +3,7 @@ name: Blog UI tests
 on:
   pull_request:
     paths:
+      - 'fixtures/blog/**'
       - 'packages/react-blog/**'
       - 'packages/vue-blog/**'
       - 'packages/fastify-ucast-sql-blog/**'

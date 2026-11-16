@@ -25,6 +25,7 @@
     "typescript": "3.9.2"
   },
   "scripts": {
+    "fixtures:build": "node scripts/build-fixtures.js",
     "start": "node src",
     "dev": "node --watch src",
     "test": "mocha -u bdd-lazy-var/getter -r spec/support.js --timeout 10000 spec/**/*.spec.js",

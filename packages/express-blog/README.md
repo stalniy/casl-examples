@@ -25,7 +25,7 @@ npm install
 npm start # `npm run dev` to run in dev mode
 ```
 
-Also you need mongodb database up and running. Application will connect to `mongodb://localhost:27017/blog`. This repository contains database fixtures which you can load using `mongorestore` cli command. Navigate to the project root and run:
+Also you need mongodb database up and running. Application will connect to `mongodb://localhost:27017/blog`. This repository contains three demo users and five technical articles about CASL and authorization (four published and one writer-owned draft), shared with the SQL blog through [frontmatter fixtures](../../fixtures/blog/README.md). Load the checked-in dump into a fresh database using `mongorestore`. From `packages/express-blog`, run:
 
 ```sh
 mongorestore --uri='mongodb://root:blogpwd@localhost:27017' ./db
@@ -37,6 +37,8 @@ Alternatively, you can run mongodb in container:
 docker compose up -d
 docker compose exec mongo mongorestore --uri='mongodb://root:blogpwd@localhost:27017' /var/app/db
 ```
+
+To edit the articles, change the files in `fixtures/blog/articles` at the repository root, then run `pnpm fixtures:build` from this package and restore into a fresh database. Rebuilding the dump does not modify a running database. Restoring into an existing database can retain old records; use a fresh database to preview the clean fixtures.
 
 ## Instruction to login
 

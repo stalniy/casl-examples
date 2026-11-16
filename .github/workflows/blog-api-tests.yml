@@ -3,6 +3,7 @@ name: Blog API tests
 on:
   pull_request:
     paths:
+      - 'fixtures/blog/**'
       - 'packages/express-blog/**'
       - 'packages/fastify-ucast-sql-blog/**'
       - 'packages/fastify-prisma-blog/**'
@@ -78,6 +79,13 @@ jobs:
 
       - name: Install API and test dependencies
         run: pnpm --filter "./packages/$API_PACKAGE" --filter ./packages/express-blog install --frozen-lockfile
+
+      - name: Verify MongoDB fixtures match their source
+        if: matrix.mongodb
+        working-directory: packages/express-blog
+        run: |
+          pnpm fixtures:build
+          git diff --exit-code -- db/blog
 
       - name: Start MongoDB and restore fixtures
         if: matrix.mongodb

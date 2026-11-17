@@ -1,5 +1,9 @@
 # CASL Vue Todo list
 
+[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/fork/github/stalniy/casl-examples/tree/master/packages/vue-todo)
+
+StackBlitz installs dependencies and starts the app automatically. Edit the source to update the preview.
+
 This example shows how to integrate [CASL](https://stalniy.github.io/casl/) authorization in a Vue 3 application powered by Vite.
 Read [Vue ACL with CASL](https://medium.com/@sergiy.stotskiy/vue-acl-with-casl-781a374b987a) for detailed explanation.
 

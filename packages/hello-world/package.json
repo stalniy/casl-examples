@@ -1,6 +1,7 @@
 {
   "name": "casl-hello-world",
   "version": "1.0.0",
+  "type": "module",
   "description": "CASL helloworld example",
   "main": "index.js",
   "scripts": {

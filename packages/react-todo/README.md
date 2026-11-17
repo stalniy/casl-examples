@@ -1,5 +1,9 @@
 # CASL and React integration example
 
+[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/fork/github/stalniy/casl-examples/tree/master/packages/react-todo)
+
+StackBlitz installs dependencies and starts the app automatically. Edit the source to update the preview.
+
 This example shows how to integrate [CASL authorization](https://stalniy.github.io/casl/) (i.e. permissions) in React application. Read [Managing user permissions in React app](https://medium.com/dailyjs/managing-user-permissions-in-your-react-app-a93a94ff9b40) for detailed explanation.
 
 > Generated with crate-react-app

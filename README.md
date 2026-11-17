@@ -13,16 +13,18 @@ Currently this repository contains the next examples:
 | [CASL hello world](./packages/hello-world)   | hello world example to start playing with | [CASL HelloWorld]          |
 | [CASL React todo](./packages/react-todo)     | user roles in Todo app | [CASL React Todo] |
 | [CASL React blog](./packages/react-blog)     | ACL in Blog app  with REST API |  |
-| [CASL Angular todo](./packages/angular-todo) | user roles in Todo app |  |
-| [CASL Vue todo](./packages/vue-todo)         | user roles in Todo app |  |
+| [CASL Angular todo](./packages/angular-todo) | user roles in Todo app | [CASL Angular Todo] |
+| [CASL Vue todo](./packages/vue-todo)         | user roles in Todo app | [CASL Vue Todo] |
 | [CASL Vue blog](./packages/vue-blog)  | ACL in Blog app with REST API |  |
 | [CASL Express API](./packages/express-blog)  | ACL in REST API for Blog app |  |
 | [CASL FeathersJS API](./packages/feathersjs-blog)  | ACL in Feathers services for Blog app |  |
 | [CASL Fastify+Prisma API](./packages/fastify-prisma-blog)  | ACL in REST API for Blog app |  |
 | [CASL Fastify+UCAST SQL API](./packages/fastify-ucast-sql-blog)  | ACL in REST API for Blog app with MikroORM, TypeORM, Sequelize, Objection and Drizzle ORM (1.x RC) |  |
 
-[CASL HelloWorld]: https://codesandbox.io/s/github/stalniy/casl-examples/tree/master/packages/hello-world
-[CASL React Todo]: https://codesandbox.io/s/github/stalniy/casl-examples/tree/master/packages/react-todo
+[CASL HelloWorld]: https://stackblitz.com/fork/github/stalniy/casl-examples/tree/master/packages/hello-world
+[CASL React Todo]: https://stackblitz.com/fork/github/stalniy/casl-examples/tree/master/packages/react-todo
+[CASL Angular Todo]: https://stackblitz.com/fork/github/stalniy/casl-examples/tree/master/packages/angular-todo
+[CASL Vue Todo]: https://stackblitz.com/fork/github/stalniy/casl-examples/tree/master/packages/vue-todo
 
 
 ## Want to contribute?

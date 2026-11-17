@@ -1,0 +1,6 @@
+{
+  "startCommand": "npm start -- --host 0.0.0.0",
+  "env": {
+    "NG_CLI_ANALYTICS": "false"
+  }
+}

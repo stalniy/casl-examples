@@ -1,5 +1,9 @@
 # CASL hello world
 
+[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/fork/github/stalniy/casl-examples/tree/master/packages/hello-world)
+
+In StackBlitz, permission checks run automatically and print to the terminal. After editing the rules or data, run `npm start` in the terminal again.
+
 Play around with [CASL](https://casl.js.org) using a simple policy: you can read all posts and edit the title and body of your own drafts. Published posts cannot be edited, and authorship stays protected.
 
 ## Run
